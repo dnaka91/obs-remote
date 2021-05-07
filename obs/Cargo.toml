@@ -1,0 +1,12 @@
+[package]
+name = "obs"
+version = "0.1.0"
+authors = ["Dominik Nakamura <dnaka91@gmail.com>"]
+edition = "2018"
+license = "AGPL-3.0-only"
+
+[dependencies]
+anyhow = "1.0.40"
+bitflags = "1.2.1"
+libobs-sys = { path = "../libobs-sys" }
+log = { version = "0.4.14", features = ["std"] }

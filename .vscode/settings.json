@@ -1,0 +1,10 @@
+{
+    "files.watcherExclude": {
+        "**/target/**": true
+    },
+    "protoc": {
+        "options": [
+            "-Iobs-remote/proto"
+        ]
+    }
+}

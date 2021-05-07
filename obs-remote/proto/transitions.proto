@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package obs_remote.transitions;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+// API functions related to transitions.
+service Transitions {
+  // List of all transitions available in the frontend's dropdown menu.
+  rpc List(google.protobuf.Empty) returns (ListReply);
+  // Get the name of the currently selected transition in the frontend's
+  // dropdown menu.
+  rpc GetCurrent(google.protobuf.Empty) returns (GetCurrentReply);
+  // Set the active transition.
+  rpc SetCurrent(SetCurrentRequest) returns (google.protobuf.Empty);
+  // Set the duration of the currently selected transition if supported.
+  rpc SetDuration(SetDurationRequest) returns (google.protobuf.Empty);
+  // Get the duration of the currently selected transition if supported.
+  rpc GetDuration(google.protobuf.Empty) returns (GetDurationReply);
+  // Get the position of the current transition.
+  rpc Position(google.protobuf.Empty) returns (PositionReply);
+  // Get the current settings of a transition.
+  rpc GetSettings(GetSettingsRequest) returns (GetSettingsReply);
+  // Change the current settings of a transition.
+  rpc SetSettings(SetSettingsRequest) returns (SetSettingsReply);
+  // Release the T-Bar (like a user releasing their mouse button after moving
+  // it). YOU MUST CALL THIS if you called `set_t_bar_position` with the
+  // `release` parameter set to `false`.
+  rpc ReleaseTBar(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // If your code needs to perform multiple successive T-Bar moves (e.g. : in an
+  // animation, or in response to a user moving a T-Bar control in your User
+  // Interface), set `release` to false and call `release_t_bar` later once the
+  // animation/interaction is over.
+  rpc SetTBarPosition(SetTBarPositionRequest) returns (google.protobuf.Empty);
+}
+
+message ListReply {
+  // Name of the currently active transition.
+  string current = 1;
+  // List of transitions.
+  repeated Transition transitions = 2;
+
+  message Transition {
+    // Name of the transition.
+    string name = 1;
+  }
+}
+
+message GetCurrentReply {
+  // Name of the selected transition.
+  string name = 1;
+  // Transition duration (in milliseconds) if supported by the transition.
+  google.protobuf.Duration duration = 2;
+}
+
+message SetCurrentRequest {
+  // The name of the transition.
+  string name = 1;
+}
+
+message SetDurationRequest {
+  // Desired duration of the transition (in milliseconds).
+  google.protobuf.Duration duration = 1;
+}
+
+message GetDurationReply {
+  // Duration of the current transition (in milliseconds).
+  google.protobuf.Duration duration = 1;
+}
+
+message PositionReply {
+  // Current transition position. This value will be between 0.0 and 1.0.
+  //
+  // Note: Transition returns 1.0 when not active.
+  float position = 1;
+}
+
+message GetSettingsRequest {
+  // Transition name.
+  string name = 1;
+}
+
+message GetSettingsReply {
+  // Current or updated transition settings.
+  string settings = 1;
+}
+
+message SetSettingsRequest {
+  // Transition name.
+  string name = 1;
+  // Transition settings (they can be partial).
+  string settings = 2;
+}
+
+message SetSettingsReply {
+  // Current or updated transition settings.
+  string settings = 1;
+}
+
+message SetTBarPositionRequest {
+  // T-Bar position. This value must be between 0.0 and 1.0.
+  double position = 1;
+  // Whether or not the T-Bar gets released automatically after setting its new
+  // position (like a user releasing their mouse button after moving the T-Bar).
+  // Call `ReleaseTBar` manually if you set `release` to false. Defaults to
+  // true.
+  google.protobuf.BoolValue release = 2;
+}

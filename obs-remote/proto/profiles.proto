@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package obs_remote.profiles;
+
+import "google/protobuf/empty.proto";
+
+// API functions related to profiles.
+service Profiles {
+  // Set the currently active profile.
+  rpc SetCurrent(SetCurrentRequest) returns (google.protobuf.Empty);
+  // Get the name of the current profile.
+  rpc GetCurrent(google.protobuf.Empty) returns (GetCurrentReply);
+  // Get a list of available profiles.
+  rpc List(google.protobuf.Empty) returns (ListReply);
+}
+
+message SetCurrentRequest {
+  // Name of the desired profile.
+  string name = 1;
+}
+
+message GetCurrentReply {
+  // Name of the currently active profile.
+  string name = 1;
+}
+
+message ListReply {
+  // List of available profiles.
+  repeated string profiles = 1;
+}

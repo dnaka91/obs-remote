@@ -1,0 +1,20 @@
+[package]
+name = "libobs-sys"
+version = "0.1.0"
+authors = ["Dominik Nakamura <dnaka91@gmail.com>"]
+edition = "2018"
+build = "build.rs"
+license = "AGPL-3.0-only"
+
+[dependencies]
+
+[build-dependencies]
+bindgen = { version = "0.58.1", default-features = false, features = ["runtime", "which-rustfmt"] }
+
+[target.'cfg(all(unix, not(target_os = "macos")))'.build-dependencies]
+pkg-config = "0.3.19"
+
+[target.'cfg(windows)'.build-dependencies]
+cc = "1.0.67"
+regex = "1.5.4"
+winreg = "0.8.0"

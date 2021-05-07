@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package obs_remote.events;
+
+import "google/protobuf/empty.proto";
+
+service Events {
+  rpc Listen(google.protobuf.Empty) returns (stream EventReply);
+}
+
+message EventReply {
+  oneof event {
+    string test1 = 1;
+    bool test2 = 2;
+    SceneCollectionChanged scene_collection_changed = 100;
+    SceneCollectionListChanged scene_collection_list_changed = 101;
+    SwitchTransition switch_transition = 200;
+
+    SourceCreated source_created = 800;
+    SourceDestroyed source_destroyed = 801;
+  }
+}
+
+// --- Scenes ---
+
+message SceneCollectionChanged { string name = 1; }
+
+message SceneCollectionListChanged { repeated string collections = 1; }
+
+// --- Transitions ---
+
+message SwitchTransition { string name = 1; }
+
+// --- Profiles ---
+
+// --- Streaming ---
+
+// --- Recording ---
+
+// --- Replay Buffer ---
+
+// --- General ---
+
+// --- Sources ---
+
+message SourceCreated {
+  string name = 1;
+  string ty = 2;
+  string kind = 3;
+  string settings = 4;
+}
+
+message SourceDestroyed {
+  string name = 1;
+  string ty = 2;
+  string kind = 3;
+}
+
+// --- Media ---
+
+// --- Scene Items ---
+
+// --- Studio Mode ---

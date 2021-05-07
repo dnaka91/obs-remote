@@ -1,0 +1,219 @@
+syntax = "proto3";
+
+package obs_remote.general;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+// General functions of the API.
+service General {
+  // Returns the latest version of the plugin and the API.
+  rpc GetVersion(google.protobuf.Empty) returns (VersionReply);
+  // Tells the client if authentication is required. If so, returns
+  // authentication parameters `challenge` and `salt`.
+  rpc GetAuthRequired(google.protobuf.Empty) returns (AuthRequiredReply);
+  // Attempt to authenticate the client to the server.
+  rpc Authenticate(AuthenticateRequest) returns (google.protobuf.Empty);
+  // Set the filename formatting string.
+  rpc SetFilenameFormatting(SetFilenameFormattingRequest)
+      returns (google.protobuf.Empty);
+  // Get the filename formatting string.
+  rpc GetFilenameFormatting(google.protobuf.Empty)
+      returns (GetFilenameFormattingReply);
+  // Get OBS stats (almost the same info as provided in OBS' stats window).
+  rpc GetStats(google.protobuf.Empty) returns (StatsReply);
+  // BroadcastCustomMessage
+  rpc GetVideoInfo(google.protobuf.Empty) returns (VideoInfoReply);
+  // Get basic OBS video information.
+  rpc OpenProjector(OpenProjectorRequest) returns (google.protobuf.Empty);
+  // Open a projector window or create a projector on a monitor. Requires OBS
+  // v24.0.4 or newer.
+  rpc TriggerHotkeyByName(TriggerHotkeyByNameRequest)
+      returns (google.protobuf.Empty);
+  // Executes hotkey routine, identified by hotkey unique name.
+  rpc TriggerHotkeyBySequence(TriggerHotkeyBySequenceRequest)
+      returns (google.protobuf.Empty);
+}
+
+message VersionReply {
+  // OBS Studio program version.
+  SemVer obs_studio_version = 1;
+  // OBS Remote plugin version.
+  SemVer obs_remote_version = 2;
+  // List of supported formats for features that use image export.
+  repeated string supported_image_export_formats = 4;
+
+  message SemVer {
+    // The major version, to be incremented on incompatible changes.
+    uint32 major = 1;
+    // The minor version, to be incremented when functionality is added in a
+    // backwards-compatible manner.
+    uint32 minor = 2;
+    // The patch version, to be incremented when backwards-compatible bug
+    // fixes are made.
+    uint32 patch = 3;
+  }
+}
+
+message AuthRequiredReply {
+  // Indicates whether authentication is required.
+  bool auth_required = 1;
+  // A random string that will be used to generate the auth response.
+  google.protobuf.StringValue challenge = 2;
+  // Applied to the password when generating the auth response.
+  google.protobuf.StringValue salt = 3;
+}
+
+message AuthenticateRequest {
+  // Response to the auth challenge.
+  string auth = 1;
+}
+
+message SetFilenameFormattingRequest {
+  // Filename formatting string to set.
+  string filename_formatting = 1;
+}
+
+message GetFilenameFormattingReply {
+  // Current filename formatting string.
+  string filename_formatting = 1;
+}
+
+message StatsReply {
+  ObsStats stats = 1;
+
+  message ObsStats {
+    // Current framerate.
+    double fps = 1;
+    // Number of frames rendered.
+    uint32 render_total_frames = 2;
+    // Number of frames missed due to rendering lag.
+    uint32 render_missed_frames = 3;
+    // Number of frames outputted.
+    uint32 output_total_frames = 4;
+    // Number of frames skipped due to encoding lag.
+    uint32 output_skipped_frames = 5;
+    // Average frame render time (in milliseconds).
+    double average_frame_time = 6;
+    // Current CPU usage (percentage).
+    double cpu_usage = 7;
+    // Current RAM usage (in megabytes).
+    double memory_usage = 8;
+    // Free recording disk space (in megabytes).
+    double free_disk_space = 9;
+  }
+}
+
+message VideoInfoReply {
+  // Base (canvas) width.
+  uint32 base_width = 1;
+  // Base (canvas) height.
+  uint32 base_height = 2;
+  // Output width.
+  uint32 output_width = 3;
+  // Output height.
+  uint32 output_height = 4;
+  // Scaling method used if output size differs from base size.
+  ScaleType scale_type = 5;
+  // Frames rendered per second.
+  double fps = 6;
+  // Video color format.
+  VideoFormat video_format = 7;
+  // Color space for YUV.
+  ColorSpace color_space = 8;
+  // Color range (full or partial).
+  ColorRange color_range = 9;
+
+  // Possible scaling types for the output.
+  enum ScaleType {
+    // Fastest, but blurry scaling.
+    BILINEAR = 0;
+    // Weighted sum, 4/6/9 samples.
+    AREA = 1;
+    // Sharpened scaling, 16 samples.
+    BICUBIC = 2;
+    // Sharpened scaling, 36 samples.
+    LANCZOS = 3;
+  }
+
+  // Supported formats for video output.
+  enum VideoFormat {
+    // NV12 format.
+    NV12 = 0;
+    // I420 format.
+    I420 = 1;
+    // I444 format.
+    I444 = 2;
+    // RGBA format.
+    RGBA = 3;
+  }
+
+  // Supported color spaces for video output.
+  enum ColorSpace {
+    // 709 color space.
+    CS_709 = 0;
+    // 601 color space.
+    CS_601 = 1;
+    // sRGB color space (default).
+    CS_SRGB = 2;
+  }
+
+  // Supported color ranges for video output.
+  enum ColorRange {
+    // Partial color range.
+    PARTIAL = 0;
+    // Full range.
+    FULL = 1;
+  }
+}
+
+message OpenProjectorRequest {
+  // Type of projector.
+  ProjectorType type = 1;
+  // Monitor to open the projector on. If -1 or omitted, opens a window.
+  google.protobuf.Int64Value monitor = 2;
+  // Size and position of the projector window (only if monitor is omitted).
+  google.protobuf.StringValue geometry = 3;
+  // Name of the source or scene to be displayed (ignored for other projector
+  // types).
+  google.protobuf.StringValue name = 4;
+
+  enum ProjectorType {
+    // Open a project for the OBS default.
+    DEFAULT = 0;
+    // Open a projector of the preview area.
+    PREVIEW = 1;
+    // Open a projector for a source.
+    SOURCE = 2;
+    // Open a projector for a scene.
+    SCENE = 3;
+    // Open a projector of the program pane in studio mode.
+    STUDIO_PROGRAM = 4;
+    // Open a projector in multiview.
+    MULTIVIEW = 5;
+  }
+}
+
+message TriggerHotkeyByNameRequest {
+  // Unique name of the hotkey, as defined when registering the hotkey (e.g.
+  // "ReplayBuffer.Save").
+  string hotkey_name = 1;
+}
+
+message TriggerHotkeyBySequenceRequest {
+  // Main key identifier (e.g. `OBS_KEY_A` for key "A").
+  string key_id = 1;
+  // Optional key modifiers object. False entries can be omitted.
+  repeated KeyModifier key_modifiers = 2;
+
+  message KeyModifier {
+    // Trigger Shift key.
+    bool shift = 1;
+    // Trigger Alt key.
+    bool alt = 2;
+    // Trigger Control (Ctrl) key.
+    bool control = 3;
+    // Trigger Command key (Mac).
+    bool command = 4;
+  }
+}

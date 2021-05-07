@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package obs_remote.common;
+
+import "google/protobuf/wrappers.proto";
+
+// Alignment for different items on the scene that is described in two axis. The
+// default is center for both axis.
+//
+// For example, only using `LEFT` would arrange the target to the left
+// horzontally and centered vertically. To align to the top right, the
+// alignments can be combined to `LEFT | TOP`. Combining both values for a
+// single axis is invalid, like `LEFT | RIGHT`.
+message Alignment {
+  // Raw flags value.
+  uint32 raw = 1;
+  // Align to the left side.
+  bool left = 3;
+  // Align to the right side.
+  bool right = 4;
+  // Align to the top.
+  bool top = 5;
+  // Align to the bottom.
+  bool bottom = 6;
+}
+
+enum MediaState {
+  // No state.
+  NONE = 0;
+  // Media is playing.
+  PLAYING = 1;
+  // Opening file for replay.
+  OPENING = 2;
+  // Buffering data for replay.
+  BUFFERING = 3;
+  // Media is paused.
+  PAUSED = 4;
+  // Media stopped.
+  STOPPED = 5;
+  // All media in the playlist played.
+  ENDED = 6;
+  // Error occurred while trying to play the media.
+  ERROR = 7;
+  // Unknown state.
+  UNKNOWN_STATE = 255;
+}
+
+message SceneItem {
+  float cy = 1;
+  float cx = 2;
+  // The point on the source that the item is manipulated from. The sum of
+  // 1=Left or 2=Right, and 4=Top or 8=Bottom, or omit to center on that axis.
+  common.Alignment alignment = 3;
+  // The name of this scene item.
+  string name = 4;
+  // Scene item ID.
+  int64 id = 5;
+  // Whether or not this Scene Item is set to "visible".
+  bool render = 6;
+  // Whether or not this Scene Item is muted.
+  bool muted = 7;
+  // Whether or not this Scene Item is locked and can't be moved around
+  bool locked = 8;
+  uint32 source_cx = 9;
+  uint32 source_cy = 10;
+  // Source type.
+  SourceType ty = 11;
+  float volume = 12;
+  float x = 13;
+  float y = 14;
+  // Name of the item's parent (if this item belongs to a group).
+  google.protobuf.StringValue parent_group_name = 15;
+  // List of children (if this item is a group).
+  repeated SceneItem group_children = 16;
+}
+
+message Timecode {
+  uint32 hours = 1;
+  uint32 minutes = 2;
+  uint32 seconds = 3;
+  uint32 milliseconds = 4;
+}
+
+enum SourceType {
+  UNKNOWN = 0;
+  // Input source from outside of OBS.
+  INPUT = 1;
+  // Filter applied to other items.
+  FILTER = 2;
+  // Transition when switching scenes.
+  TRANSITION = 3;
+  // Another scene added as source.
+  SCENE = 4;
+}

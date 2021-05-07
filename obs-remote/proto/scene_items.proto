@@ -1,0 +1,283 @@
+syntax = "proto3";
+
+package obs_remote.scene_items;
+
+import "common.proto";
+import "google/protobuf/empty.proto";
+
+// API functions related to scene items.
+service SceneItems {
+  // Get a list of all scene items in a scene.
+  rpc List(ListRequest) returns (ListReply);
+  // Gets the scene specific properties of the specified source item.
+  // Coordinates are relative to the item's parent (the scene or group it
+  // belongs to).
+  rpc GetProperties(GetPropertiesRequest) returns (GetPropertiesReply);
+  // Sets the scene specific properties of a source. Unspecified properties will
+  // remain unchanged. Coordinates are relative to the item's parent (the scene
+  // or group it belongs to).
+  rpc SetProperties(SetPropertiesRequest) returns (google.protobuf.Empty);
+  // Reset a scene item.
+  rpc Reset(ResetRequest) returns (google.protobuf.Empty);
+  // Show or hide a specified source item in a specified scene.
+  rpc SetRender(SetRenderRequest)
+      returns (google.protobuf.Empty);
+  // Deletes a scene item.
+  rpc Delete(DeleteRequest) returns (google.protobuf.Empty);
+  // Creates a scene item in a scene. In other words, this is how you add a
+  // source into a scene.
+  rpc Add(AddRequest) returns (AddReply);
+  // Duplicates a scene item.
+  rpc Duplicate(DuplicateRequest)
+      returns (DuplicateReply);
+}
+
+message ListRequest {
+  // Name of the scene to get the list of scene items from. Defaults to the
+  // current scene if not specified.
+  string scene_name = 1;
+}
+
+message ListReply {
+  // Name of the requested (or current) scene.
+  string scene_name = 1;
+  // Array of scene items.
+  repeated SceneItem items = 2;
+
+  message SceneItem {
+    // Unique item id of the source item.
+    int64 id = 1;
+    // ID if the scene item's source. For example `vlc_source` or
+    // `image_source`.
+    string kind = 2;
+    // Name of the scene item's source.
+    string name = 3;
+    // Type of the scene item's source. Either `input`, `group`, or `scene`.
+    string ty = 4;
+  }
+}
+
+message GetPropertiesRequest {
+  // Name of the scene the scene item belongs to. Defaults to the current scene.
+  string scene_name = 1;
+  // Scene item name (if this field is a string) or specification (if it is an
+  // object).
+  Identifier item = 2;
+}
+
+message GetPropertiesReply {
+  // Scene item name.
+  string name = 1;
+  // Scene item ID.
+  int64 id = 2;
+  // Position of the source.
+  Position position = 3;
+  // The clockwise rotation of the item in degrees around the point of
+  // alignment.
+  double rotation = 4;
+  // Scaling factor of the source.
+  Scale scale = 5;
+  // Pixel cropping of the source before scaling.
+  Crop crop = 6;
+  // If the source is visible.
+  bool visible = 7;
+  // If the source is muted.
+  bool muted = 8;
+  // If the source's transform is locked.
+  bool locked = 9;
+  // Bounding box of the source.
+  Bounds bounds = 10;
+  // Base width (without scaling) of the source.
+  uint32 source_width = 11;
+  // Base source (without scaling) of the source.
+  uint32 source_height = 12;
+  // Scene item width (base source width multiplied by the horizontal scaling
+  // factor).
+  double width = 13;
+  // Scene item height (base source height multiplied by the vertical scaling
+  // factor).
+  double height = 14;
+  // Name of the item's parent (if this item belongs to a group).
+  string parent_group_name = 15;
+  // List of children (if this item is a group).
+  repeated Transform group_children = 16;
+
+  message Transform {
+    // Position of the scene item.
+    Position position = 1;
+    // The clockwise rotation of the scene item in degrees around the point of
+    // alignment.
+    double rotation = 2;
+    // Scaling factor of the scene item.
+    Scale scale = 3;
+    // Pixel cropping of the scene item before scaling.
+    Crop crop = 4;
+    // If the scene item is visible.
+    bool visible = 5;
+    // If the scene item is locked in position.
+    bool locked = 6;
+    // Bounding box of the source item.
+    Bounds bounds = 7;
+    // Base width (without scaling) of the source.
+    uint64 source_width = 8;
+    // Base source (without scaling) of the source.
+    uint64 source_height = 9;
+    // Scene item width (base source width multiplied by the horizontal scaling
+    // factor).
+    double width = 10;
+    // Scene item height (base source height multiplied by the vertical scaling
+    // factor).
+    double height = 11;
+    // Name of the item's parent (if this item belongs to a group).
+    string parent_group_name = 12;
+    // List of children (if this item is a group).
+    repeated Transform group_children = 13;
+  }
+}
+
+message SetPropertiesRequest {
+  // Name of the scene the source item belongs to. Defaults to the current
+  // scene.
+  string scene_name = 1;
+  // Scene item name (if this field is a string) or specification (if it is an
+  // object).
+  Identifier item = 2;
+  Position position = 3;
+  double rotation = 4;
+  Scale scale = 5;
+  Crop crop = 6;
+  bool visible = 7;
+  bool locked = 8;
+  Bounds bounds = 9;
+}
+
+message ResetRequest {
+  // Name of the scene the scene item belongs to. Defaults to the current scene.
+  string scene_name = 1;
+  // Scene item name (if this field is a string) or specification (if it is an
+  // object).
+ Identifier item = 2;
+}
+
+message SetRenderRequest {
+  // Name of the scene the scene item belongs to. Defaults to the currently
+  // active scene.
+  string scene_name = 1;
+  // Scene item name.
+  string source = 2;
+  // Scene item ID.
+  int64 item = 3;
+  // true = shown ; false = hidden.
+  bool render = 4;
+}
+
+message DeleteRequest {
+  // Name of the scene the scene item belongs to. Defaults to the current scene.
+  string scene_name = 1;
+  // Scene item to delete.
+  Identifier item = 2;
+}
+
+message AddRequest {
+  // Name of the scene to create the scene item in.
+  string scene_name = 1;
+  // Name of the source to be added.
+  string source_name = 2;
+  // Whether to make the sceneitem visible on creation or not. Default `true`.
+  bool set_visible = 3;
+}
+
+message AddReply {
+  // Numerical ID of the created scene item.
+  int64 id = 1;
+}
+
+message DuplicateRequest {
+  // Name of the scene to copy the item from. Defaults to the current scene.
+  string from_scene = 1;
+  // Name of the scene to create the item in. Defaults to the current scene.
+  string to_scene = 2;
+  // Scene item to duplicate from the source scene.
+  Identifier item = 3;
+}
+
+message DuplicateReply {
+  // Name of the scene where the new item was created.
+  string scene = 1;
+  // New item info.
+  SceneItemSpecification specification = 2;
+}
+
+message Identifier {
+  oneof value {
+    // Scene item name.
+    string name = 1;
+    // Scene item specification.
+    SceneItemSpecification specification = 2;
+  }
+}
+
+message SceneItemSpecification {
+  // Scene item name.
+  string name = 1;
+  // Scene item ID.
+  int64 id = 2;
+}
+
+message Position {
+  // The x position of the source from the left.
+  double x = 1;
+  // The y position of the source from the top.
+  double y = 2;
+  // The point on the source that the item is manipulated from. The sum of
+  // 1=Left or 2=Right, and 4=Top or 8=Bottom, or omit to center on that axis.
+  common.Alignment alignment = 3;
+}
+
+message Scale {
+  // The x-scale factor of the source.
+  double x = 1;
+  // The y-scale factor of the source.
+  double y = 2;
+}
+
+message Crop {
+  // The number of pixels cropped off the top of the source before scaling.
+  uint32 top = 1;
+  // The number of pixels cropped off the right of the source before scaling.
+  uint32 right = 2;
+  // The number of pixels cropped off the bottom of the source before scaling.
+  uint32 bottom = 3;
+  // The number of pixels cropped off the left of the source before scaling.
+  uint32 left = 4;
+}
+
+message Bounds {
+  // Type of bounding box.
+  BoundsType ty = 1;
+  // Alignment of the bounding box.
+  common.Alignment alignment = 2;
+  // Width of the bounding box.
+  double x = 3;
+  // Height of the bounding box.
+  double y = 4;
+
+  // Different kinds of bounds that can be applied to different items on the
+  // scene.
+  enum BoundsType {
+    // Stretch to bounds.
+    STRETCH = 0;
+    // Scale to inner bounds.
+    SCALE_INNER = 1;
+    // Scale to outer bounds.
+    SCALE_OUTER = 2;
+    // Scale to width of bounds.
+    SCALE_TO_WIDTH = 3;
+    // Scale to height of bounds.
+    SCALE_TO_HEIGHT = 4;
+    // Maximum size only.
+    MAX_ONLY = 5;
+    // No bounds.
+    NONE = 6;
+  }
+}

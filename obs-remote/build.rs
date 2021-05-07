@@ -1,0 +1,25 @@
+fn main() {
+    tonic_build::configure()
+        .build_client(false)
+        .compile(
+            &[
+                "proto/events.proto",
+                "proto/general.proto",
+                "proto/media_control.proto",
+                "proto/outputs.proto",
+                "proto/profiles.proto",
+                "proto/recording.proto",
+                "proto/replay_buffer.proto",
+                "proto/scene_collections.proto",
+                "proto/scene_items.proto",
+                "proto/scenes.proto",
+                "proto/sources.proto",
+                "proto/streaming.proto",
+                "proto/studio_mode.proto",
+                "proto/transitions.proto",
+                "proto/v5.proto",
+            ],
+            &["proto"],
+        )
+        .unwrap();
+}

@@ -1,0 +1,14 @@
+[package]
+name = "obs-rust"
+version = "0.1.0"
+authors = ["Dominik Nakamura <dnaka91@gmail.com>"]
+edition = "2018"
+license = "AGPL-3.0-only"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+libobs-sys = { path = "../libobs-sys" }
+log = "0.4.14"
+obs = { path = "../obs" }

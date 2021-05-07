@@ -1,0 +1,18 @@
+[licenses]
+allow = [
+    "Apache-2.0",
+    "BSD-3-Clause",
+    "ISC",
+    "MIT",
+]
+exceptions = [
+    { allow = ["AGPL-3.0"], name = "libobs-sys" },
+    { allow = ["AGPL-3.0"], name = "obs" },
+    { allow = ["AGPL-3.0"], name = "obs-remote" },
+    { allow = ["AGPL-3.0"], name = "obs-rust" },
+]
+
+[bans]
+skip = [
+    { name = "which", version = "=3.1.1" },
+]

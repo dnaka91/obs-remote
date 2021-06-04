@@ -1,0 +1,68 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.177.0/containers/ubuntu
+{
+	"name": "Ubuntu",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"runArgs": [
+		"--cap-add=SYS_PTRACE",
+		"--security-opt",
+		"seccomp=unconfined"
+	],
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"terminal.integrated.shell.linux": "/usr/bin/fish",
+		"terminal.integrated.profiles.linux": {
+			"fish": {
+				"path": "/usr/bin/fish"
+			},
+		},
+		"terminal.integrated.defaultProfile.linux": "fish",
+		"lldb.executable": "/usr/bin/lldb",
+		// VS Code don't watch files under ./target
+        "files.watcherExclude": {
+            "**/target/**": true
+        }
+	},
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"alexcvzz.vscode-sqlite",
+        "bbenoist.vagrant",
+        "bierner.emojisense",
+        "bierner.markdown-emoji",
+        "bierner.markdown-mermaid",
+        "bpruitt-goddard.mermaid-markdown-syntax-highlighting",
+        "DavidAnson.vscode-markdownlint",
+        "eamodio.gitlens",
+        "EditorConfig.EditorConfig",
+        "eriklynd.json-tools",
+        "felipe.nasc-touchbar",
+        "GitHub.vscode-pull-request-github",
+        "jgclark.vscode-todo-highlight",
+        "k--kato.intellij-idea-keybindings",
+        "kevinkyang.auto-comment-blocks",
+        "lunaryorn.fish-ide",
+        "matklad.rust-analyzer",
+        "mikestead.dotenv",
+        "mrmlnc.vscode-scss",
+        "nickdemayo.vscode-json-editor",
+        "redhat.vscode-commons",
+        "redhat.vscode-yaml",
+        "samuelcolvin.jinjahtml",
+        "serayuzgur.crates",
+        "streetsidesoftware.code-spell-checker",
+        "syler.sass-indented",
+        "tamasfe.even-better-toml",
+        "timonwong.shellcheck",
+        "Tyriar.sort-lines",
+        "vadimcn.vscode-lldb",
+        "yzhang.markdown-all-in-one",
+	],
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "uname -a",
+	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "vscode"
+}

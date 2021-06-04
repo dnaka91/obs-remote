@@ -1,4 +1,3 @@
-/.vagrant
 /target
 
 Cargo.lock

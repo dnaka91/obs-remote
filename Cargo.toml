@@ -1,2 +1,5 @@
 [workspace]
 members = ["libobs-sys", "obs", "obs-remote", "obs-rust"]
+
+[profile.release]
+lto = true

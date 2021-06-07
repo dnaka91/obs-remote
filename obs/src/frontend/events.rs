@@ -75,6 +75,9 @@ pub enum Event {
     RecordingUnpaused,
     TransitionDurationChanged,
     ReplayBufferSaved,
+    VirtualcamStarted,
+    VirtualcamStopped,
+    TBarValueChanged,
 }
 
 impl Event {
@@ -113,6 +116,9 @@ impl Event {
             OBS_FRONTEND_EVENT_RECORDING_UNPAUSED => Self::RecordingUnpaused,
             OBS_FRONTEND_EVENT_TRANSITION_DURATION_CHANGED => Self::TransitionDurationChanged,
             OBS_FRONTEND_EVENT_REPLAY_BUFFER_SAVED => Self::ReplayBufferSaved,
+            OBS_FRONTEND_EVENT_VIRTUALCAM_STARTED => Self::VirtualcamStarted,
+            OBS_FRONTEND_EVENT_VIRTUALCAM_STOPPED => Self::VirtualcamStopped,
+            OBS_FRONTEND_EVENT_TBAR_VALUE_CHANGED => Self::TBarValueChanged,
             _ => unreachable!(),
         }
     }

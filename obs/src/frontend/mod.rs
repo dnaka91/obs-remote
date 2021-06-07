@@ -10,6 +10,7 @@ pub mod sources;
 pub mod streaming;
 pub(crate) mod tasks;
 pub mod transitions;
+pub mod virtualcam;
 
 pub fn add_scene_collection(name: &str) -> bool {
     unsafe { libobs_sys::obs_frontend_add_scene_collection(cstr_ptr!(name)) }
@@ -74,6 +75,10 @@ pub fn open_projector(ty: &str, monitor: i32, geometry: &str, name: &str) {
             cstr_ptr!(name),
         )
     };
+}
+
+pub fn reset_video() {
+    unsafe { libobs_sys::obs_frontend_reset_video() };
 }
 
 fn convert_string_list(raw: *mut *mut c_char) -> Vec<String> {

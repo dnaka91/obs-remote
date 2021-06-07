@@ -163,6 +163,10 @@ impl Source {
     pub fn transition_time(&self) -> f32 {
         unsafe { libobs_sys::obs_transition_get_time(self.raw.as_ptr()) }
     }
+
+    pub fn filter_count(&self) -> u64 {
+        unsafe { libobs_sys::obs_source_filter_count(self.raw.as_ptr()) }
+    }
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -321,6 +325,8 @@ bitflags! {
         const CONTROLLABLE_MEDIA = libobs_sys::OBS_SOURCE_CONTROLLABLE_MEDIA;
         /// Source type provides cea708 data.
         const CEA_708 = libobs_sys::OBS_SOURCE_CEA_708;
+        /// Source understands SRGB rendering.
+        const SRGB = libobs_sys::OBS_SOURCE_SRGB;
     }
 }
 

@@ -17,6 +17,18 @@ pub fn set_duration(duration: i32) {
     unsafe { libobs_sys::obs_frontend_set_transition_duration(duration) };
 }
 
+pub fn release_tbar() {
+    unsafe { libobs_sys::obs_frontend_release_tbar() };
+}
+
+pub fn tbar_position() -> i32 {
+    unsafe { libobs_sys::obs_frontend_get_tbar_position() }
+}
+
+pub fn set_tbar_position(position: i32) {
+    unsafe { libobs_sys::obs_frontend_set_tbar_position(position) };
+}
+
 pub fn list() -> Vec<Source> {
     let mut sources = libobs_sys::obs_frontend_source_list::default();
     unsafe { libobs_sys::obs_frontend_get_transitions(&mut sources as *mut _) };

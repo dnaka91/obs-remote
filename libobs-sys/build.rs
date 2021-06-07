@@ -39,6 +39,10 @@ fn main() {
     let bindings = bindgen::Builder::default()
         .header("headers/obs.h")
         .header("headers/obs-frontend-api.h")
+        .header("headers/obs-scene.h")
+        .header("headers/graphics/matrix3.h")
+        .header("headers/graphics/matrix4.h")
+        .header("headers/graphics/quat.h")
         .header("headers/util/config-file.h")
         .header("headers/util/platform.h")
         .allowlist_function("bfree|blog")
@@ -52,6 +56,9 @@ fn main() {
         .allowlist_var("CALL_.+")
         // Media
         .allowlist_function("(audio|media|video)_.+")
+        // Graphics
+        .allowlist_type("matrix[3-4]|quat|vec[2-4]")
+        .allowlist_function("(matrix[3-4]|quat|vec[2-4])_.+")
         // Other settings
         .default_enum_style(EnumVariation::ModuleConsts)
         .constified_enum("LOG_.+")

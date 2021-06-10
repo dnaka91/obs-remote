@@ -2,7 +2,7 @@ use std::{thread, time::Duration};
 
 use libobs_sys::{LIBOBS_API_MAJOR_VER, LIBOBS_API_MINOR_VER, LIBOBS_API_PATCH_VER};
 use log::{info, warn, Level};
-use obs::{audio::AudioInfo, logger::ObsLogger, source::Source, Plugin};
+use obs::{Plugin, audio::AudioInfo, encoder::EncoderType, logger::ObsLogger, source::Source};
 
 obs::declare_module!(MainPlugin);
 
@@ -24,7 +24,7 @@ impl Plugin for MainPlugin {
         );
 
         thread::spawn(|| {
-            thread::sleep(Duration::from_secs(5));
+            thread::sleep(Duration::from_secs(2));
             let get_source = |name| match Source::by_name(name) {
                 Some(source) => {
                     info!("-----------------");
@@ -62,27 +62,8 @@ impl Plugin for MainPlugin {
             get_source("BOOBS");
             get_source("OBWS-TEST-Media");
 
-            info!("-----------------");
-            info!("Modules");
-
-            for module in obs::module::list_modules() {
-                info!("-----------------");
-                info!("  Name: {:?}", module.name());
-                info!("  Author: {:?}", module.author());
-                info!("  Description: {:?}", module.description());
-                info!("  File name: {}", module.file_name());
-                info!("  Binary path: {:?}", module.binary_path());
-                info!("  Data path: {:?}", module.data_path());
-            }
-
-            info!("-----------------");
-            info!("Source types: {:#?}", obs::source::list_source_types());
-            info!("Input types: {:#?}", obs::source::list_input_types());
-            info!("Filter types: {:#?}", obs::source::list_filter_types());
-            info!(
-                "Transition types: {:#?}",
-                obs::source::list_transition_types()
-            );
+            list_modules();
+            list_source_types();
 
             info!("-----------------");
             info!("Profiles: {:?}", obs::frontend::profiles());
@@ -95,14 +76,7 @@ impl Plugin for MainPlugin {
             obs::frontend::add_tools_menu_item("OBS Rust!");
             // obs::frontend::events::add_callback();
 
-            info!("-----------------");
-            info!(
-                "Encoders: {:?}",
-                obs::encoder::list()
-                    .into_iter()
-                    .map(|e| e.name())
-                    .collect::<Vec<_>>()
-            );
+            list_encoders();
 
             info!("-----------------");
             info!("Service types: {:?}", obs::service::list_service_types());
@@ -139,3 +113,53 @@ impl Plugin for MainPlugin {
 }
 
 // obs::module_use_default_locale!("en-US");
+
+fn list_modules() {
+    info!("-----------------");
+    info!("Modules");
+
+    for module in obs::module::list_modules() {
+        info!("-----------------");
+        info!("  Name: {:?}", module.name());
+        info!("  Author: {:?}", module.author());
+        info!("  Description: {:?}", module.description());
+        info!("  File name: {}", module.file_name());
+        info!("  Binary path: {:?}", module.binary_path());
+        info!("  Data path: {:?}", module.data_path());
+    }
+}
+
+fn list_source_types() {
+    info!("-----------------");
+    info!("Source types: {:#?}", obs::source::list_source_types());
+    info!("Input types: {:#?}", obs::source::list_input_types());
+    info!("Filter types: {:#?}", obs::source::list_filter_types());
+    info!(
+        "Transition types: {:#?}",
+        obs::source::list_transition_types()
+    );
+}
+
+fn list_encoders() {
+    info!("-----------------");
+    info!("Encoders");
+
+    for encoder in obs::encoder::list() {
+        info!("-----------------");
+        info!("  Name: {}", encoder.name());
+        info!("  Type: {:?}", encoder.ty());
+        info!("  Codec: {}", encoder.codec());
+
+        match encoder.ty() {
+            EncoderType::Audio => {
+                info!("  Sample rate: {}", encoder.sample_rate());
+            }
+            EncoderType::Video => {
+                info!("  Scaling: {}", encoder.scaling());
+                info!("  Width: {}", encoder.width());
+                info!("  Height: {}", encoder.height());
+            }
+            _ => {}
+        }
+    }
+}

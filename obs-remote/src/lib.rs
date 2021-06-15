@@ -22,6 +22,7 @@ use crate::obs_remote::{
     sources::sources_server::SourcesServer, streaming::streaming_server::StreamingServer,
     studio_mode::studio_mode_server::StudioModeServer,
     transitions::transitions_server::TransitionsServer,
+    virtual_cam::virtual_cam_server::VirtualCamServer,
 };
 
 pub mod obs_remote;
@@ -124,6 +125,9 @@ async fn run_server(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
         ))
         .add_service(TransitionsServer::new(
             crate::obs_remote::transitions::Service,
+        ))
+        .add_service(VirtualCamServer::new(
+            crate::obs_remote::virtual_cam::Service,
         ))
         .serve_with_shutdown(addr, async {
             signal.changed().await.ok();

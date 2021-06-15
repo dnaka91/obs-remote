@@ -25,3 +25,4 @@ pub mod streaming;
 pub mod studio_mode;
 pub mod transitions;
 pub mod v5;
+pub mod virtual_cam;

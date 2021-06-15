@@ -23,13 +23,19 @@ message EventReply {
 
 // --- Scenes ---
 
-message SceneCollectionChanged { string name = 1; }
+message SceneCollectionChanged {
+  string name = 1;
+}
 
-message SceneCollectionListChanged { repeated string collections = 1; }
+message SceneCollectionListChanged {
+  repeated string collections = 1;
+}
 
 // --- Transitions ---
 
-message SwitchTransition { string name = 1; }
+message SwitchTransition {
+  string name = 1;
+}
 
 // --- Profiles ---
 

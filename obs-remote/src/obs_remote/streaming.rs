@@ -14,7 +14,7 @@ tonic::include_proto!("obs_remote.streaming");
 impl From<StreamType> for service::StreamType {
     fn from(value: StreamType) -> Self {
         match value {
-            StreamType::RtmpCommon => Self::RtmpCommon,
+            StreamType::Unspecified | StreamType::RtmpCommon => Self::RtmpCommon,
             StreamType::RtmpCustom => Self::RtmpCustom,
         }
     }

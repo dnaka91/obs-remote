@@ -13,9 +13,13 @@ message Value {
   }
 }
 
-message Object { map<string, Value> values = 1; }
+message Object {
+  map<string, Value> values = 1;
+}
 
-message Array { repeated Value values = 1; }
+message Array {
+  repeated Value values = 1;
+}
 
 message Number {
   oneof value {
@@ -24,4 +28,5 @@ message Number {
   }
 }
 
-message Null {}
+message Null {
+}

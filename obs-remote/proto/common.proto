@@ -25,24 +25,26 @@ message Alignment {
 }
 
 enum MediaState {
+  // No value specified.
+  MEDIA_STATE_UNSPECIFIED = 0;
   // No state.
-  NONE = 0;
+  MEDIA_STATE_NONE = 1;
   // Media is playing.
-  PLAYING = 1;
+  MEDIA_STATE_PLAYING = 2;
   // Opening file for replay.
-  OPENING = 2;
+  MEDIA_STATE_OPENING = 3;
   // Buffering data for replay.
-  BUFFERING = 3;
+  MEDIA_STATE_BUFFERING = 4;
   // Media is paused.
-  PAUSED = 4;
+  MEDIA_STATE_PAUSED = 5;
   // Media stopped.
-  STOPPED = 5;
+  MEDIA_STATE_STOPPED = 6;
   // All media in the playlist played.
-  ENDED = 6;
+  MEDIA_STATE_ENDED = 7;
   // Error occurred while trying to play the media.
-  ERROR = 7;
+  MEDIA_STATE_ERROR = 8;
   // Unknown state.
-  UNKNOWN_STATE = 255;
+  MEDIA_STATE_UNKNOWN_STATE = 255;
 }
 
 message SceneItem {
@@ -82,13 +84,16 @@ message Timecode {
 }
 
 enum SourceType {
-  UNKNOWN = 0;
+  // No value specified.
+  SOURCE_TYPE_UNSPECIFIED = 0;
+  // Unknown source type.
+  SOURCE_TYPE_UNKNOWN = 1;
   // Input source from outside of OBS.
-  INPUT = 1;
+  SOURCE_TYPE_INPUT = 2;
   // Filter applied to other items.
-  FILTER = 2;
+  SOURCE_TYPE_FILTER = 3;
   // Transition when switching scenes.
-  TRANSITION = 3;
+  SOURCE_TYPE_TRANSITION = 4;
   // Another scene added as source.
-  SCENE = 4;
+  SOURCE_TYPE_SCENE = 5;
 }

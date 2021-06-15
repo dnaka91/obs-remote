@@ -411,9 +411,12 @@ message GeneralEvent {
     Custom custom = 3;
   }
 
-  message ExitStarted {}
-  message StudioModeStateChanged {}
-  message Custom {}
+  message ExitStarted {
+  }
+  message StudioModeStateChanged {
+  }
+  message Custom {
+  }
 }
 
 message ConfigEvent {
@@ -424,10 +427,14 @@ message ConfigEvent {
     ProfileListChanged profile_list_changed = 4;
   }
 
-  message CurrentSceneCollectionChanged {}
-  message SceneCollectionListChanged {}
-  message CurrentProfileChanged {}
-  message ProfileListChanged {}
+  message CurrentSceneCollectionChanged {
+  }
+  message SceneCollectionListChanged {
+  }
+  message CurrentProfileChanged {
+  }
+  message ProfileListChanged {
+  }
 }
 
 message ScenesEvent {
@@ -441,17 +448,23 @@ message ScenesEvent {
   }
 
   // Original: SceneCreated
-  message Created {}
+  message Created {
+  }
   // Original: SceneRemoved
-  message Removed {}
+  message Removed {
+  }
   // Original: SceneNameChanged
-  message NameChanged {}
+  message NameChanged {
+  }
   // Original: CurrentSceneChanged
-  message CurrentChanged {}
+  message CurrentChanged {
+  }
   // Original CurrentPreviewSceneChanged
-  message CurrentPreviewChanged {}
+  message CurrentPreviewChanged {
+  }
   // Original: SceneListReindexed
-  message ListReindexed {}
+  message ListReindexed {
+  }
 }
 
 message InputsEvent {
@@ -468,23 +481,32 @@ message InputsEvent {
   }
 
   // Original: InputCreated
-  message Created {}
+  message Created {
+  }
   // Original: InputRemoved
-  message Removed {}
+  message Removed {
+  }
   // Original: InputNameChanged
-  message NameChanged {}
+  message NameChanged {
+  }
   // Original: InputActiveStateChanged
-  message ActiveStateChanged {}
+  message ActiveStateChanged {
+  }
   // Original: InputShowStateChanged
-  message ShowStateChanged {}
+  message ShowStateChanged {
+  }
   // Original: InputMuteStateChanged
-  message MuteStateChanged {}
+  message MuteStateChanged {
+  }
   // Original: InputVolumeChanged
-  message VolumeChanged {}
+  message VolumeChanged {
+  }
   // Original: InputAudioSyncOffsetChanged
-  message AudioSyncOffsetChanged {}
+  message AudioSyncOffsetChanged {
+  }
   // Original: InputAudioTracksChanged
-  message AudioTracksChanged {}
+  message AudioTracksChanged {
+  }
 }
 
 message TransitionsEvent {
@@ -499,19 +521,26 @@ message TransitionsEvent {
   }
 
   // Original: TransitionCreated
-  message Created {}
+  message Created {
+  }
   // Original: TransitionRemoved
-  message Removed {}
+  message Removed {
+  }
   // Original: TransitionNameChanged
-  message NameChanged {}
+  message NameChanged {
+  }
   // Original: CurrentTransitionChanged
-  message CurrentChanged {}
+  message CurrentChanged {
+  }
   // Original: CurrentTransitionDurationChanged
-  message CurrentDurationChanged {}
+  message CurrentDurationChanged {
+  }
   // Original: TransitionStarted
-  message Started {}
+  message Started {
+  }
   // Original: TransitionEnded
-  message Ended {}
+  message Ended {
+  }
 }
 
 message FiltersEvent {
@@ -525,17 +554,23 @@ message FiltersEvent {
   }
 
   // Original: FilterCreated
-  message Created {}
+  message Created {
+  }
   // Original: FilterRemoved
-  message Removed {}
+  message Removed {
+  }
   // Original: FilterNameChanged
-  message NameChanged {}
+  message NameChanged {
+  }
   // Original: SourceFilterAdded
-  message AddedToSource {}
+  message AddedToSource {
+  }
   // Orignal: SourceFilterRemoved
-  message RemovedFromSource {}
+  message RemovedFromSource {
+  }
   // Original: SourceListReindexed
-  message SourceListReindexed {}
+  message SourceListReindexed {
+  }
 }
 
 message OutputsEvent {
@@ -546,10 +581,14 @@ message OutputsEvent {
     VirtualCamStateChanged virtual_cam_state_changed = 4;
   }
 
-  message StreamStateChanged {}
-  message RecordStateChanged {}
-  message ReplayBufferStateChanged {}
-  message VirtualCamStateChanged {}
+  message StreamStateChanged {
+  }
+  message RecordStateChanged {
+  }
+  message ReplayBufferStateChanged {
+  }
+  message VirtualCamStateChanged {
+  }
 }
 
 message SceneItemsEvent {
@@ -563,17 +602,23 @@ message SceneItemsEvent {
   }
 
   // Original: SceneItemCreated
-  message Created {}
+  message Created {
+  }
   // Original: SceneItemRemoved
-  message Removed {}
+  message Removed {
+  }
   // Original: SceneItemListReindexed
-  message ListReindexed {}
+  message ListReindexed {
+  }
   // Original: SceneItemEnableStateChanged
-  message EnableStateChanged {}
+  message EnableStateChanged {
+  }
   // Original: SceneItemLockStateChanged
-  message LockStateChanged {}
+  message LockStateChanged {
+  }
   // Original: SceneItemTransformChanged
-  message TransformChanged {}
+  message TransformChanged {
+  }
 }
 
 message MediaInputsEvent {
@@ -584,15 +629,21 @@ message MediaInputsEvent {
   }
 
   // Original: MediaInputPlaybackStarted
-  message PlaybackStarted {}
+  message PlaybackStarted {
+  }
   // Original: MediaInputPlaybackEnded
-  message PlaybackEnded {}
+  message PlaybackEnded {
+  }
   // Original: MediaInputActionTriggered
-  message ActionTriggered {}
+  message ActionTriggered {
+  }
 }
 
 message HighVolumeEvent {
-  oneof value { InputVolumeMeters input_volume_meters = 1; }
+  oneof value {
+    InputVolumeMeters input_volume_meters = 1;
+  }
 
-  message InputVolumeMeters {}
+  message InputVolumeMeters {
+  }
 }

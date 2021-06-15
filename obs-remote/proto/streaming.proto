@@ -93,10 +93,12 @@ message SendCaptionsRequest {
 
 // The type of streaming for service configurations.
 enum StreamType {
+  // No value specified.
+  STREAM_TYPE_UNSPECIFIED = 0;
   // Common RTMP configuration.
-  RTMP_COMMON = 0;
+  STREAM_TYPE_RTMP_COMMON = 1;
   // Customized RTMP streaming.
-  RTMP_CUSTOM = 1;
+  STREAM_TYPE_RTMP_CUSTOM = 2;
 }
 
 message StreamSettings {

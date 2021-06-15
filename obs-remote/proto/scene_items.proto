@@ -156,7 +156,7 @@ message ResetRequest {
   string scene_name = 1;
   // Scene item name (if this field is a string) or specification (if it is an
   // object).
- Identifier item = 2;
+  Identifier item = 2;
 }
 
 message SetRenderRequest {
@@ -265,19 +265,21 @@ message Bounds {
   // Different kinds of bounds that can be applied to different items on the
   // scene.
   enum BoundsType {
+    // No value specified.
+    BOUNDS_TYPE_UNSPECIFIED = 0;
     // Stretch to bounds.
-    STRETCH = 0;
+    BOUNDS_TYPE_STRETCH = 1;
     // Scale to inner bounds.
-    SCALE_INNER = 1;
+    BOUNDS_TYPE_SCALE_INNER = 2;
     // Scale to outer bounds.
-    SCALE_OUTER = 2;
+    BOUNDS_TYPE_SCALE_OUTER = 3;
     // Scale to width of bounds.
-    SCALE_TO_WIDTH = 3;
+    BOUNDS_TYPE_SCALE_TO_WIDTH = 4;
     // Scale to height of bounds.
-    SCALE_TO_HEIGHT = 4;
+    BOUNDS_TYPE_SCALE_TO_HEIGHT = 5;
     // Maximum size only.
-    MAX_ONLY = 5;
+    BOUNDS_TYPE_MAX_ONLY = 6;
     // No bounds.
-    NONE = 6;
+    BOUNDS_TYPE_NONE = 7;
   }
 }

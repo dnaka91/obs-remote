@@ -162,9 +162,9 @@ impl General for Service {
                 }
             } as i32,
             color_space: match video.colorspace {
-                Colorspace::Default | Colorspace::Cs709 => video_info_reply::ColorSpace::Cs709,
-                Colorspace::Cs601 => video_info_reply::ColorSpace::Cs601,
-                Colorspace::Srgb => video_info_reply::ColorSpace::CsSrgb,
+                Colorspace::Default | Colorspace::Cs709 => video_info_reply::ColorSpace::S709,
+                Colorspace::Cs601 => video_info_reply::ColorSpace::S601,
+                Colorspace::Srgb => video_info_reply::ColorSpace::Srgb,
             } as i32,
             color_range: match video.range {
                 RangeType::Default | RangeType::Partial => video_info_reply::ColorRange::Partial,
@@ -201,7 +201,7 @@ impl General for Service {
 
         obs::frontend::open_projector(
             match request.r#type() {
-                ProjectorType::Default => "Default",
+                ProjectorType::Unspecified | ProjectorType::Default => "Default",
                 ProjectorType::Preview => "Preview",
                 ProjectorType::Source => "Source",
                 ProjectorType::Scene => "Scene",

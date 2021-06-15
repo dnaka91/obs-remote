@@ -126,44 +126,52 @@ message VideoInfoReply {
 
   // Possible scaling types for the output.
   enum ScaleType {
+    // No value specified.
+    SCALE_TYPE_UNSPECIFIED = 0;
     // Fastest, but blurry scaling.
-    BILINEAR = 0;
+    SCALE_TYPE_BILINEAR = 1;
     // Weighted sum, 4/6/9 samples.
-    AREA = 1;
+    SCALE_TYPE_AREA = 2;
     // Sharpened scaling, 16 samples.
-    BICUBIC = 2;
+    SCALE_TYPE_BICUBIC = 3;
     // Sharpened scaling, 36 samples.
-    LANCZOS = 3;
+    SCALE_TYPE_LANCZOS = 4;
   }
 
   // Supported formats for video output.
   enum VideoFormat {
+    // No value specified.
+    VIDEO_FORMAT_UNSPECIFIED = 0;
     // NV12 format.
-    NV12 = 0;
+    VIDEO_FORMAT_NV12 = 1;
     // I420 format.
-    I420 = 1;
+    VIDEO_FORMAT_I420 = 2;
     // I444 format.
-    I444 = 2;
+    VIDEO_FORMAT_I444 = 3;
     // RGBA format.
-    RGBA = 3;
+    VIDEO_FORMAT_RGBA = 4;
   }
 
   // Supported color spaces for video output.
   enum ColorSpace {
+    // No value specified.
+    COLOR_SPACE_UNSPECIFIED = 0;
     // 709 color space.
-    CS_709 = 0;
+    COLOR_SPACE_S709 = 1;
     // 601 color space.
-    CS_601 = 1;
+    COLOR_SPACE_S601 = 2;
     // sRGB color space (default).
-    CS_SRGB = 2;
+    COLOR_SPACE_SRGB = 3;
   }
 
   // Supported color ranges for video output.
   enum ColorRange {
+    // No value specified.
+    COLOR_RANGE_UNSPECIFIED = 0;
     // Partial color range.
-    PARTIAL = 0;
+    COLOR_RANGE_PARTIAL = 1;
     // Full range.
-    FULL = 1;
+    COLOR_RANGE_FULL = 2;
   }
 }
 
@@ -179,18 +187,20 @@ message OpenProjectorRequest {
   google.protobuf.StringValue name = 4;
 
   enum ProjectorType {
+    // No value specified.
+    PROJECTOR_TYPE_UNSPECIFIED = 0;
     // Open a project for the OBS default.
-    DEFAULT = 0;
+    PROJECTOR_TYPE_DEFAULT = 1;
     // Open a projector of the preview area.
-    PREVIEW = 1;
+    PROJECTOR_TYPE_PREVIEW = 2;
     // Open a projector for a source.
-    SOURCE = 2;
+    PROJECTOR_TYPE_SOURCE = 3;
     // Open a projector for a scene.
-    SCENE = 3;
+    PROJECTOR_TYPE_SCENE = 4;
     // Open a projector of the program pane in studio mode.
-    STUDIO_PROGRAM = 4;
+    PROJECTOR_TYPE_STUDIO_PROGRAM = 5;
     // Open a projector in multiview.
-    MULTIVIEW = 5;
+    PROJECTOR_TYPE_MULTIVIEW = 6;
   }
 }
 

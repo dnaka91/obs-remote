@@ -565,14 +565,16 @@ message MoveSourceFilterRequest {
   MovementType movement_type = 3;
 
   enum MovementType {
+    // No value specified.
+    MOVEMENT_TYPE_UNSPECIFIED = 0;
     // Move up by one position.
-    UP = 0;
+    MOVEMENT_TYPE_UP = 1;
     // Move down by one position.
-    DOWN = 1;
+    MOVEMENT_TYPE_DOWN = 2;
     // Move to the very top.
-    TOP = 2;
+    MOVEMENT_TYPE_TOP = 3;
     // Move to the very bottom.
-    BOTTOM = 3;
+    MOVEMENT_TYPE_BOTTOM = 4;
   }
 }
 
@@ -667,24 +669,30 @@ message RefreshBrowserSourceRequest {
 
 // Text alignment used for GDI+ text properties.
 enum Align {
-  DEFAULT = 0;
+  // No value specified.
+  ALIGN_UNSPECIFIED = 0;
+  // Default alignment.
+  ALIGN_DEFAULT = 1;
   // Align to the left.
-  LEFT = 1;
+  ALIGN_LEFT = 2;
   // Center the text in the middle (horizontally).
-  CENTER = 2;
+  ALIGN_CENTER = 3;
   // Align to the right.
-  RIGHT = 3;
+  ALIGN_RIGHT = 4;
 }
 
 // Vertical text alignment use for GDI+ text properties.
 enum Valign {
-  V_DEFAULT = 0;
+  // No value specified.
+  VALIGN_UNSPECIFIED = 0;
+  // Default vertical alignment.
+  VALIGN_DEFAULT = 1;
   // Align to the top.
-  V_TOP = 1;
+  VALIGN_TOP = 2;
   // Center the text in the middle (vertically).
-  V_CENTER = 2;
+  VALIGN_CENTER = 3;
   // Align to the bottom.
-  V_BOTTOM = 3;
+  VALIGN_BOTTOM = 4;
 }
 
 message Font {
@@ -701,24 +709,26 @@ message Font {
   // Different flags for font display that can be combined together.
   enum FontFlags {
     // No font flags.
-    NONE = 0;
+    FONT_FLAGS_UNSPECIFIED = 0;
     // Make the text appear thicker.
-    BOLD = 1;
+    FONT_FLAGS_BOLD = 1;
     // Make the text appear cursive.
-    ITALIC = 2;
+    FONT_FLAGS_ITALIC = 2;
     // Underline the text with a straight line.
-    UNDERLINE = 4;
+    FONT_FLAGS_UNDERLINE = 4;
     // Strikeout the text.
-    STRIKEOUT = 8;
+    FONT_FLAGS_STRIKEOUT = 8;
   }
 }
 
 // Monitoring type for audio outputs.
 enum MonitorType {
+  // No value specified.
+  MONITOR_TYPE_UNSPECIFIED = 0;
   // No monitoring.
-  NONE = 0;
+  MONITOR_TYPE_NONE = 1;
   // Only monitor but don't output any sounds.
-  MONITOR_ONLY = 1;
+  MONITOR_TYPE_MONITOR_ONLY = 2;
   // Mintor the audio and output it at the same time.
-  MONITOR_AND_OUTPUT = 2;
+  MONITOR_TYPE_MONITOR_AND_OUTPUT = 3;
 }

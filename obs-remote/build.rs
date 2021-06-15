@@ -18,6 +18,7 @@ fn main() {
                 "proto/studio_mode.proto",
                 "proto/transitions.proto",
                 "proto/v5.proto",
+                "proto/virtual_cam.proto",
             ],
             &["proto"],
         )

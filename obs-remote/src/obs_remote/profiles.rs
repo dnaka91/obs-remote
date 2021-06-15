@@ -16,10 +16,14 @@ impl Profiles for Service {
     }
 
     async fn get_current(&self, request: Request<()>) -> Result<Response<GetCurrentReply>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+        Ok(Response::new(GetCurrentReply {
+            name: obs::frontend::profiles::current(),
+        }))
     }
 
     async fn list(&self, request: Request<()>) -> Result<Response<ListReply>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+        Ok(Response::new(ListReply {
+            profiles: obs::frontend::profiles::list(),
+        }))
     }
 }

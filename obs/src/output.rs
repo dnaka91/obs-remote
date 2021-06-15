@@ -31,6 +31,12 @@ impl Output {
         }
     }
 
+    /// Get an output by its name.
+    pub fn by_name(name: &str) -> Option<Self> {
+        let raw = unsafe { libobs_sys::obs_get_output_by_name(cstr_ptr!(name)) };
+        (!raw.is_null()).then(|| Self::from_raw(raw))
+    }
+
     /// Returns whether the output is active.
     pub fn active(&self) -> bool {
         unsafe { libobs_sys::obs_output_active(self.raw.as_ptr()) }

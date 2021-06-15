@@ -66,7 +66,7 @@ impl Plugin for MainPlugin {
             list_source_types();
 
             info!("-----------------");
-            info!("Profiles: {:?}", obs::frontend::profiles());
+            info!("Profiles: {:?}", obs::frontend::profiles::list());
             info!(
                 "Scene collections: {:?}",
                 obs::frontend::scene_collections()

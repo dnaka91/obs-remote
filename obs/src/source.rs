@@ -167,6 +167,14 @@ impl Source {
     pub fn filter_count(&self) -> u64 {
         unsafe { libobs_sys::obs_source_filter_count(self.raw.as_ptr()) }
     }
+
+    pub fn update(&self, settings: Data) {
+        unsafe { libobs_sys::obs_source_update(self.raw.as_ptr(), settings.as_ptr()) };
+    }
+
+    pub fn update_properties(&self) {
+        unsafe { libobs_sys::obs_source_update_properties(self.raw.as_ptr()) };
+    }
 }
 
 #[derive(Clone, Copy, Debug)]

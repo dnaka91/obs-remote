@@ -7,12 +7,10 @@ import "google/protobuf/empty.proto";
 // API functions related to the replay buffer.
 service ReplayBuffer {
   // Get the status of the OBS replay buffer.
-  rpc Status(google.protobuf.Empty)
-      returns (StatusReply);
+  rpc Status(google.protobuf.Empty) returns (StatusReply);
   // Toggle the Replay Buffer on/off (depending on the current state of the
   // replay buffer).
-  rpc Toggle(google.protobuf.Empty)
-      returns (google.protobuf.Empty);
+  rpc Toggle(google.protobuf.Empty) returns (google.protobuf.Empty);
   // Start recording into the Replay Buffer. Will return an `error` if the
   // Replay Buffer is already active or if the "Save Replay Buffer" hotkey is
   // not set in OBS' settings. Setting this hotkey is mandatory, even when

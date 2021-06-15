@@ -8,6 +8,7 @@ pub mod recording;
 pub mod replay_buffer;
 pub mod sources;
 pub mod streaming;
+pub mod profiles;
 pub(crate) mod tasks;
 pub mod transitions;
 pub mod virtualcam;
@@ -18,10 +19,6 @@ pub fn add_scene_collection(name: &str) -> bool {
 
 pub fn add_tools_menu_item(name: &str) {
     unsafe { libobs_sys::obs_frontend_add_tools_menu_item(cstr_ptr!(name), None, ptr::null_mut()) };
-}
-
-pub fn current_profile() -> String {
-    unsafe { libobs_sys::obs_frontend_get_current_profile() as *const c_char }.into_string()
 }
 
 pub fn current_scene() -> Source {
@@ -50,10 +47,6 @@ pub fn global_config() -> Config {
 pub fn profile_config() -> Config {
     let raw = unsafe { libobs_sys::obs_frontend_get_profile_config() };
     Config::from_raw(raw)
-}
-
-pub fn profiles() -> Vec<String> {
-    convert_string_list(unsafe { libobs_sys::obs_frontend_get_profiles() })
 }
 
 pub fn scene_collections() -> Vec<String> {
@@ -87,16 +80,16 @@ fn convert_string_list(raw: *mut *mut c_char) -> Vec<String> {
     }
 
     let mut index = 0;
-    let mut profiles = Vec::new();
+    let mut values = Vec::new();
 
     loop {
         let value = unsafe { *raw.add(index) };
         if value.is_null() {
             unsafe { libobs_sys::bfree(raw as *mut _) };
-            break profiles;
+            break values;
         }
 
-        profiles.push((value as *const c_char).into_string());
+        values.push((value as *const c_char).into_string());
         index += 1;
     }
 }

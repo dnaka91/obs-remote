@@ -69,17 +69,17 @@ message Output {
   // Output reconnection status (reconnecting or not).
   bool reconnecting = 8;
   // Output congestion.
-  double congestion = 9;
+  float congestion = 9;
   // Number of frames sent.
-  uint64 total_frames = 10;
+  uint32 total_frames = 10;
   // Number of frames dropped.
-  uint64 dropped_frames = 11;
+  uint32 dropped_frames = 11;
   // Total bytes sent.
   uint64 total_bytes = 12;
 
   message OutputFlags {
     // Raw flags value.
-    uint64 raw_value = 1;
+    uint32 raw_value = 1;
     // Output uses audio.
     bool audio = 2;
     // Output uses video.

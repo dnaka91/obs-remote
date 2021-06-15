@@ -1,6 +1,9 @@
 use std::{convert::TryFrom, time::Duration};
 
-use obs::frontend::transitions;
+use obs::{
+    data,
+    frontend::{preview_mode, transitions},
+};
 use tonic::{Request, Response, Status};
 
 use self::transitions_server::Transitions;
@@ -16,7 +19,6 @@ impl Transitions for Service {
         use self::list_reply::Transition;
 
         let current = transitions::current();
-        let list = transitions::list;
 
         Ok(Response::new(ListReply {
             current: transitions::current().name(),
@@ -93,18 +95,57 @@ impl Transitions for Service {
         &self,
         request: Request<GetSettingsRequest>,
     ) -> Result<Response<GetSettingsReply>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+        let name = request.into_inner().name;
+        precondition!(!name.is_empty(), "transition name mustn't be empty");
+
+        let transition = transitions::list()
+            .into_iter()
+            .find(|source| source.name() == name)
+            .ok_or_else(|| {
+                Status::failed_precondition(format!("transition `{}` doesn't exist", name))
+            })?;
+
+        Ok(Response::new(GetSettingsReply {
+            settings: transition.settings().to_json(),
+        }))
     }
 
     async fn set_settings(
         &self,
         request: Request<SetSettingsRequest>,
     ) -> Result<Response<SetSettingsReply>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+        let SetSettingsRequest { name, settings } = request.into_inner();
+        precondition!(!name.is_empty(), "transition name mustn't be empty");
+        precondition!(!settings.is_empty(), "settings mustn't be empty");
+
+        let transition = transitions::list()
+            .into_iter()
+            .find(|source| source.name() == name)
+            .ok_or_else(|| {
+                Status::failed_precondition(format!("transition `{}` doesn't exist", name))
+            })?;
+
+        let data = data::Data::from_json(&settings)
+            .map_err(|e| Status::failed_precondition(format!("invalid JSON data: {:?}", e)))?;
+
+        transition.update(data);
+        transition.update_properties();
+
+        Ok(Response::new(SetSettingsReply {
+            settings: transition.settings().to_json(),
+        }))
     }
 
     async fn release_t_bar(&self, request: Request<()>) -> Result<Response<()>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+        precondition!(preview_mode::active(), "studio mode isn't enabled");
+        precondition!(
+            !transitions::current().transition_fixed(),
+            "current transition doesn't support t-bar control"
+        );
+
+        transitions::release_tbar();
+
+        Ok(Response::new(()))
     }
 
     async fn set_t_bar_position(

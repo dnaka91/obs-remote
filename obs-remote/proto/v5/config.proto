@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package obs_remote.v5.config;
+
+import "google/protobuf/empty.proto";
+
+service Config {
+  // Original: -
+  rpc GlobalPersistentData(google.protobuf.Empty)
+      returns (google.protobuf.Empty);
+  // Original: -
+  rpc SetGlobalPersistentData(google.protobuf.Empty)
+      returns (google.protobuf.Empty);
+  // Original: -
+  rpc VideoSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: -
+  rpc SetVideoSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
+}

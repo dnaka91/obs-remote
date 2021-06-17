@@ -11,20 +11,6 @@ use obs::{declare_module, logger::ObsLogger, module_use_default_locale, Plugin};
 use tokio::sync::watch;
 use tonic::transport::Server;
 
-use crate::obs_remote::{
-    events::events_server::EventsServer, general::general_server::GeneralServer,
-    media_control::media_control_server::MediaControlServer,
-    outputs::outputs_server::OutputsServer, profiles::profiles_server::ProfilesServer,
-    recording::recording_server::RecordingServer,
-    replay_buffer::replay_buffer_server::ReplayBufferServer,
-    scene_collections::scene_collections_server::SceneCollectionsServer,
-    scene_items::scene_items_server::SceneItemsServer, scenes::scenes_server::ScenesServer,
-    sources::sources_server::SourcesServer, streaming::streaming_server::StreamingServer,
-    studio_mode::studio_mode_server::StudioModeServer,
-    transitions::transitions_server::TransitionsServer,
-    virtual_cam::virtual_cam_server::VirtualCamServer,
-};
-
 pub mod obs_remote;
 
 struct ObsRemotePlugin {
@@ -85,6 +71,8 @@ impl Plugin for ObsRemotePlugin {
 }
 
 async fn run_server(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
+    use crate::obs_remote::*;
+
     let addr = if ipv6 {
         "[::1]:50051"
     } else {
@@ -98,36 +86,36 @@ async fn run_server(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
     let signal2 = signal.clone();
 
     let result = Server::builder()
-        .add_service(EventsServer::new(crate::obs_remote::events::Service::new(
+        .add_service(EventsServer::new(EventsService::new(
             signal2,
         )))
-        .add_service(GeneralServer::new(crate::obs_remote::general::Service))
+        .add_service(GeneralServer::new(GeneralService))
         .add_service(MediaControlServer::new(
-            crate::obs_remote::media_control::Service,
+            MediaControlService,
         ))
-        .add_service(OutputsServer::new(crate::obs_remote::outputs::Service))
-        .add_service(ProfilesServer::new(crate::obs_remote::profiles::Service))
-        .add_service(RecordingServer::new(crate::obs_remote::recording::Service))
+        .add_service(OutputsServer::new(OutputsService))
+        .add_service(ProfilesServer::new(ProfilesService))
+        .add_service(RecordingServer::new(RecordingService))
         .add_service(ReplayBufferServer::new(
-            crate::obs_remote::replay_buffer::Service,
+            ReplayBufferService,
         ))
         .add_service(SceneCollectionsServer::new(
-            crate::obs_remote::scene_collections::Service,
+            SceneCollectionsService,
         ))
         .add_service(SceneItemsServer::new(
-            crate::obs_remote::scene_items::Service,
+            SceneItemsService,
         ))
-        .add_service(ScenesServer::new(crate::obs_remote::scenes::Service))
-        .add_service(SourcesServer::new(crate::obs_remote::sources::Service))
-        .add_service(StreamingServer::new(crate::obs_remote::streaming::Service))
+        .add_service(ScenesServer::new(ScenesService))
+        .add_service(SourcesServer::new(SourcesService))
+        .add_service(StreamingServer::new(StreamingService))
         .add_service(StudioModeServer::new(
-            crate::obs_remote::studio_mode::Service,
+            StudioModeService,
         ))
         .add_service(TransitionsServer::new(
-            crate::obs_remote::transitions::Service,
+            TransitionsService,
         ))
         .add_service(VirtualCamServer::new(
-            crate::obs_remote::virtual_cam::Service,
+            VirtualCamService,
         ))
         .serve_with_shutdown(addr, async {
             signal.changed().await.ok();

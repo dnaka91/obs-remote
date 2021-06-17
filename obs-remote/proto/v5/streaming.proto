@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package obs_remote.v5.streaming;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+// Original: Stream
+service Streaming {
+  // Original: GetStreamStatus
+  rpc Status(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: ToggleStream
+  rpc Toggle(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: StartStream
+  rpc Start(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: StopStream
+  rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: SendStreamCaptions
+  rpc SendCaptions(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  // Original: GetStreamBitrateSetting
+  rpc Bitrate(google.protobuf.Empty) returns (google.protobuf.UInt32Value);
+  // Original: SetStreamBitrateSetting
+  rpc SetBitrate(google.protobuf.UInt32Value) returns (google.protobuf.Empty);
+  // Original: GetStreamServiceSettings
+  rpc Settings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: SetStreamServiceSettings
+  rpc SetSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
+}

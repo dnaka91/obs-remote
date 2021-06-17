@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package obs_remote.v5.general;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+service General {
+  // Original: GetVersion
+  rpc Version(google.protobuf.Empty) returns (VersionReply);
+  // Original: BroadcastCustomEvent
+  rpc BroadcastEvent(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: GetSystemStats
+  rpc SystemStats(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: -
+  rpc IsStudioModeEnabled(google.protobuf.Empty)
+      returns (google.protobuf.BoolValue);
+  // Original: -
+  rpc SetStudioModeEnabled(google.protobuf.BoolValue)
+      returns (google.protobuf.Empty);
+  // Original: -
+  rpc Sleep(google.protobuf.Duration) returns (google.protobuf.Empty);
+}
+
+message VersionReply {
+  SemVer obs_version = 1;
+  SemVer obs_remote_version = 2;
+  uint32 rpc_version = 3;
+  repeated string supported_image_formats = 4;
+
+  message SemVer {
+    uint32 major = 1;
+    uint32 minor = 2;
+    uint32 patch = 3;
+  }
+}

@@ -62,60 +62,59 @@ impl Config {
         };
     }
 
-    pub fn bool(&self, section: &str, name: &str) -> Option<bool> {
-        self.get(section, name, libobs_sys::config_get_bool)
-    }
-
-    pub fn double(&self, section: &str, name: &str) -> Option<f64> {
-        self.get(section, name, libobs_sys::config_get_double)
-    }
-
-    pub fn int(&self, section: &str, name: &str) -> Option<i64> {
-        self.get(section, name, libobs_sys::config_get_int)
-    }
-
+    /// Gets a string value.
     pub fn string(&self, section: &str, name: &str) -> Option<String> {
         self.get(section, name, libobs_sys::config_get_string)
             .map(|value| value.into_string())
     }
 
+    /// Gets an integer value.
+    pub fn int(&self, section: &str, name: &str) -> Option<i64> {
+        self.get(section, name, libobs_sys::config_get_int)
+    }
+
+    /// Gets an unsigned integer value.
     pub fn uint(&self, section: &str, name: &str) -> Option<u64> {
         self.get(section, name, libobs_sys::config_get_uint)
     }
 
-    pub fn default_bool(&self, section: &str, name: &str) -> Option<bool> {
-        self.get_default(section, name, libobs_sys::config_get_default_bool)
+    /// Gets a boolean value.
+    pub fn bool(&self, section: &str, name: &str) -> Option<bool> {
+        self.get(section, name, libobs_sys::config_get_bool)
     }
 
-    pub fn default_double(&self, section: &str, name: &str) -> Option<f64> {
-        self.get_default(section, name, libobs_sys::config_get_default_double)
+    /// Gets a floating point value.
+    pub fn double(&self, section: &str, name: &str) -> Option<f64> {
+        self.get(section, name, libobs_sys::config_get_double)
     }
 
-    pub fn default_int(&self, section: &str, name: &str) -> Option<i64> {
-        self.get_default(section, name, libobs_sys::config_get_default_int)
-    }
-
+    /// Gets a default string value.
     pub fn default_string(&self, section: &str, name: &str) -> Option<String> {
         self.get_default(section, name, libobs_sys::config_get_default_string)
             .map(|value| value.into_string())
     }
 
+    /// Gets a default integer value.
+    pub fn default_int(&self, section: &str, name: &str) -> Option<i64> {
+        self.get_default(section, name, libobs_sys::config_get_default_int)
+    }
+
+    /// Gets a default unsigned integer value.
     pub fn default_uint(&self, section: &str, name: &str) -> Option<u64> {
         self.get_default(section, name, libobs_sys::config_get_default_uint)
     }
 
-    pub fn set_bool(&self, section: &str, name: &str, value: bool) {
-        self.set(section, name, value, libobs_sys::config_set_bool)
+    /// Gets a default boolean value.
+    pub fn default_bool(&self, section: &str, name: &str) -> Option<bool> {
+        self.get_default(section, name, libobs_sys::config_get_default_bool)
     }
 
-    pub fn set_double(&self, section: &str, name: &str, value: f64) {
-        self.set(section, name, value, libobs_sys::config_set_double)
+    /// Gets a default floating point value.
+    pub fn default_double(&self, section: &str, name: &str) -> Option<f64> {
+        self.get_default(section, name, libobs_sys::config_get_default_double)
     }
 
-    pub fn set_int(&self, section: &str, name: &str, value: i64) {
-        self.set(section, name, value, libobs_sys::config_set_int)
-    }
-
+    /// Sets a string value.
     pub fn set_string(&self, section: &str, name: &str, value: &str) {
         self.set(
             section,
@@ -125,22 +124,27 @@ impl Config {
         )
     }
 
+    /// Sets an integer value.
+    pub fn set_int(&self, section: &str, name: &str, value: i64) {
+        self.set(section, name, value, libobs_sys::config_set_int)
+    }
+
+    /// Sets an unsigned integer value.
     pub fn set_uint(&self, section: &str, name: &str, value: u64) {
         self.set(section, name, value, libobs_sys::config_set_uint)
     }
 
-    pub fn set_default_bool(&self, section: &str, name: &str, value: bool) {
-        self.set(section, name, value, libobs_sys::config_set_default_bool)
+    /// Sets a boolean value.
+    pub fn set_bool(&self, section: &str, name: &str, value: bool) {
+        self.set(section, name, value, libobs_sys::config_set_bool)
     }
 
-    pub fn set_default_double(&self, section: &str, name: &str, value: f64) {
-        self.set(section, name, value, libobs_sys::config_set_default_double)
+    /// Sets a floating point value.
+    pub fn set_double(&self, section: &str, name: &str, value: f64) {
+        self.set(section, name, value, libobs_sys::config_set_double)
     }
 
-    pub fn set_default_int(&self, section: &str, name: &str, value: i64) {
-        self.set(section, name, value, libobs_sys::config_set_default_int)
-    }
-
+    /// Sets a default string value.
     pub fn set_default_string(&self, section: &str, name: &str, value: &str) {
         self.set(
             section,
@@ -150,8 +154,24 @@ impl Config {
         )
     }
 
+    /// Sets a default integer value.
+    pub fn set_default_int(&self, section: &str, name: &str, value: i64) {
+        self.set(section, name, value, libobs_sys::config_set_default_int)
+    }
+
+    /// Sets a default unsigned integer value.
     pub fn set_default_uint(&self, section: &str, name: &str, value: u64) {
         self.set(section, name, value, libobs_sys::config_set_default_uint)
+    }
+
+    /// Sets a default boolean value.
+    pub fn set_default_bool(&self, section: &str, name: &str, value: bool) {
+        self.set(section, name, value, libobs_sys::config_set_default_bool)
+    }
+
+    /// Sets a default floating point value.
+    pub fn set_default_double(&self, section: &str, name: &str, value: f64) {
+        self.set(section, name, value, libobs_sys::config_set_default_double)
     }
 
     pub fn remove_value(&self, section: &str, name: &str) -> bool {
@@ -160,10 +180,12 @@ impl Config {
         }
     }
 
+    /// Creates a new configuration object and associates it with the specified file name.
     pub fn create(file: &str) -> Self {
         Self::from_raw(unsafe { libobs_sys::config_create(cstr_ptr!(file)) })
     }
 
+    /// Opens a configuration file.
     pub fn open(file: &str, open_type: OpenType) -> Result<Self> {
         const CONFIG_SUCCESS: i32 = libobs_sys::CONFIG_SUCCESS as i32;
 
@@ -184,6 +206,7 @@ impl Config {
         }
     }
 
+    /// Saves configuration data to a file (if associated with a file).
     pub fn save(&self) -> Result<()> {
         let res = unsafe { libobs_sys::config_save(self.raw.as_ptr()) };
 
@@ -194,14 +217,17 @@ impl Config {
         Ok(())
     }
 
+    /// Closes the configuration object.
     pub fn close(self) {
         unsafe { libobs_sys::config_close(self.raw.as_ptr()) };
     }
 
+    /// Returns the number of sections.
     pub fn sections(&self) -> u64 {
         unsafe { libobs_sys::config_num_sections(self.raw.as_ptr()) }
     }
 
+    /// Returns a section name based upon its index.
     pub fn section(&self, idx: u64) -> Option<String> {
         unsafe { libobs_sys::config_get_section(self.raw.as_ptr(), idx) }.into_opt_string()
     }
@@ -209,7 +235,9 @@ impl Config {
 
 #[derive(Clone, Copy, Debug)]
 pub enum OpenType {
+    /// Try to open the file. If it doesn't exist, create it.
     Always,
+    /// Fail if the file doesn't exist.
     Existing,
 }
 

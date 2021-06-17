@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package obs_remote.v5.sources;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+service Sources {
+  // Original: GetSourceList
+  rpc List(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: GetSourceActive
+  rpc IsActive(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  // Original: GetSourceScreenshot
+  rpc Screenshot(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: SaveSourceScreenshot
+  rpc SaveScreenshot(google.protobuf.Empty) returns (google.protobuf.Empty);
+}

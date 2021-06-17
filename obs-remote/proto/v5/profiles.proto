@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package obs_remote.v5.profiles;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+service Profiles {
+  // Original: GetProfileList
+  rpc List(google.protobuf.Empty) returns (ListReply);
+  // Original: **MISSING**
+  rpc Current(google.protobuf.Empty) returns (google.protobuf.StringValue);
+  // Original: SetCurrentProfile
+  rpc SetCurrent(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  // Original: ProfileParameter
+  rpc Parameter(ParameterRequest) returns (ParameterReply);
+  // Original: SetProfileParameter
+  rpc SetParameter(SetParameterRequest) returns (google.protobuf.Empty);
+  // Original: ProfilePersistentData
+  rpc PersistentData(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: SetProfilePersistentData
+  rpc SetPersistentData(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: CreateProfile
+  rpc Create(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  // Original: DeleteProfile
+  rpc Delete(google.protobuf.StringValue) returns (google.protobuf.Empty);
+}
+
+message ListReply {
+  string current = 1;
+  repeated string profiles = 2;
+}
+
+message ParameterRequest {
+  string category = 1;
+  string name = 2;
+}
+
+message ParameterReply {
+  google.protobuf.StringValue value = 1;
+  google.protobuf.StringValue default = 2;
+}
+
+message SetParameterRequest {
+  string category = 1;
+  string name = 2;
+  google.protobuf.StringValue value = 3;
+
+}

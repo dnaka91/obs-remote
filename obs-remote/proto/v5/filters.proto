@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package obs_remote.v5.filters;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+service Filters {
+  // Original: GetSourceFilterList
+  rpc List(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: GetSourceFilterDefaultSettings
+  rpc DefaultSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: GetSourceFilter
+  rpc Get(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: SetSourceFilterIndex
+  rpc SetIndex(google.protobuf.UInt32Value) returns (google.protobuf.Empty);
+  // Original: SetSourceFilterSettings
+  rpc SetSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: SetSourceFilterEnabled
+  rpc SetEnabled(google.protobuf.BoolValue) returns (google.protobuf.Empty);
+  // Original: CreateSourceFilter
+  rpc Create(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: DeleteSourceFilter
+  rpc Delete(google.protobuf.Empty) returns (google.protobuf.Empty);
+}

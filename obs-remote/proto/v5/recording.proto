@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package obs_remote.v5.recording;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+// Original: Record
+service Recording {
+  // Original: GetRecordStatus
+  rpc Status(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: ToggleRecord
+  rpc Toggle(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: StartRecord
+  rpc Start(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: StopRecord
+  rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: ToggleRecordPause
+  rpc TogglePause(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: PauseRecord
+  rpc Pause(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: ResumeRecord
+  rpc Resume(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: GetRecordDirectory
+  rpc Directory(google.protobuf.Empty) returns (google.protobuf.StringValue);
+  // Original: SetRecordDirectory
+  rpc SetDirectory(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  // Original: GetRecordFilenameFormatting
+  rpc FilenameFormatting(google.protobuf.Empty)
+      returns (google.protobuf.StringValue);
+  // Original: SetRecordFilenameFormatting
+  rpc SetFilenameFormatting(google.protobuf.Empty)
+      returns (google.protobuf.StringValue);
+}

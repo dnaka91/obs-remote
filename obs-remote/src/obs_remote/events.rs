@@ -159,7 +159,7 @@ impl Events for Service {
                 while let Ok(event) = rx.recv().await {
                     match event {
                         events::Event::SceneCollectionChanged => {
-                            let name = obs::frontend::current_scene_collection();
+                            let name = obs::frontend::scene_collections::current();
 
                             tx2.send(Ok(EventReply {
                                 event: Some(Event::SceneCollectionChanged(
@@ -170,7 +170,7 @@ impl Events for Service {
                             .ok();
                         }
                         events::Event::SceneCollectionListChanged => {
-                            let collections = obs::frontend::scene_collections();
+                            let collections = obs::frontend::scene_collections::list();
 
                             tx2.send(Ok(EventReply {
                                 event: Some(Event::SceneCollectionListChanged(

@@ -39,7 +39,7 @@ impl StudioMode for Service {
                 name: item_source.name(),
                 id: item.id(),
                 ty: SourceType::from(item_source.ty()) as i32,
-                volume: item_source.volume(),
+                volume: item_source.volume().as_mul(),
                 x: pos.0,
                 y: pos.1,
                 source_cx: item_source.width(),

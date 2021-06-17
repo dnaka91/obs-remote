@@ -2,7 +2,7 @@ use std::{thread, time::Duration};
 
 use libobs_sys::{LIBOBS_API_MAJOR_VER, LIBOBS_API_MINOR_VER, LIBOBS_API_PATCH_VER};
 use log::{info, warn, Level};
-use obs::{Plugin, audio::AudioInfo, encoder::EncoderType, logger::ObsLogger, source::Source};
+use obs::{audio::AudioInfo, encoder::EncoderType, logger::ObsLogger, source::Source, Plugin};
 
 obs::declare_module!(MainPlugin);
 
@@ -69,7 +69,7 @@ impl Plugin for MainPlugin {
             info!("Profiles: {:?}", obs::frontend::profiles::list());
             info!(
                 "Scene collections: {:?}",
-                obs::frontend::scene_collections()
+                obs::frontend::scene_collections::list()
             );
             info!("Scene names: {:?}", obs::frontend::scene_names());
 

@@ -1,8 +1,7 @@
 use tonic::{Request, Response, Status};
 
-use crate::precondition;
-
 use self::outputs_server::Outputs;
+use crate::precondition;
 
 tonic::include_proto!("obs_remote.outputs");
 

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package obs_remote.v5.scene_collections;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+service SceneCollections {
+  // Original: GetSceneCollectionList
+  rpc List(google.protobuf.Empty) returns (ListReply);
+  // Original: **MISSING**
+  rpc Current(google.protobuf.Empty) returns (google.protobuf.StringValue);
+  // Original: SetCurrentSceneCollection
+  rpc SetCurrent(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  // Original: CreateSceneCollection
+  rpc Create(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  // Original: DeleteSceneCollection
+  rpc Delete(google.protobuf.StringValue) returns (google.protobuf.Empty);
+}
+
+message ListReply {
+  string current = 1;
+  repeated string collections = 2;
+}

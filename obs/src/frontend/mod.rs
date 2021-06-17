@@ -4,18 +4,15 @@ use crate::{config::Config, cstr_ptr, source::Source, util::StringConversion};
 
 pub mod events;
 pub mod preview_mode;
+pub mod profiles;
 pub mod recording;
 pub mod replay_buffer;
 pub mod sources;
 pub mod streaming;
-pub mod profiles;
 pub(crate) mod tasks;
 pub mod transitions;
+pub mod scene_collections;
 pub mod virtualcam;
-
-pub fn add_scene_collection(name: &str) -> bool {
-    unsafe { libobs_sys::obs_frontend_add_scene_collection(cstr_ptr!(name)) }
-}
 
 pub fn add_tools_menu_item(name: &str) {
     unsafe { libobs_sys::obs_frontend_add_tools_menu_item(cstr_ptr!(name), None, ptr::null_mut()) };
@@ -26,19 +23,6 @@ pub fn current_scene() -> Source {
     Source::from_raw(raw)
 }
 
-pub fn current_scene_collection() -> String {
-    let raw = unsafe { libobs_sys::obs_frontend_get_current_scene_collection() };
-    let value = raw.into_string();
-
-    unsafe { libobs_sys::bfree(raw as *mut _) };
-
-    value
-}
-
-pub fn set_current_scene_collection(name: &str) {
-    unsafe { libobs_sys::obs_frontend_set_current_scene_collection(cstr_ptr!(name)) };
-}
-
 pub fn global_config() -> Config {
     let raw = unsafe { libobs_sys::obs_frontend_get_global_config() };
     Config::from_raw(raw)
@@ -47,10 +31,6 @@ pub fn global_config() -> Config {
 pub fn profile_config() -> Config {
     let raw = unsafe { libobs_sys::obs_frontend_get_profile_config() };
     Config::from_raw(raw)
-}
-
-pub fn scene_collections() -> Vec<String> {
-    convert_string_list(unsafe { libobs_sys::obs_frontend_get_scene_collections() })
 }
 
 pub fn scene_names() -> Vec<String> {

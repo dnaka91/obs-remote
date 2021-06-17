@@ -1,4 +1,7 @@
-use std::ptr::NonNull;
+use std::{
+    fmt::{self, Display},
+    ptr::NonNull,
+};
 
 use bitflags::bitflags;
 
@@ -142,8 +145,12 @@ impl Source {
         unsafe { libobs_sys::obs_source_get_unversioned_id(self.raw.as_ptr()) }.into_string()
     }
 
-    pub fn volume(&self) -> f32 {
-        unsafe { libobs_sys::obs_source_get_volume(self.raw.as_ptr()) }
+    pub fn volume(&self) -> Volume {
+        Volume::Mul(unsafe { libobs_sys::obs_source_get_volume(self.raw.as_ptr()) })
+    }
+
+    pub fn set_volume(&self, volume: Volume) {
+        unsafe { libobs_sys::obs_source_set_volume(self.raw.as_ptr(), volume.as_mul()) };
     }
 
     pub fn width(&self) -> u32 {
@@ -152,6 +159,10 @@ impl Source {
 
     pub fn muted(&self) -> bool {
         unsafe { libobs_sys::obs_source_muted(self.raw.as_ptr()) }
+    }
+
+    pub fn set_muted(&self, muted: bool) {
+        unsafe { libobs_sys::obs_source_set_muted(self.raw.as_ptr(), muted) };
     }
 
     // TODO: Move to transitions area.
@@ -177,7 +188,7 @@ impl Source {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum SourceType {
     Input,
     Filter,
@@ -348,6 +359,25 @@ pub fn list_input_types() -> Vec<String> {
     util::list_types(libobs_sys::obs_enum_input_types)
 }
 
+pub fn list_input_types2() -> Vec<(String, String)> {
+    use std::os::raw::c_char;
+    use std::ptr;
+
+    let mut id = ptr::null::<c_char>();
+    let mut unversioned_id = ptr::null::<c_char>();
+    let raw = (&mut id) as *mut _;
+    let unversioned_raw = (&mut unversioned_id) as *mut _;
+    let mut idx = 0;
+    let mut values = Vec::new();
+
+    while unsafe { libobs_sys::obs_enum_input_types2(idx, raw, unversioned_raw) } {
+        values.push((id.into_string(), unversioned_id.into_string()));
+        idx += 1;
+    }
+
+    values
+}
+
 /// List all available filter source types.
 pub fn list_filter_types() -> Vec<String> {
     util::list_types(libobs_sys::obs_enum_filter_types)
@@ -356,4 +386,71 @@ pub fn list_filter_types() -> Vec<String> {
 /// List all available transition source types.
 pub fn list_transition_types() -> Vec<String> {
     util::list_types(libobs_sys::obs_enum_transition_types)
+}
+
+pub fn list() -> Vec<Source> {
+    util::list_instances(
+        libobs_sys::obs_enum_sources,
+        libobs_sys::obs_source_get_ref,
+        Source::from_raw,
+    )
+}
+
+pub fn output_flags(id: &str) -> OutputFlags {
+    OutputFlags::from_bits_truncate(unsafe {
+        libobs_sys::obs_get_source_output_flags(cstr_ptr!(id))
+    })
+}
+
+pub fn defaults(id: &str) -> Option<Data> {
+    let raw = unsafe { libobs_sys::obs_get_source_defaults(cstr_ptr!(id)) };
+    (!raw.is_null()).then(|| {
+        unsafe { libobs_sys::obs_data_addref(raw) };
+        Data::from_raw(raw)
+    })
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum Volume {
+    Mul(f32),
+    Db(f32),
+}
+
+impl Volume {
+    pub fn as_mul(self) -> f32 {
+        match self {
+            Self::Mul(v) => v,
+            Self::Db(v) => unsafe { libobs_sys::obs_db_to_mul(v) },
+        }
+    }
+
+    pub fn as_db(self) -> f32 {
+        match self {
+            Self::Mul(v) => unsafe { libobs_sys::obs_mul_to_db(v) },
+            Self::Db(v) => v,
+        }
+    }
+
+    pub fn into_mul(self) -> Self {
+        match self {
+            Self::Mul(_) => self,
+            Self::Db(_) => Self::Db(self.as_db()),
+        }
+    }
+
+    pub fn into_db(self) -> Self {
+        match self {
+            Self::Mul(_) => Self::Mul(self.as_mul()),
+            Self::Db(_) => self,
+        }
+    }
+}
+
+impl Display for Volume {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Mul(v) => write!(f, "{}%", v),
+            Self::Db(v) => write!(f, "{:.1} dB", v),
+        }
+    }
 }

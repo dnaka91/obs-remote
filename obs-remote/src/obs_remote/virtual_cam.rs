@@ -2,9 +2,8 @@ use anyhow::Result;
 use obs::frontend::virtualcam;
 use tonic::{Request, Response, Status};
 
-use crate::precondition;
-
 use self::virtual_cam_server::VirtualCam;
+use crate::precondition;
 
 tonic::include_proto!("obs_remote.virtual_cam");
 

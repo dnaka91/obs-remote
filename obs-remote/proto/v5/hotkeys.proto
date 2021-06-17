@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package obs_remote.v5.hotkeys;
+
+import "google/protobuf/empty.proto";
+
+service Hotkeys {
+  // Original: GetHotkeyList
+  rpc List(google.protobuf.Empty) returns (ListReply);
+  // Original: TriggerHotkeyByName
+  rpc TriggerByName(TriggerByNameRequest) returns (google.protobuf.Empty);
+  // Original: TriggerHotkeyBySequence
+  rpc TriggerBySequence(TriggerBySequenceRequest)
+      returns (google.protobuf.Empty);
+}
+
+message ListReply {
+  repeated string hotkeys = 1;
+}
+
+message TriggerByNameRequest {
+  string name = 1;
+}
+
+message TriggerBySequenceRequest {
+  string id = 1;
+  Modifiers modifiers = 2;
+
+  message Modifiers {
+    bool shift = 1;
+    bool control = 2;
+    bool alt = 3;
+    bool command = 4;
+  }
+}

@@ -39,7 +39,6 @@ fn main() {
     let bindings = bindgen::Builder::default()
         .header("headers/obs.h")
         .header("headers/obs-frontend-api.h")
-        .header("headers/obs-scene.h")
         .header("headers/graphics/matrix3.h")
         .header("headers/graphics/matrix4.h")
         .header("headers/graphics/quat.h")

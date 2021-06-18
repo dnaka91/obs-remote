@@ -449,7 +449,7 @@ impl Volume {
 impl Display for Volume {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Mul(v) => write!(f, "{}%", v),
+            Self::Mul(v) => write!(f, "{:.0}%", v * 100.0),
             Self::Db(v) => write!(f, "{:.1} dB", v),
         }
     }

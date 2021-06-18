@@ -57,7 +57,7 @@ impl Log for ObsLogger {
             Level::Info | Level::Debug | Level::Trace => libobs_sys::LOG_INFO,
         };
 
-        for chunk in to_chunks(message) {
+        for chunk in to_chunks(message.replace("%", "%%")) {
             if let Ok(chunk) = CString::new(chunk) {
                 unsafe { libobs_sys::blog(level as c_int, chunk.as_ptr()) }
             }

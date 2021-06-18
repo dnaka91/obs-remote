@@ -14,7 +14,7 @@ EOF
 rustup install nightly
 rustup component add llvm-tools-preview
 rustup component add llvm-tools-preview --toolchain nightly
-cargo install cargo-binutils cargo-edit grcov
+cargo install cargo-edit
 
 echo "export PATH=$HOME/.cargo/bin:$PATH" >> $HOME/.bashrc
 mkdir -p $HOME/.config/fish

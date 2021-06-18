@@ -360,8 +360,7 @@ pub fn list_input_types() -> Vec<String> {
 }
 
 pub fn list_input_types2() -> Vec<(String, String)> {
-    use std::os::raw::c_char;
-    use std::ptr;
+    use std::{os::raw::c_char, ptr};
 
     let mut id = ptr::null::<c_char>();
     let mut unversioned_id = ptr::null::<c_char>();

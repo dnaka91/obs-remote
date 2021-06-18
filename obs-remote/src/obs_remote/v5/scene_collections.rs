@@ -1,9 +1,8 @@
 use obs::frontend::scene_collections;
 use tonic::{Request, Response, Status};
 
-use crate::precondition;
-
 pub use self::scene_collections_server::SceneCollectionsServer;
+use crate::precondition;
 
 tonic::include_proto!("obs_remote.v5.scene_collections");
 

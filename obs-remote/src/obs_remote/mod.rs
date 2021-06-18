@@ -47,3 +47,9 @@ mod transitions;
 mod virtual_cam;
 
 pub mod v5;
+
+pub(crate) const FILE_DESCRIPTOR_SET_V4: &[u8] =
+    tonic::include_file_descriptor_set!("obs_remote_v4_descriptor");
+
+pub(crate) const FILE_DESCRIPTOR_SET_V5: &[u8] =
+    tonic::include_file_descriptor_set!("obs_remote_v5_descriptor");

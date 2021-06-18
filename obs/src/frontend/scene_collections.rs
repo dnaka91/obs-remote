@@ -1,6 +1,8 @@
+use super::{
+    convert_string_list,
+    tasks::{self, TaskType},
+};
 use crate::{cstr_ptr, util::StringConversion};
-
-use super::{convert_string_list, tasks::{self, TaskType}};
 
 pub fn add(name: &str) -> bool {
     unsafe { libobs_sys::obs_frontend_add_scene_collection(cstr_ptr!(name)) }

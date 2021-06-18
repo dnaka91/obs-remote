@@ -1,6 +1,11 @@
+use std::{env, path::PathBuf};
+
 fn main() {
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+
     tonic_build::configure()
         .build_client(false)
+        .file_descriptor_set_path(out_dir.join("obs_remote_v4_descriptor.bin"))
         .compile(
             &[
                 "proto/events.proto",
@@ -18,6 +23,16 @@ fn main() {
                 "proto/studio_mode.proto",
                 "proto/transitions.proto",
                 "proto/virtual_cam.proto",
+            ],
+            &["proto"],
+        )
+        .unwrap();
+
+    tonic_build::configure()
+        .build_client(false)
+        .file_descriptor_set_path(out_dir.join("obs_remote_v5_descriptor.bin"))
+        .compile(
+            &[
                 "proto/v5/config.proto",
                 "proto/v5/events.proto",
                 "proto/v5/filters.proto",

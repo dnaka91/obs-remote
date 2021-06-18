@@ -1,9 +1,8 @@
 use obs::source::{self, OutputFlags, Source, SourceType};
 use tonic::{Request, Response, Status};
 
-use crate::precondition;
-
 pub use self::inputs_server::InputsServer;
+use crate::precondition;
 
 tonic::include_proto!("obs_remote.v5.inputs");
 

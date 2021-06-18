@@ -7,11 +7,11 @@ pub mod preview_mode;
 pub mod profiles;
 pub mod recording;
 pub mod replay_buffer;
+pub mod scene_collections;
 pub mod sources;
 pub mod streaming;
 pub(crate) mod tasks;
 pub mod transitions;
-pub mod scene_collections;
 pub mod virtualcam;
 
 pub fn add_tools_menu_item(name: &str) {

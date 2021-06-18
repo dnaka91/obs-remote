@@ -81,42 +81,31 @@ async fn run_server(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
     .parse()
     .unwrap();
 
+    let reflection = tonic_reflection::server::Builder::configure()
+        .register_encoded_file_descriptor_set(obs_remote::FILE_DESCRIPTOR_SET_V4)
+        .build()?;
+
     info!("OBS Remote server (v4) starting up at {} ...", addr);
 
     let signal2 = signal.clone();
 
     let result = Server::builder()
-        .add_service(EventsServer::new(EventsService::new(
-            signal2,
-        )))
+        .add_service(reflection)
+        .add_service(EventsServer::new(EventsService::new(signal2)))
         .add_service(GeneralServer::new(GeneralService))
-        .add_service(MediaControlServer::new(
-            MediaControlService,
-        ))
+        .add_service(MediaControlServer::new(MediaControlService))
         .add_service(OutputsServer::new(OutputsService))
         .add_service(ProfilesServer::new(ProfilesService))
         .add_service(RecordingServer::new(RecordingService))
-        .add_service(ReplayBufferServer::new(
-            ReplayBufferService,
-        ))
-        .add_service(SceneCollectionsServer::new(
-            SceneCollectionsService,
-        ))
-        .add_service(SceneItemsServer::new(
-            SceneItemsService,
-        ))
+        .add_service(ReplayBufferServer::new(ReplayBufferService))
+        .add_service(SceneCollectionsServer::new(SceneCollectionsService))
+        .add_service(SceneItemsServer::new(SceneItemsService))
         .add_service(ScenesServer::new(ScenesService))
         .add_service(SourcesServer::new(SourcesService))
         .add_service(StreamingServer::new(StreamingService))
-        .add_service(StudioModeServer::new(
-            StudioModeService,
-        ))
-        .add_service(TransitionsServer::new(
-            TransitionsService,
-        ))
-        .add_service(VirtualCamServer::new(
-            VirtualCamService,
-        ))
+        .add_service(StudioModeServer::new(StudioModeService))
+        .add_service(TransitionsServer::new(TransitionsService))
+        .add_service(VirtualCamServer::new(VirtualCamService))
         .serve_with_shutdown(addr, async {
             signal.changed().await.ok();
         })
@@ -142,9 +131,14 @@ async fn run_server_v5(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()
     .parse()
     .unwrap();
 
+    let reflection = tonic_reflection::server::Builder::configure()
+        .register_encoded_file_descriptor_set(obs_remote::FILE_DESCRIPTOR_SET_V5)
+        .build()?;
+
     info!("OBS Remote server (v5) starting up at {} ...", addr);
 
     let result = Server::builder()
+        .add_service(reflection)
         .add_service(ConfigServer::new(ConfigService))
         .add_service(EventsServer::new(EventsService))
         .add_service(FiltersServer::new(FiltersService))

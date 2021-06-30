@@ -79,7 +79,7 @@ impl StudioMode for Service {
 
         let scene_name = request.into_inner().scene_name;
         let scene = if scene_name.is_empty() {
-            obs::frontend::current_scene()
+            obs::frontend::scenes::current()
         } else {
             Source::by_name(&scene_name).ok_or_else(|| {
                 Status::failed_precondition(format!("scene `{}` doesn't exist", scene_name))

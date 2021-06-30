@@ -2,33 +2,30 @@ syntax = "proto3";
 
 package obs_remote.v5.scenes;
 
-import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
 service Scenes {
   // Original: GetSceneList
-  rpc List(google.protobuf.Empty) returns (google.protobuf.Empty);
-  // Original: GetCurrentScene
+  rpc List(google.protobuf.Empty) returns (ListReply);
+  // Original: GetCurrentProgramScene
   rpc Current(google.protobuf.Empty) returns (google.protobuf.StringValue);
-  // Original: -
-  rpc SetCurrentProgramScene(google.protobuf.StringValue)
-      returns (google.protobuf.Empty);
-  // Original: -
-  rpc CurrentPreviewScene(google.protobuf.Empty)
+  // Original: SetCurrentProgramScene
+  rpc SetCurrent(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  // Original: GetCurrentPreviewScene
+  rpc CurrentPreview(google.protobuf.Empty)
       returns (google.protobuf.StringValue);
-  // Original: -
-  rpc SetCurrentPreviewScene(google.protobuf.StringValue)
+  // Original: SetCurrentPreviewScene
+  rpc SetCurrentPreview(google.protobuf.StringValue)
       returns (google.protobuf.Empty);
   // Original: SetSceneIndex
   rpc SetIndex(google.protobuf.UInt32Value) returns (google.protobuf.Empty);
   // Original: SetSceneName
-  rpc SetName(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc SetName(SetNameRequest) returns (google.protobuf.Empty);
   // Original: CreateScene
-  rpc Create(google.protobuf.Empty) returns (google.protobuf.Empty);
-  // Original: DeleteScene
-  rpc Delete(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Create(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  // Original: RemoveScene
+  rpc Delete(google.protobuf.StringValue) returns (google.protobuf.Empty);
   // Original: GetSceneTransitionOverride
   rpc TransitionOverride(google.protobuf.Empty) returns (google.protobuf.Empty);
   // Original: SetSceneTransitionOverride
@@ -37,4 +34,21 @@ service Scenes {
   // Original: DeleteSceneTransitionOverride
   rpc DeleteTransitionOverride(google.protobuf.Empty)
       returns (google.protobuf.Empty);
+}
+
+message ListReply {
+  string current = 1;
+  google.protobuf.StringValue current_preview = 2;
+  repeated Scene scenes = 3;
+
+  message Scene {
+    string name = 1;
+    uint64 index = 2;
+    bool group = 3;
+  }
+}
+
+message SetNameRequest {
+  string name = 1;
+  string new_name = 2;
 }

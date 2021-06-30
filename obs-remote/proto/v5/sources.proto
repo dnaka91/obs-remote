@@ -9,9 +9,33 @@ service Sources {
   // Original: GetSourceList
   rpc List(google.protobuf.Empty) returns (google.protobuf.Empty);
   // Original: GetSourceActive
-  rpc IsActive(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  rpc IsActive(google.protobuf.StringValue) returns (IsActiveReply);
   // Original: GetSourceScreenshot
-  rpc Screenshot(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Screenshot(ScreenshotRequest) returns (google.protobuf.BytesValue);
   // Original: SaveSourceScreenshot
-  rpc SaveScreenshot(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SaveScreenshot(SaveScreenshotRequest) returns (google.protobuf.Empty);
+}
+
+message IsActiveReply {
+  bool active = 1;
+  bool showing = 2;
+}
+
+message ScreenshotRequest {
+  string name = 1;
+  uint32 width = 2;
+  uint32 height = 3;
+  ImageFormat format = 4;
+  uint32 compression = 5;
+
+  enum ImageFormat {
+    IMAGE_FORMAT_UNSPECIFIED = 0;
+    IMAGE_FORMAT_PNG = 1;
+    IMAGE_FORMAT_JPG = 2;
+  }
+}
+
+message SaveScreenshotRequest {
+  string file_path = 1;
+  ScreenshotRequest details = 2;
 }

@@ -4,7 +4,6 @@ package obs_remote.v5.transitions;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
 service Transitions {

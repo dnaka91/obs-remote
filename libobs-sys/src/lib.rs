@@ -3,6 +3,7 @@
 #![allow(non_snake_case)]
 #![allow(improper_ctypes)] // TODO: investigate
 #![allow(clippy::upper_case_acronyms)]
+#![cfg_attr(test, allow(deref_nullptr))] // TODO: investigate
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 

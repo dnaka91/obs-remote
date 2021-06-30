@@ -41,6 +41,7 @@ fn main() {
         .header("headers/obs-frontend-api.h")
         .header("headers/graphics/matrix3.h")
         .header("headers/graphics/matrix4.h")
+        .header("headers/graphics/plane.h")
         .header("headers/graphics/quat.h")
         .header("headers/util/config-file.h")
         .header("headers/util/platform.h")
@@ -56,8 +57,9 @@ fn main() {
         // Media
         .allowlist_function("(audio|media|video)_.+")
         // Graphics
-        .allowlist_type("matrix[3-4]|quat|vec[2-4]")
-        .allowlist_function("(matrix[3-4]|quat|vec[2-4])_.+")
+        .allowlist_type("axisang|matrix[3-4]|gs_.+|plane|quat|vec[2-4]")
+        .allowlist_function("(axisang|matrix[3-4]|gs|plane|quat|vec[2-4])_.+")
+        .allowlist_var("GS_.+")
         // Other settings
         .default_enum_style(EnumVariation::ModuleConsts)
         .constified_enum("LOG_.+")

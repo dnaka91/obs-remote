@@ -30,7 +30,10 @@ impl Plugin for ObsRemotePlugin {
         ObsLogger::init(
             env!("CARGO_PKG_NAME"),
             Level::Warn,
-            vec![(env!("CARGO_CRATE_NAME"), Level::Trace)],
+            vec![
+                (env!("CARGO_CRATE_NAME"), Level::Trace),
+                ("obs", Level::Trace),
+            ],
         )
         .ok();
 

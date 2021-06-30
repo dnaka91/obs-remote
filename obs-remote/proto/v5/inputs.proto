@@ -2,9 +2,7 @@ syntax = "proto3";
 
 package obs_remote.v5.inputs;
 
-import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
 service Inputs {
@@ -31,7 +29,7 @@ service Inputs {
   // Original: GetInputVolume
   rpc Volume(google.protobuf.StringValue) returns (VolumeReply);
   // Original: SetInputVolume
-  rpc SetVolume(google.protobuf.FloatValue) returns (google.protobuf.Empty);
+  rpc SetVolume(SetVolumeRequest) returns (google.protobuf.Empty);
   // Original: GetInputAudioSyncOffset
   rpc AudioSyncOffset(google.protobuf.Empty) returns (google.protobuf.Empty);
   // Original: SetInputAudioSyncOffset
@@ -100,4 +98,13 @@ message SetMuteRequest {
 message VolumeReply {
   float mul = 1;
   float db = 2;
+}
+
+message SetVolumeRequest {
+  string name = 1;
+
+  oneof volume {
+    float mul = 2;
+    float db = 3;
+  }
 }

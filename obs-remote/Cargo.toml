@@ -10,12 +10,13 @@ license = "AGPL-3.0-only"
 crate-type = ["cdylib"]
 
 [dependencies]
-anyhow = "1.0.40"
+anyhow = "1.0.41"
+image = { version = "0.23.14", default-features = false, features = ["jpeg", "png"] }
 log = { version = "0.4.14", features = ["std", "max_level_debug"] }
-obs = { path = "../obs" }
+obs = { path="../obs" }
 prost = "0.7.0"
 prost-types = "0.7.0"
-tokio = { version = "1.6.1", features = ["macros", "rt", "sync"] }
+tokio = { version = "1.7.1", features = ["macros", "rt", "sync"] }
 tokio-stream = { version = "0.1.6", default-features = false, features = ["sync"] }
 tonic = "0.4.3"
 tonic-reflection = "0.1.0"

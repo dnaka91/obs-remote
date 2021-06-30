@@ -1,4 +1,4 @@
-use obs::source::{self, OutputFlags, Source, SourceType};
+use obs::source::{self, OutputFlags, Source, SourceType, Volume};
 use tonic::{Request, Response, Status};
 
 pub use self::inputs_server::InputsServer;
@@ -136,8 +136,20 @@ impl inputs_server::Inputs for InputsService {
         }))
     }
 
-    async fn set_volume(&self, request: Request<f32>) -> Result<Response<()>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+    async fn set_volume(&self, request: Request<SetVolumeRequest>) -> Result<Response<()>, Status> {
+        let SetVolumeRequest { name, volume } = request.into_inner();
+        precondition!(!name.is_empty(), "name mustn't be empty");
+
+        let volume = volume.ok_or_else(|| Status::failed_precondition("volume must be set"))?;
+        let input = Source::by_name(&name)
+            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+
+        input.set_volume(match volume {
+            set_volume_request::Volume::Mul(v) => Volume::Mul(v),
+            set_volume_request::Volume::Db(v) => Volume::Db(v),
+        });
+
+        Ok(Response::new(()))
     }
 
     async fn audio_sync_offset(&self, request: Request<()>) -> Result<Response<()>, Status> {

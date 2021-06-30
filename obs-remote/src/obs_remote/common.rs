@@ -29,8 +29,13 @@ impl From<obs::scene::Alignment> for Alignment {
 #[macro_export]
 macro_rules! precondition {
     ($cond:expr, $msg:literal) => {
-        if !$cond {
+        if !($cond) {
             return Err(Status::failed_precondition($msg));
+        }
+    };
+    ($cond:expr, $($arg:tt)*) => {
+        if !($cond) {
+            return Err(Status::failed_precondition(format!($($arg)*)));
         }
     };
 }

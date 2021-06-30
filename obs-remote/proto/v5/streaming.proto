@@ -2,9 +2,7 @@ syntax = "proto3";
 
 package obs_remote.v5.streaming;
 
-import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
 // Original: Stream

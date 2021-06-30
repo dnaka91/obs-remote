@@ -14,6 +14,7 @@ pub mod config;
 pub mod data;
 pub mod encoder;
 pub mod frontend;
+pub mod graphics;
 pub mod gs;
 pub mod hotkeys;
 pub mod logger;
@@ -232,21 +233,8 @@ pub fn master_volume() -> f32 {
     unsafe { libobs_sys::obs_get_master_volume() }
 }
 
-#[derive(Default)]
-pub(crate) struct Vec2(libobs_sys::vec2);
-
-impl Vec2 {
-    pub(crate) fn as_ptr(&mut self) -> *mut libobs_sys::vec2 {
-        &mut self.0 as _
-    }
-
-    pub fn x(&self) -> f32 {
-        unsafe { self.0.__bindgen_anon_1.__bindgen_anon_1.x }
-    }
-
-    pub fn y(&self) -> f32 {
-        unsafe { self.0.__bindgen_anon_1.__bindgen_anon_1.y }
-    }
+pub fn render_main_texture() {
+    unsafe { libobs_sys::obs_render_main_texture() };
 }
 
 pub struct Ref<'a, S, T> {

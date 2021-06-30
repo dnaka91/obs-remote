@@ -12,8 +12,6 @@ cat > $HOME/.cargo/config.toml <<-EOF
 EOF
 
 rustup install nightly
-rustup component add llvm-tools-preview
-rustup component add llvm-tools-preview --toolchain nightly
 cargo install cargo-edit
 
 echo "export PATH=$HOME/.cargo/bin:$PATH" >> $HOME/.bashrc

@@ -71,7 +71,7 @@ impl Plugin for MainPlugin {
                 "Scene collections: {:?}",
                 obs::frontend::scene_collections::list()
             );
-            info!("Scene names: {:?}", obs::frontend::scene_names());
+            info!("Scene names: {:?}", obs::frontend::scenes::names());
 
             obs::frontend::add_tools_menu_item("OBS Rust!");
             // obs::frontend::events::add_callback();

@@ -2,7 +2,7 @@ use std::{ffi::c_void, ptr::NonNull};
 
 use bitflags::bitflags;
 
-use crate::{source::Source, Ref, Vec2};
+use crate::{cstr_ptr, graphics::Vec2, source::Source, Ref};
 
 pub struct Scene {
     raw: NonNull<libobs_sys::obs_scene_t>,
@@ -19,6 +19,10 @@ impl Scene {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
         }
+    }
+
+    pub fn create(name: &str) -> Self {
+        Self::from_raw(unsafe { libobs_sys::obs_scene_create(cstr_ptr!(name)) })
     }
 
     pub fn from_source(source: &Source) -> Option<Ref<'_, Source, Self>> {
@@ -91,7 +95,7 @@ impl SceneItem {
     pub fn pos(&self) -> (f32, f32) {
         let mut pos = Vec2::default();
 
-        unsafe { libobs_sys::obs_sceneitem_get_pos(self.raw.as_ptr(), pos.as_ptr()) };
+        unsafe { libobs_sys::obs_sceneitem_get_pos(self.raw.as_ptr(), pos.as_ptr_mut()) };
 
         (pos.x(), pos.y())
     }
@@ -99,7 +103,7 @@ impl SceneItem {
     pub fn scale(&self) -> (f32, f32) {
         let mut scale = Vec2::default();
 
-        unsafe { libobs_sys::obs_sceneitem_get_scale(self.raw.as_ptr(), scale.as_ptr()) };
+        unsafe { libobs_sys::obs_sceneitem_get_scale(self.raw.as_ptr(), scale.as_ptr_mut()) };
 
         (scale.x(), scale.y())
     }

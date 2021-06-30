@@ -46,12 +46,7 @@ impl Source {
 
     pub fn by_name(name: &str) -> Option<Source> {
         let raw = unsafe { libobs_sys::obs_get_source_by_name(cstr_ptr!(name)) };
-
-        if raw.is_null() {
-            None
-        } else {
-            Some(Self::from_raw(raw))
-        }
+        (!raw.is_null()).then(|| Self::from_raw(raw))
     }
 
     pub fn audio_mixers(&self) -> [bool; 6] {
@@ -122,6 +117,10 @@ impl Source {
         unsafe { libobs_sys::obs_source_get_name(self.raw.as_ptr()) }.into_string()
     }
 
+    pub fn set_name(&self, name: &str) {
+        unsafe { libobs_sys::obs_source_set_name(self.raw.as_ptr(), cstr_ptr!(name)) };
+    }
+
     pub fn output_flags(&self) -> OutputFlags {
         OutputFlags::from_bits_truncate(unsafe {
             libobs_sys::obs_source_get_output_flags(self.raw.as_ptr())
@@ -185,6 +184,34 @@ impl Source {
 
     pub fn update_properties(&self) {
         unsafe { libobs_sys::obs_source_update_properties(self.raw.as_ptr()) };
+    }
+
+    pub fn is_group(&self) -> bool {
+        unsafe { libobs_sys::obs_source_is_group(self.raw.as_ptr()) }
+    }
+
+    pub fn remove(&self) {
+        unsafe { libobs_sys::obs_source_remove(self.raw.as_ptr()) };
+    }
+
+    pub fn active(&self) -> bool {
+        unsafe { libobs_sys::obs_source_active(self.raw.as_ptr()) }
+    }
+
+    pub fn showing(&self) -> bool {
+        unsafe { libobs_sys::obs_source_showing(self.raw.as_ptr()) }
+    }
+
+    pub fn inc_showing(&self) {
+        unsafe { libobs_sys::obs_source_inc_showing(self.raw.as_ptr()) };
+    }
+
+    pub fn dec_showing(&self) {
+        unsafe { libobs_sys::obs_source_dec_showing(self.raw.as_ptr()) };
+    }
+
+    pub fn video_render(&self) {
+        unsafe { libobs_sys::obs_source_video_render(self.raw.as_ptr()) };
     }
 }
 

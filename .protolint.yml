@@ -1,0 +1,4 @@
+lint:
+  rules_option:
+    indent:
+      not_insert_newline: true

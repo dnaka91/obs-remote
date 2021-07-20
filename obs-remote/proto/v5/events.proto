@@ -42,8 +42,11 @@ message GeneralEvent {
 
   message ExitStarted {
   }
+
   message StudioModeStateChanged {
+    bool enabled = 1;
   }
+
   message Custom {
   }
 }
@@ -57,12 +60,19 @@ message ConfigEvent {
   }
 
   message CurrentSceneCollectionChanged {
+    string name = 1;
   }
+
   message SceneCollectionListChanged {
+    repeated string collections = 1;
   }
+
   message CurrentProfileChanged {
+    string name = 1;
   }
+
   message ProfileListChanged {
+    repeated string profiles = 1;
   }
 }
 
@@ -78,21 +88,40 @@ message ScenesEvent {
 
   // Original: SceneCreated
   message Created {
+    string name = 1;
+    bool group = 2;
   }
+
   // Original: SceneRemoved
   message Removed {
+    string name = 1;
+    bool group = 2;
   }
+
   // Original: SceneNameChanged
   message NameChanged {
+    string old_name = 1;
+    string name = 2;
   }
+
   // Original: CurrentSceneChanged
   message CurrentChanged {
+    string name = 1;
   }
+
   // Original CurrentPreviewSceneChanged
   message CurrentPreviewChanged {
+    string name = 1;
   }
   // Original: SceneListReindexed
   message ListReindexed {
+    repeated Scene scenes = 1;
+
+    message Scene {
+      string name = 1;
+      int32 index = 2;
+      bool group = 3;
+    }
   }
 }
 
@@ -111,30 +140,64 @@ message InputsEvent {
 
   // Original: InputCreated
   message Created {
+    string name = 1;
+    string kind = 2;
+    string unversioned_kind = 3;
+    string settings = 4;
+    string default_settings = 5;
   }
+
   // Original: InputRemoved
   message Removed {
+    string name = 1;
   }
+
   // Original: InputNameChanged
   message NameChanged {
+    string old_name = 1;
+    string name = 2;
   }
+
   // Original: InputActiveStateChanged
   message ActiveStateChanged {
+    string name = 1;
+    bool active = 2;
   }
+
   // Original: InputShowStateChanged
   message ShowStateChanged {
+    string name = 1;
+    bool visible = 2;
   }
+
   // Original: InputMuteStateChanged
   message MuteStateChanged {
+    string name = 1;
+    bool muted = 2;
   }
+
   // Original: InputVolumeChanged
   message VolumeChanged {
+    string name = 1;
+    double volume_mul = 2;
+    double volume_db = 3;
   }
+
   // Original: InputAudioSyncOffsetChanged
   message AudioSyncOffsetChanged {
+    string name = 1;
+    int64 offset = 2;
   }
+
   // Original: InputAudioTracksChanged
   message AudioTracksChanged {
+    string name = 1;
+    bool track_1 = 2;
+    bool track_2 = 3;
+    bool track_3 = 4;
+    bool track_4 = 5;
+    bool track_5 = 6;
+    bool track_6 = 7;
   }
 }
 
@@ -151,22 +214,34 @@ message TransitionsEvent {
 
   // Original: TransitionCreated
   message Created {
+    string name = 1;
+    string kind = 2;
+    bool fixed = 3;
   }
+
   // Original: TransitionRemoved
   message Removed {
+    string name = 1;
   }
+
   // Original: TransitionNameChanged
   message NameChanged {
+    string old_name = 1;
+    string name = 2;
   }
+
   // Original: CurrentTransitionChanged
   message CurrentChanged {
   }
+
   // Original: CurrentTransitionDurationChanged
   message CurrentDurationChanged {
   }
+
   // Original: TransitionStarted
   message Started {
   }
+
   // Original: TransitionEnded
   message Ended {
   }
@@ -185,18 +260,23 @@ message FiltersEvent {
   // Original: FilterCreated
   message Created {
   }
+
   // Original: FilterRemoved
   message Removed {
   }
+
   // Original: FilterNameChanged
   message NameChanged {
   }
+
   // Original: SourceFilterAdded
   message AddedToSource {
   }
+
   // Orignal: SourceFilterRemoved
   message RemovedFromSource {
   }
+
   // Original: SourceListReindexed
   message SourceListReindexed {
   }
@@ -208,15 +288,41 @@ message OutputsEvent {
     RecordStateChanged record_state_changed = 2;
     ReplayBufferStateChanged replay_buffer_state_changed = 3;
     VirtualCamStateChanged virtual_cam_state_changed = 4;
+    ReplayBufferSaved replay_buffer_saved = 5;
   }
 
   message StreamStateChanged {
+    bool active = 1;
+    State state = 2;
   }
+
   message RecordStateChanged {
+    bool active = 1;
+    State state = 2;
   }
+
   message ReplayBufferStateChanged {
+    bool active = 1;
+    State state = 2;
   }
+
   message VirtualCamStateChanged {
+    bool active = 1;
+    State state = 2;
+  }
+
+  message ReplayBufferSaved {
+    string path = 1;
+  }
+
+  enum State {
+    STATE_UNSPECIFIED = 0;
+    STATE_STARTING = 1;
+    STATE_STARTED = 2;
+    STATE_STOPPING = 3;
+    STATE_STOPPED = 4;
+    STATE_PAUSED = 5;
+    STATE_RESUMED = 6;
   }
 }
 
@@ -232,19 +338,45 @@ message SceneItemsEvent {
 
   // Original: SceneItemCreated
   message Created {
+    string scene = 1;
+    string input = 2;
+    int64 id = 3;
+    int32 index = 4;
   }
+
   // Original: SceneItemRemoved
   message Removed {
+    string scene = 1;
+    string input = 2;
+    int64 id = 3;
+    int32 index = 4;
   }
+
   // Original: SceneItemListReindexed
   message ListReindexed {
+    string scene = 1;
+    repeated SceneItem items = 2;
+
+    message SceneItem {
+      int64 id = 3;
+      int32 index = 4;
+    }
   }
+
   // Original: SceneItemEnableStateChanged
   message EnableStateChanged {
+    string scene = 1;
+    int64 id = 2;
+    bool enabled = 3;
   }
+
   // Original: SceneItemLockStateChanged
   message LockStateChanged {
+    string scene = 1;
+    int64 id = 2;
+    bool locked = 3;
   }
+
   // Original: SceneItemTransformChanged
   message TransformChanged {
   }
@@ -259,12 +391,28 @@ message MediaInputsEvent {
 
   // Original: MediaInputPlaybackStarted
   message PlaybackStarted {
+    string name = 1;
   }
+
   // Original: MediaInputPlaybackEnded
   message PlaybackEnded {
+    string name = 1;
   }
+
   // Original: MediaInputActionTriggered
   message ActionTriggered {
+    string name = 1;
+    Action action = 2;
+
+    enum Action {
+      ACTION_UNSPECIFIED = 0;
+      ACTION_PAUSE = 1;
+      ACTION_PLAY = 2;
+      ACTION_RESTART = 3;
+      ACTION_STOP = 4;
+      ACTION_NEXT = 5;
+      ACTION_PREVIOUS = 6;
+    }
   }
 }
 

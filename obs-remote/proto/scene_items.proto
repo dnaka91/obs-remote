@@ -71,14 +71,14 @@ message GetPropertiesReply {
   // Scene item ID.
   int64 id = 2;
   // Position of the source.
-  Position position = 3;
+  common.Position position = 3;
   // The clockwise rotation of the item in degrees around the point of
   // alignment.
   double rotation = 4;
   // Scaling factor of the source.
-  Scale scale = 5;
+  common.Scale scale = 5;
   // Pixel cropping of the source before scaling.
-  Crop crop = 6;
+  common.Crop crop = 6;
   // If the source is visible.
   bool visible = 7;
   // If the source is muted.
@@ -86,7 +86,7 @@ message GetPropertiesReply {
   // If the source's transform is locked.
   bool locked = 9;
   // Bounding box of the source.
-  Bounds bounds = 10;
+  common.Bounds bounds = 10;
   // Base width (without scaling) of the source.
   uint32 source_width = 11;
   // Base source (without scaling) of the source.
@@ -100,39 +100,7 @@ message GetPropertiesReply {
   // Name of the item's parent (if this item belongs to a group).
   string parent_group_name = 15;
   // List of children (if this item is a group).
-  repeated Transform group_children = 16;
-
-  message Transform {
-    // Position of the scene item.
-    Position position = 1;
-    // The clockwise rotation of the scene item in degrees around the point of
-    // alignment.
-    double rotation = 2;
-    // Scaling factor of the scene item.
-    Scale scale = 3;
-    // Pixel cropping of the scene item before scaling.
-    Crop crop = 4;
-    // If the scene item is visible.
-    bool visible = 5;
-    // If the scene item is locked in position.
-    bool locked = 6;
-    // Bounding box of the source item.
-    Bounds bounds = 7;
-    // Base width (without scaling) of the source.
-    uint64 source_width = 8;
-    // Base source (without scaling) of the source.
-    uint64 source_height = 9;
-    // Scene item width (base source width multiplied by the horizontal scaling
-    // factor).
-    double width = 10;
-    // Scene item height (base source height multiplied by the vertical scaling
-    // factor).
-    double height = 11;
-    // Name of the item's parent (if this item belongs to a group).
-    string parent_group_name = 12;
-    // List of children (if this item is a group).
-    repeated Transform group_children = 13;
-  }
+  repeated common.SceneItemTransform group_children = 16;
 }
 
 message SetPropertiesRequest {
@@ -142,13 +110,13 @@ message SetPropertiesRequest {
   // Scene item name (if this field is a string) or specification (if it is an
   // object).
   Identifier item = 2;
-  Position position = 3;
+  common.Position position = 3;
   double rotation = 4;
-  Scale scale = 5;
-  Crop crop = 6;
+  common.Scale scale = 5;
+  common.Crop crop = 6;
   bool visible = 7;
   bool locked = 8;
-  Bounds bounds = 9;
+  common.Bounds bounds = 9;
 }
 
 message ResetRequest {
@@ -222,64 +190,4 @@ message SceneItemSpecification {
   string name = 1;
   // Scene item ID.
   int64 id = 2;
-}
-
-message Position {
-  // The x position of the source from the left.
-  double x = 1;
-  // The y position of the source from the top.
-  double y = 2;
-  // The point on the source that the item is manipulated from. The sum of
-  // 1=Left or 2=Right, and 4=Top or 8=Bottom, or omit to center on that axis.
-  common.Alignment alignment = 3;
-}
-
-message Scale {
-  // The x-scale factor of the source.
-  double x = 1;
-  // The y-scale factor of the source.
-  double y = 2;
-}
-
-message Crop {
-  // The number of pixels cropped off the top of the source before scaling.
-  uint32 top = 1;
-  // The number of pixels cropped off the right of the source before scaling.
-  uint32 right = 2;
-  // The number of pixels cropped off the bottom of the source before scaling.
-  uint32 bottom = 3;
-  // The number of pixels cropped off the left of the source before scaling.
-  uint32 left = 4;
-}
-
-message Bounds {
-  // Type of bounding box.
-  BoundsType ty = 1;
-  // Alignment of the bounding box.
-  common.Alignment alignment = 2;
-  // Width of the bounding box.
-  double x = 3;
-  // Height of the bounding box.
-  double y = 4;
-
-  // Different kinds of bounds that can be applied to different items on the
-  // scene.
-  enum BoundsType {
-    // No value specified.
-    BOUNDS_TYPE_UNSPECIFIED = 0;
-    // Stretch to bounds.
-    BOUNDS_TYPE_STRETCH = 1;
-    // Scale to inner bounds.
-    BOUNDS_TYPE_SCALE_INNER = 2;
-    // Scale to outer bounds.
-    BOUNDS_TYPE_SCALE_OUTER = 3;
-    // Scale to width of bounds.
-    BOUNDS_TYPE_SCALE_TO_WIDTH = 4;
-    // Scale to height of bounds.
-    BOUNDS_TYPE_SCALE_TO_HEIGHT = 5;
-    // Maximum size only.
-    BOUNDS_TYPE_MAX_ONLY = 6;
-    // No bounds.
-    BOUNDS_TYPE_NONE = 7;
-  }
 }

@@ -5,6 +5,7 @@ package obs_remote.media_control;
 import "common.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 
 // API functions related to media control.
 service MediaControl {
@@ -50,7 +51,7 @@ message ToggleRequest {
   // Source name.
   string name = 1;
   // Whether to pause or play the source. `false` for play, `true` for pause.
-  bool play_pause = 2;
+  google.protobuf.BoolValue play_pause = 2;
 }
 
 message Identifier {

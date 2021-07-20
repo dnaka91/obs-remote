@@ -9,8 +9,7 @@ import "google/protobuf/wrappers.proto";
 // API functions related to streaming.
 service Streaming {
   // Get current streaming and recording status.
-  rpc Status(google.protobuf.Empty)
-      returns (StatusReply);
+  rpc Status(google.protobuf.Empty) returns (StatusReply);
   // Toggle streaming on or off (depending on the current stream state).
   rpc Toggle(google.protobuf.Empty) returns (google.protobuf.Empty);
   // Start streaming. Will return an `error` if streaming is already active.
@@ -22,8 +21,7 @@ service Streaming {
   // response. If 'type' is different than the current streaming service type,
   // all settings are required. Returns the full settings of the stream (the
   // same as GetStreamSettings).
-  rpc SetSettings(SetSettingsRequest)
-      returns (google.protobuf.Empty);
+  rpc SetSettings(SetSettingsRequest) returns (google.protobuf.Empty);
   // Get the current streaming server settings.
   rpc GetSettings(google.protobuf.Empty) returns (GetSettingsReply);
   // Save the current streaming server settings to disk.
@@ -39,13 +37,17 @@ message StatusReply {
   bool recording = 2;
   // If recording is paused.
   bool recording_paused = 3;
+  // Current virtual cam status.
+  bool virtualcam = 4;
   // Always false. Retrocompatibility with OBSRemote.
-  bool preview_only = 4;
+  bool preview_only = 5;
   // Time elapsed since streaming started (only present if currently streaming).
-  common.Timecode stream_timecode = 5;
+  common.Timecode stream_timecode = 6;
   // Time elapsed since recording started (only present if currently recording).
-  common.Timecode rec_timecode = 6;
-
+  common.Timecode rec_timecode = 7;
+  // Time elapsed since virtual cam started (only present if virtual cam
+  // currently active).
+  common.Timecode virtualcam_timecode = 8;
 }
 
 message StartRequest {

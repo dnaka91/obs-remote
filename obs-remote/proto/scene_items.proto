@@ -4,6 +4,7 @@ package obs_remote.scene_items;
 
 import "common.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 
 // API functions related to scene items.
 service SceneItems {
@@ -152,7 +153,7 @@ message AddRequest {
   // Name of the source to be added.
   string source_name = 2;
   // Whether to make the sceneitem visible on creation or not. Default `true`.
-  bool set_visible = 3;
+  google.protobuf.BoolValue set_visible = 3;
 }
 
 message AddReply {

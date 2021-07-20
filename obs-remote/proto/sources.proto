@@ -24,12 +24,20 @@ service Sources {
   // Set the volume of the specified source. Default request format uses mul,
   // NOT SLIDER PERCENTAGE.
   rpc SetVolume(SetVolumeRequest) returns (google.protobuf.Empty);
+  // Gets whether an audio track is active for a source.
+  rpc GetTracks(GetTracksRequest) returns (GetTracksReply);
+  // Changes whether an audio track is active for a source.
+  rpc SetTracks(SetTracksRequest) returns (google.protobuf.Empty);
   // Get the mute status of a specified source.
   rpc GetMute(GetMuteRequest) returns (GetMuteReply);
   // Sets the mute status of a specified source.
   rpc SetMute(SetMuteRequest) returns (google.protobuf.Empty);
   // Inverts the mute status of a specified source.
   rpc ToggleMute(ToggleMuteRequest) returns (google.protobuf.Empty);
+  // Get the source's active status of a specified source (if it is showing in
+  // the final mix).
+  rpc GetSourceActive(GetSourceActiveRequest)
+      returns (google.protobuf.BoolValue);
   // Get the audio's active status of a specified source.
   rpc GetAudioActive(GetAudioActiveRequest) returns (GetAudioActiveReply);
   // Rename an existing source.
@@ -219,6 +227,29 @@ message SetVolumeRequest {
   bool use_decibel = 3;
 }
 
+message GetTracksRequest {
+  // Source name.
+  string source = 1;
+}
+
+message GetTracksReply {
+  bool track_1 = 1;
+  bool track_2 = 2;
+  bool track_3 = 3;
+  bool track_4 = 4;
+  bool track_5 = 5;
+  bool track_6 = 6;
+}
+
+message SetTracksRequest {
+  // Source name.
+  string source = 1;
+  // Audio tracks 1-6.
+  uint32 track = 2;
+  // Whether audio track is active or not.
+  bool active = 3;
+}
+
 message GetMuteRequest {
   // Source name.
   string source = 1;
@@ -241,6 +272,11 @@ message SetMuteRequest {
 message ToggleMuteRequest {
   // Source name.
   string source = 1;
+}
+
+message GetSourceActiveRequest {
+  // Source name.
+  string source_name = 1;
 }
 
 message GetAudioActiveRequest {

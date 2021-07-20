@@ -19,7 +19,7 @@ service Transitions {
   // Original: GetTransitionSettings
   rpc Settings(google.protobuf.Empty) returns (google.protobuf.Empty);
   // Original: SetTransitionSettings
-  rpc SetSetttings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SetSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
   // Original: ReleaseTbar
   rpc ReleaseTBar(google.protobuf.Empty) returns (google.protobuf.Empty);
   // Original: SetTbarPosition

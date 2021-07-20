@@ -31,7 +31,7 @@ impl transitions_server::Transitions for TransitionsService {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn set_setttings(&self, request: Request<()>) -> Result<Response<()>, Status> {
+    async fn set_settings(&self, request: Request<()>) -> Result<Response<()>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 

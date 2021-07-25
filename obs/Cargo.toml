@@ -8,5 +8,6 @@ license = "AGPL-3.0-only"
 [dependencies]
 anyhow = "1.0.42"
 bitflags = "1.2.1"
+chrono = "0.4.19"
 libobs-sys = { path = "../libobs-sys" }
 log = { version = "0.4.14", features = ["std"] }

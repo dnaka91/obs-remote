@@ -4,6 +4,7 @@ use std::{
 };
 
 use bitflags::bitflags;
+use chrono::Duration;
 
 use crate::{
     cstr_ptr,
@@ -213,6 +214,58 @@ impl Source {
     pub fn video_render(&self) {
         unsafe { libobs_sys::obs_source_video_render(self.raw.as_ptr()) };
     }
+
+    // --- Media controls ---
+
+    pub fn media_play_pause(&self, pause: bool) {
+        unsafe { libobs_sys::obs_source_media_play_pause(self.raw.as_ptr(), pause) };
+    }
+
+    pub fn media_restart(&self) {
+        unsafe { libobs_sys::obs_source_media_restart(self.raw.as_ptr()) };
+    }
+
+    pub fn media_stop(&self) {
+        unsafe { libobs_sys::obs_source_media_stop(self.raw.as_ptr()) };
+    }
+
+    pub fn media_next(&self) {
+        unsafe { libobs_sys::obs_source_media_next(self.raw.as_ptr()) };
+    }
+
+    pub fn media_previous(&self) {
+        unsafe { libobs_sys::obs_source_media_previous(self.raw.as_ptr()) };
+    }
+
+    pub fn media_duration(&self) -> Duration {
+        Duration::milliseconds(unsafe {
+            libobs_sys::obs_source_media_get_duration(self.raw.as_ptr())
+        })
+    }
+
+    pub fn media_time(&self) -> Duration {
+        Duration::milliseconds(unsafe { libobs_sys::obs_source_media_get_time(self.raw.as_ptr()) })
+    }
+
+    pub fn media_set_time(&self, duration: Duration) {
+        unsafe {
+            libobs_sys::obs_source_media_set_time(self.raw.as_ptr(), duration.num_milliseconds())
+        };
+    }
+
+    pub fn media_state(&self) -> MediaState {
+        MediaState::from_native(unsafe {
+            libobs_sys::obs_source_media_get_state(self.raw.as_ptr())
+        })
+    }
+
+    pub fn media_started(&self) {
+        unsafe { libobs_sys::obs_source_media_started(self.raw.as_ptr()) };
+    }
+
+    pub fn media_ended(&self) {
+        unsafe { libobs_sys::obs_source_media_ended(self.raw.as_ptr()) };
+    }
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -225,15 +278,15 @@ pub enum SourceType {
 }
 
 impl SourceType {
-    fn from_native(ty: libobs_sys::obs_source_type::Type) -> Self {
+    fn from_native(value: libobs_sys::obs_source_type::Type) -> Self {
         use libobs_sys::obs_source_type::*;
 
-        match ty {
+        match value {
             OBS_SOURCE_TYPE_INPUT => Self::Input,
             OBS_SOURCE_TYPE_FILTER => Self::Filter,
             OBS_SOURCE_TYPE_TRANSITION => Self::Transition,
             OBS_SOURCE_TYPE_SCENE => Self::Scene,
-            _ => Self::Unknown(ty as u32),
+            _ => Self::Unknown(value as u32),
         }
     }
 }
@@ -257,10 +310,10 @@ pub enum IconType {
 }
 
 impl IconType {
-    fn from_native(icon_type: libobs_sys::obs_icon_type::Type) -> Self {
+    fn from_native(value: libobs_sys::obs_icon_type::Type) -> Self {
         use libobs_sys::obs_icon_type::*;
 
-        match icon_type {
+        match value {
             OBS_ICON_TYPE_UNKNOWN => Self::Unknown,
             OBS_ICON_TYPE_IMAGE => Self::Image,
             OBS_ICON_TYPE_COLOR => Self::Color,
@@ -288,10 +341,10 @@ pub enum MonitoringType {
 }
 
 impl MonitoringType {
-    fn from_native(monitoring_type: libobs_sys::obs_monitoring_type::Type) -> Self {
+    fn from_native(value: libobs_sys::obs_monitoring_type::Type) -> Self {
         use libobs_sys::obs_monitoring_type::*;
 
-        match monitoring_type {
+        match value {
             OBS_MONITORING_TYPE_NONE => Self::None,
             OBS_MONITORING_TYPE_MONITOR_ONLY => Self::MonitorOnly,
             OBS_MONITORING_TYPE_MONITOR_AND_OUTPUT => Self::MonitorAndOutput,
@@ -477,6 +530,37 @@ impl Display for Volume {
         match self {
             Self::Mul(v) => write!(f, "{:.0}%", v * 100.0),
             Self::Db(v) => write!(f, "{:.1} dB", v),
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum MediaState {
+    None,
+    Playing,
+    Opening,
+    Buffering,
+    Paused,
+    Stopped,
+    Ended,
+    Error,
+    Unknown(u32),
+}
+
+impl MediaState {
+    fn from_native(value: libobs_sys::obs_media_state::Type) -> Self {
+        use libobs_sys::obs_media_state::*;
+
+        match value {
+            OBS_MEDIA_STATE_NONE => Self::None,
+            OBS_MEDIA_STATE_PLAYING => Self::Playing,
+            OBS_MEDIA_STATE_OPENING => Self::Opening,
+            OBS_MEDIA_STATE_BUFFERING => Self::Buffering,
+            OBS_MEDIA_STATE_PAUSED => Self::Paused,
+            OBS_MEDIA_STATE_STOPPED => Self::Stopped,
+            OBS_MEDIA_STATE_ENDED => Self::Ended,
+            OBS_MEDIA_STATE_ERROR => Self::Error,
+            _ => Self::Unknown(value as u32),
         }
     }
 }

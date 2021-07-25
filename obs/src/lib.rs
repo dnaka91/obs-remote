@@ -7,6 +7,8 @@ use std::{
     os::raw::c_char,
 };
 
+pub use chrono::Duration;
+
 use crate::util::StringConversion;
 
 pub mod audio;
@@ -148,6 +150,7 @@ macro_rules! module_use_default_locale {
     };
 }
 
+/// Internal macro to conveniently create a [`CString`](std::ffi::CString).
 #[macro_export]
 macro_rules! cstr {
     ($v:ident) => {
@@ -155,6 +158,8 @@ macro_rules! cstr {
     };
 }
 
+/// Internal macro that does the same as [`cstr`] but additionally turns the `CString` into a
+/// `*const c_char` pointer.
 #[macro_export]
 macro_rules! cstr_ptr {
     ($v:ident) => {

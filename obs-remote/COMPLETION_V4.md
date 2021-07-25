@@ -26,16 +26,16 @@
 
 | Method   | Status |
 | -------- | ------ |
-| Toggle   | 🚫      |
-| Restart  | 🚫      |
-| Stop     | 🚫      |
-| Next     | 🚫      |
-| Previous | 🚫      |
-| Duration | 🚫      |
-| GetTime  | 🚫      |
-| SetTime  | 🚫      |
-| Scrub    | 🚫      |
-| State    | 🚫      |
+| Toggle   | 👍      |
+| Restart  | 👍      |
+| Stop     | 👍      |
+| Next     | 👍      |
+| Previous | 👍      |
+| Duration | 👍      |
+| GetTime  | 👍      |
+| SetTime  | 👍      |
+| Scrub    | 👍      |
+| State    | 👍      |
 
 ### Outputs
 

@@ -14,6 +14,22 @@ impl From<obs::source::SourceType> for SourceType {
     }
 }
 
+impl From<obs::source::MediaState> for MediaState {
+    fn from(value: obs::source::MediaState) -> Self {
+        match value {
+            obs::source::MediaState::None => Self::None,
+            obs::source::MediaState::Playing => Self::Playing,
+            obs::source::MediaState::Opening => Self::Opening,
+            obs::source::MediaState::Buffering => Self::Buffering,
+            obs::source::MediaState::Paused => Self::Paused,
+            obs::source::MediaState::Stopped => Self::Stopped,
+            obs::source::MediaState::Ended => Self::Ended,
+            obs::source::MediaState::Error => Self::Error,
+            obs::source::MediaState::Unknown(_) => Self::UnknownState,
+        }
+    }
+}
+
 impl From<obs::scene::Alignment> for Alignment {
     fn from(value: obs::scene::Alignment) -> Self {
         Self {

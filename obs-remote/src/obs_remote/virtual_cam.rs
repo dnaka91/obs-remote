@@ -3,9 +3,8 @@ use obs::{frontend::virtualcam, output::Output};
 use tonic::{Request, Response, Status};
 
 use self::virtual_cam_server::VirtualCam;
-use crate::precondition;
-
 use super::common;
+use crate::precondition;
 
 tonic::include_proto!("obs_remote.virtual_cam");
 
@@ -16,8 +15,7 @@ impl VirtualCam for Service {
     async fn status(&self, request: Request<()>) -> Result<Response<StatusReply>, Status> {
         Ok(Response::new(StatusReply {
             active: virtualcam::active(),
-            timecode: output_running_time(&virtualcam::output())
-                .map(common::ns_to_timestamp),
+            timecode: output_running_time(&virtualcam::output()).map(common::ns_to_timestamp),
         }))
     }
 

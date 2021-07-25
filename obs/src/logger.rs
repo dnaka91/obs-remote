@@ -1,3 +1,5 @@
+//! Logging functionality that allows to forward macro calls of the [`log`] crate to the OBS log.
+
 use std::{ffi::CString, os::raw::c_int, usize};
 
 use log::{Level, Log, SetLoggerError};

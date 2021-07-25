@@ -35,13 +35,13 @@ service MediaControl {
   rpc GetTime(Identifier) returns (GetTimeReply);
   // Set the timestamp of a media source. Supports ffmpeg and vlc media sources
   // (as of OBS v25.0.8).
-  rpc SetTime(SetTimeReqeust) returns (google.protobuf.Empty);
+  rpc SetTime(SetTimeRequest) returns (google.protobuf.Empty);
   // Scrub media using a supplied offset. Supports ffmpeg and vlc media sources
   // (as of OBS v25.0.8).
   //
   // Note: Due to processing/network delays, this request is not perfect. The
   // processing rate of this request has also not been tested.
-  rpc Scrub(ScrubReqeust) returns (google.protobuf.Empty);
+  rpc Scrub(ScrubRequest) returns (google.protobuf.Empty);
   // Get the current playing state of a media source. Supports ffmpeg and vlc
   // media sources (as of OBS v25.0.8).
   rpc State(Identifier) returns (StateReply);
@@ -69,14 +69,14 @@ message GetTimeReply {
   google.protobuf.Duration timestamp = 1;
 }
 
-message SetTimeReqeust {
+message SetTimeRequest {
   // Source name.
   string name = 1;
   // Milliseconds to set the timestamp to.
   google.protobuf.Duration timestamp = 2;
 }
 
-message ScrubReqeust {
+message ScrubRequest {
   // Source name.
   string name = 1;
   // Millisecond offset (positive or negative) to offset the current media

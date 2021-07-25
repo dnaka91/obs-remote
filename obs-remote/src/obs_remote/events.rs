@@ -162,6 +162,8 @@ impl Events for Service {
                             let name = obs::frontend::scene_collections::current();
 
                             tx2.send(Ok(EventReply {
+                                stream_timecode: None,
+                                rec_timecode: None,
                                 event: Some(Event::SceneCollectionChanged(
                                     SceneCollectionChanged { name },
                                 )),
@@ -173,6 +175,8 @@ impl Events for Service {
                             let collections = obs::frontend::scene_collections::list();
 
                             tx2.send(Ok(EventReply {
+                                stream_timecode: None,
+                                rec_timecode: None,
                                 event: Some(Event::SceneCollectionListChanged(
                                     SceneCollectionListChanged { collections },
                                 )),
@@ -193,6 +197,8 @@ impl Events for Service {
             tokio::spawn(async move {
                 while let Ok(event) = rx.recv().await {
                     tx2.send(Ok(EventReply {
+                        stream_timecode: None,
+                        rec_timecode: None,
                         event: Some(Event::SourceCreated(event)),
                     }))
                     .await
@@ -207,6 +213,8 @@ impl Events for Service {
             tokio::spawn(async move {
                 while let Ok(event) = rx.recv().await {
                     tx.send(Ok(EventReply {
+                        stream_timecode: None,
+                        rec_timecode: None,
                         event: Some(Event::SourceDestroyed(event)),
                     }))
                     .await

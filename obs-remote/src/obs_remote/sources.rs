@@ -47,6 +47,17 @@ impl Sources for Service {
         Err(Status::unimplemented("not implemented!"))
     }
 
+    async fn get_tracks(
+        &self,
+        request: Request<GetTracksRequest>,
+    ) -> Result<Response<GetTracksReply>, Status> {
+        Err(Status::unimplemented("not implemented!"))
+    }
+
+    async fn set_tracks(&self, request: Request<SetTracksRequest>) -> Result<Response<()>, Status> {
+        Err(Status::unimplemented("not implemented!"))
+    }
+
     async fn get_mute(
         &self,
         request: Request<GetMuteRequest>,
@@ -65,10 +76,17 @@ impl Sources for Service {
         Err(Status::unimplemented("not implemented!"))
     }
 
+    async fn get_source_active(
+        &self,
+        request: Request<GetSourceActiveRequest>,
+    ) -> Result<Response<bool>, Status> {
+        Err(Status::unimplemented("not implemented!"))
+    }
+
     async fn get_audio_active(
         &self,
         request: Request<GetAudioActiveRequest>,
-    ) -> Result<Response<GetAudioActiveReply>, Status> {
+    ) -> Result<Response<bool>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 

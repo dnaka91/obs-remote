@@ -13,8 +13,8 @@ service Events {
 }
 
 message EventReply {
-  string stream_timecode = 1;
-  string rec_timecode = 2;
+  common.Timecode stream_timecode = 1;
+  common.Timecode rec_timecode = 2;
 
   oneof event {
     string test1 = 3;

@@ -1,6 +1,6 @@
 use obs::{
     data::Data,
-    frontend::{recording, streaming},
+    frontend::{recording, streaming, virtualcam},
     hotkeys, service,
 };
 use tonic::{Request, Response, Status};
@@ -76,11 +76,14 @@ impl Streaming for Service {
             streaming: streaming::active(),
             recording: recording::active(),
             recording_paused: recording::paused(),
+            virtualcam: virtualcam::active(),
             preview_only: false,
             stream_timecode: streaming::active()
                 .then(|| common::ns_to_timestamp(common::recording_time(&streaming::output()))),
             rec_timecode: recording::active()
                 .then(|| common::ns_to_timestamp(common::recording_time(&recording::output()))),
+            virtualcam_timecode: virtualcam::active()
+                .then(|| common::ns_to_timestamp(common::recording_time(&virtualcam::output()))),
         }))
     }
 

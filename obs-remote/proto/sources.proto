@@ -39,7 +39,7 @@ service Sources {
   rpc GetSourceActive(GetSourceActiveRequest)
       returns (google.protobuf.BoolValue);
   // Get the audio's active status of a specified source.
-  rpc GetAudioActive(GetAudioActiveRequest) returns (GetAudioActiveReply);
+  rpc GetAudioActive(GetAudioActiveRequest) returns (google.protobuf.BoolValue);
   // Rename an existing source.
   //
   // Note: If the new name already exists as a source, obs-websocket will return
@@ -282,11 +282,6 @@ message GetSourceActiveRequest {
 message GetAudioActiveRequest {
   // Source name.
   string source_name = 1;
-}
-
-message GetAudioActiveReply {
-  // Audio active status of the source.
-  bool audio_active = 1;
 }
 
 message SetNameRequest {

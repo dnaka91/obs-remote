@@ -175,7 +175,7 @@ impl General for Service {
                 ScaleType::Area => video_info_reply::ScaleType::Area,
                 ScaleType::Bicubic => video_info_reply::ScaleType::Bicubic,
                 ScaleType::Lanczos => video_info_reply::ScaleType::Lanczos,
-                ScaleType::Disable | ScaleType::Point => {
+                ScaleType::Disable | ScaleType::Point | ScaleType::Unknown(_) => {
                     return Err(Status::internal(format!(
                         "unsupported scale type `{:?}`",
                         video.scale_type

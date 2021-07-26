@@ -1,8 +1,8 @@
-use std::{ffi::c_void, ptr::NonNull};
+use std::{ffi::c_void, ops::Deref, ptr::NonNull};
 
 use bitflags::bitflags;
 
-use crate::{cstr_ptr, graphics::Vec2, source::Source, Ref};
+use crate::{cstr_ptr, graphics::Vec2, source::Source, video::ScaleType, Ref};
 
 pub struct Scene {
     raw: NonNull<libobs_sys::obs_scene_t>,
@@ -25,13 +25,13 @@ impl Scene {
         Self::from_raw(unsafe { libobs_sys::obs_scene_create(cstr_ptr!(name)) })
     }
 
-    pub fn from_source(source: &Source) -> Option<Ref<'_, Source, Self>> {
+    pub fn from_source(source: Source) -> Option<Self> {
         let raw = unsafe { libobs_sys::obs_scene_from_source(source.as_ptr()) };
         if raw.is_null() {
             None
         } else {
             unsafe { libobs_sys::obs_scene_addref(raw) };
-            Some(Ref::new(Self::from_raw(raw)))
+            Some(Self::from_raw(raw))
         }
     }
 
@@ -69,6 +69,55 @@ impl Scene {
             libobs_sys::obs_source_get_ref(raw)
         }))
     }
+
+    pub fn into_source(self) -> Source {
+        Source::from_raw(unsafe {
+            let raw = libobs_sys::obs_scene_get_source(self.raw.as_ptr());
+            libobs_sys::obs_source_get_ref(raw)
+        })
+    }
+
+    pub fn atomic_update<F, T>(&mut self, update: F) -> T
+    where
+        F: FnOnce(&mut Self) -> T,
+        T: Default,
+    {
+        struct Param<F, T> {
+            update: Option<F>,
+            result: Option<T>,
+        }
+
+        unsafe extern "C" fn callback<F, T>(param: *mut c_void, raw: *mut libobs_sys::obs_scene_t)
+        where
+            F: FnOnce(&mut Scene) -> T,
+        {
+            let param = &mut *param.cast::<Param<F, T>>();
+            if let Some(update) = param.update.take() {
+                param.result = Some(update(&mut Scene::from_raw(raw)));
+            }
+        }
+
+        let mut param = Param {
+            update: Some(update),
+            result: None,
+        };
+
+        unsafe {
+            libobs_sys::obs_scene_atomic_update(
+                self.raw.as_ptr(),
+                Some(callback::<F, T>),
+                (&mut param as *mut Param<_, _>).cast(),
+            )
+        };
+
+        param.result.unwrap_or_default()
+    }
+
+    pub fn add(&mut self, source: &Source) -> SceneItem {
+        let raw = unsafe { libobs_sys::obs_scene_add(self.raw.as_ptr(), source.as_ptr()) };
+        unsafe { libobs_sys::obs_sceneitem_addref(raw) };
+        SceneItem::from_raw(raw)
+    }
 }
 
 pub struct SceneItem {
@@ -100,6 +149,16 @@ impl SceneItem {
         (pos.x(), pos.y())
     }
 
+    pub fn alignment(&self) -> Alignment {
+        Alignment::from_bits_truncate(unsafe {
+            libobs_sys::obs_sceneitem_get_alignment(self.raw.as_ptr())
+        })
+    }
+
+    pub fn rot(&self) -> f32 {
+        unsafe { libobs_sys::obs_sceneitem_get_rot(self.raw.as_ptr()) }
+    }
+
     pub fn scale(&self) -> (f32, f32) {
         let mut scale = Vec2::default();
 
@@ -108,9 +167,37 @@ impl SceneItem {
         (scale.x(), scale.y())
     }
 
-    pub fn alignment(&self) -> Alignment {
+    pub fn scale_filter(&self) -> ScaleType {
+        ScaleType::from_native(unsafe {
+            libobs_sys::obs_sceneitem_get_scale_filter(self.raw.as_ptr())
+        })
+    }
+
+    pub fn crop(&self) -> (i32, i32, i32, i32) {
+        let mut crop = libobs_sys::obs_sceneitem_crop::default();
+
+        unsafe { libobs_sys::obs_sceneitem_get_crop(self.raw.as_ptr(), &mut crop as *mut _) };
+
+        (crop.left, crop.top, crop.right, crop.bottom)
+    }
+
+    pub fn bounds(&self) -> (f32, f32) {
+        let mut bounds = Vec2::default();
+
+        unsafe { libobs_sys::obs_sceneitem_get_bounds(self.raw.as_ptr(), bounds.as_ptr_mut()) };
+
+        (bounds.x(), bounds.y())
+    }
+
+    pub fn bounds_type(&self) -> BoundsType {
+        BoundsType::from_native(unsafe {
+            libobs_sys::obs_sceneitem_get_bounds_type(self.raw.as_ptr())
+        })
+    }
+
+    pub fn bounds_alignment(&self) -> Alignment {
         Alignment::from_bits_truncate(unsafe {
-            libobs_sys::obs_sceneitem_get_alignment(self.raw.as_ptr())
+            libobs_sys::obs_sceneitem_get_bounds_alignment(self.raw.as_ptr())
         })
     }
 
@@ -118,8 +205,16 @@ impl SceneItem {
         unsafe { libobs_sys::obs_sceneitem_visible(self.raw.as_ptr()) }
     }
 
+    pub fn set_visible(&self, visible: bool) {
+        unsafe { libobs_sys::obs_sceneitem_set_visible(self.raw.as_ptr(), visible) };
+    }
+
     pub fn locked(&self) -> bool {
         unsafe { libobs_sys::obs_sceneitem_locked(self.raw.as_ptr()) }
+    }
+
+    pub fn set_locked(&self, locked: bool) {
+        unsafe { libobs_sys::obs_sceneitem_set_locked(self.raw.as_ptr(), locked) };
     }
 
     pub fn is_group(&self) -> bool {
@@ -172,6 +267,80 @@ impl SceneItem {
 
         Some(Ref::new(param))
     }
+
+    pub fn remove(&self) {
+        unsafe { libobs_sys::obs_sceneitem_remove(self.raw.as_ptr()) };
+    }
+
+    pub fn update<F>(&mut self, f: F)
+    where
+        F: FnOnce(&mut EditableSceneItem<'_>),
+    {
+        unsafe { libobs_sys::obs_sceneitem_defer_update_begin(self.raw.as_ptr()) };
+        f(&mut EditableSceneItem(self));
+        unsafe { libobs_sys::obs_sceneitem_defer_update_end(self.raw.as_ptr()) };
+    }
+}
+
+pub struct EditableSceneItem<'a>(&'a mut SceneItem);
+
+impl<'a> EditableSceneItem<'a> {
+    pub fn set_pos(&mut self, pos: (f32, f32)) {
+        let pos = Vec2::new(pos.0, pos.1);
+        unsafe { libobs_sys::obs_sceneitem_set_pos(self.0.raw.as_ptr(), pos.as_ptr()) };
+    }
+
+    pub fn set_alignment(&mut self, alignment: Alignment) {
+        unsafe { libobs_sys::obs_sceneitem_set_alignment(self.0.raw.as_ptr(), alignment.bits()) };
+    }
+
+    pub fn set_rot(&mut self, rot: f32) {
+        unsafe { libobs_sys::obs_sceneitem_set_rot(self.0.raw.as_ptr(), rot) };
+    }
+
+    pub fn set_scale(&mut self, scale: (f32, f32)) {
+        let scale = Vec2::new(scale.0, scale.1);
+        unsafe { libobs_sys::obs_sceneitem_set_scale(self.0.raw.as_ptr(), scale.as_ptr()) };
+    }
+
+    pub fn set_scale_filter(&mut self, filter: ScaleType) {
+        unsafe {
+            libobs_sys::obs_sceneitem_set_scale_filter(self.0.raw.as_ptr(), filter.to_native())
+        };
+    }
+
+    pub fn set_crop(&mut self, crop: (i32, i32, i32, i32)) {
+        let crop = libobs_sys::obs_sceneitem_crop {
+            left: crop.0,
+            top: crop.1,
+            right: crop.2,
+            bottom: crop.3,
+        };
+        unsafe { libobs_sys::obs_sceneitem_set_crop(self.0.raw.as_ptr(), &crop as *const _) };
+    }
+
+    pub fn set_bounds(&mut self, bounds: (f32, f32)) {
+        let bounds = Vec2::new(bounds.0, bounds.1);
+        unsafe { libobs_sys::obs_sceneitem_set_bounds(self.0.raw.as_ptr(), bounds.as_ptr()) };
+    }
+
+    pub fn set_bounds_type(&mut self, ty: BoundsType) {
+        unsafe { libobs_sys::obs_sceneitem_set_bounds_type(self.0.raw.as_ptr(), ty.to_native()) };
+    }
+
+    pub fn set_bounds_alignment(&mut self, alignment: Alignment) {
+        unsafe {
+            libobs_sys::obs_sceneitem_set_bounds_alignment(self.0.raw.as_ptr(), alignment.bits())
+        };
+    }
+}
+
+impl<'a> Deref for EditableSceneItem<'a> {
+    type Target = SceneItem;
+
+    fn deref(&self) -> &Self::Target {
+        self.0
+    }
 }
 
 bitflags! {
@@ -181,5 +350,58 @@ bitflags! {
         const RIGHT = libobs_sys::OBS_ALIGN_RIGHT;
         const TOP = libobs_sys::OBS_ALIGN_TOP;
         const BOTTOM = libobs_sys::OBS_ALIGN_BOTTOM;
+    }
+}
+
+/// Used with scene items to indicate the type of bounds to use for scene items. Mostly determines
+/// how the image will be scaled within those bounds, or whether to use bounds at all.
+#[derive(Clone, Copy, Debug)]
+pub enum BoundsType {
+    /// No bounds.
+    None,
+    /// Stretch (ignores base scale).
+    Stretch,
+    /// Scales to inner rectangle.
+    ScaleInner,
+    /// Scales to outer rectangle.
+    ScaleOuter,
+    /// Scales to the width.
+    ScaleToWidth,
+    /// Scales to the height.
+    ScaleToHeight,
+    /// No scaling, maximum size only.
+    MaxOnly,
+    Unknown(u32),
+}
+
+impl BoundsType {
+    fn from_native(value: libobs_sys::obs_bounds_type::Type) -> Self {
+        use libobs_sys::obs_bounds_type::*;
+
+        match value {
+            OBS_BOUNDS_NONE => Self::None,
+            OBS_BOUNDS_STRETCH => Self::Stretch,
+            OBS_BOUNDS_SCALE_INNER => Self::ScaleInner,
+            OBS_BOUNDS_SCALE_OUTER => Self::ScaleOuter,
+            OBS_BOUNDS_SCALE_TO_WIDTH => Self::ScaleToWidth,
+            OBS_BOUNDS_SCALE_TO_HEIGHT => Self::ScaleToHeight,
+            OBS_BOUNDS_MAX_ONLY => Self::MaxOnly,
+            _ => Self::Unknown(value as u32),
+        }
+    }
+
+    fn to_native(self) -> libobs_sys::obs_bounds_type::Type {
+        use libobs_sys::obs_bounds_type::*;
+
+        match self {
+            Self::None => OBS_BOUNDS_NONE,
+            Self::Stretch => OBS_BOUNDS_STRETCH,
+            Self::ScaleInner => OBS_BOUNDS_SCALE_INNER,
+            Self::ScaleOuter => OBS_BOUNDS_SCALE_OUTER,
+            Self::ScaleToWidth => OBS_BOUNDS_SCALE_TO_WIDTH,
+            Self::ScaleToHeight => OBS_BOUNDS_SCALE_TO_HEIGHT,
+            Self::MaxOnly => OBS_BOUNDS_MAX_ONLY,
+            Self::Unknown(value) => value,
+        }
     }
 }

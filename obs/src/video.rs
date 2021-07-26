@@ -163,10 +163,11 @@ pub enum ScaleType {
     Bilinear,
     Lanczos,
     Area,
+    Unknown(u32),
 }
 
 impl ScaleType {
-    fn from_native(value: libobs_sys::obs_scale_type::Type) -> Self {
+    pub(crate) fn from_native(value: libobs_sys::obs_scale_type::Type) -> Self {
         use libobs_sys::obs_scale_type::*;
 
         match value {
@@ -176,7 +177,21 @@ impl ScaleType {
             OBS_SCALE_BILINEAR => Self::Bilinear,
             OBS_SCALE_LANCZOS => Self::Lanczos,
             OBS_SCALE_AREA => Self::Area,
-            _ => unreachable!(),
+            _ => Self::Unknown(value as u32),
+        }
+    }
+
+    pub(crate) fn to_native(self) -> libobs_sys::obs_scale_type::Type {
+        use libobs_sys::obs_scale_type::*;
+
+        match self {
+            Self::Disable => OBS_SCALE_DISABLE,
+            Self::Point => OBS_SCALE_POINT,
+            Self::Bicubic => OBS_SCALE_BICUBIC,
+            Self::Bilinear => OBS_SCALE_BILINEAR,
+            Self::Lanczos => OBS_SCALE_LANCZOS,
+            Self::Area => OBS_SCALE_AREA,
+            Self::Unknown(value) => value,
         }
     }
 }

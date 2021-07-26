@@ -62,11 +62,12 @@ impl StudioMode for Service {
 
         let source = preview_mode::current_scene()
             .ok_or_else(|| Status::internal("no current preview scene"))?;
-        let scene = Scene::from_source(&source)
+        let name = source.name();
+        let scene = Scene::from_source(source)
             .ok_or_else(|| Status::internal("current source is not a scene"))?;
 
         Ok(Response::new(GetPreviewSceneReply {
-            name: source.name(),
+            name,
             sources: scene.list_items().iter().map(get_data).collect(),
         }))
     }

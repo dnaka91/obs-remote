@@ -2,6 +2,7 @@
 
 - 👍 Done
 - 🚫 Not yet implemented
+- 🗑️ Removed
 
 ## Events
 
@@ -89,14 +90,20 @@
 
 | Method        | Status |
 | ------------- | ------ |
-| List          | 🚫      |
-| GetProperties | 🚫      |
-| SetProperties | 🚫      |
-| Reset         | 🚫      |
-| SetRender     | 🚫      |
-| Delete        | 🚫      |
-| Add           | 🚫      |
-| Duplicate     | 🚫      |
+| List          | 👍      |
+| GetProperties | 👍      |
+| SetProperties | 👍      |
+| Reset         | 👍      |
+| SetRender     | 🗑️      |
+| SetPosition   | 🗑️      |
+| SetTransform  | 🗑️      |
+| SetCrop       | 🗑️      |
+| Delete        | 👍      |
+| Add           | 👍      |
+| Duplicate     | 👍      |
+
+**Note:** Functionality of `SetRender`, `SetPosition`, `SetTransform` and `SetCrop` can be
+accomplished with `SetProperties` and are therefore dropped.
 
 ### Scenes
 

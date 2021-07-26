@@ -12,6 +12,7 @@ use crate::{
     util::{self, StringConversion},
 };
 
+#[derive(PartialEq, Eq)]
 pub struct Source {
     raw: NonNull<libobs_sys::obs_source_t>,
     release: bool,

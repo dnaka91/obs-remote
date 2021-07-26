@@ -103,7 +103,7 @@ message SceneItemTransform {
   Position position = 1;
   // The clockwise rotation of the scene item in degrees around the point of
   // alignment.
-  double rotation = 2;
+  float rotation = 2;
   // Scaling factor of the scene item.
   Scale scale = 3;
   // Pixel cropping of the scene item before scaling.
@@ -115,15 +115,15 @@ message SceneItemTransform {
   // Bounding box of the source item.
   Bounds bounds = 7;
   // Base width (without scaling) of the source.
-  uint64 source_width = 8;
+  uint32 source_width = 8;
   // Base source (without scaling) of the source.
-  uint64 source_height = 9;
+  uint32 source_height = 9;
   // Scene item width (base source width multiplied by the horizontal scaling
   // factor).
-  double width = 10;
+  float width = 10;
   // Scene item height (base source height multiplied by the vertical scaling
   // factor).
-  double height = 11;
+  float height = 11;
   // Name of the item's parent (if this item belongs to a group).
   string parent_group_name = 12;
   // List of children (if this item is a group).
@@ -132,9 +132,9 @@ message SceneItemTransform {
 
 message Position {
   // The x position of the source from the left.
-  double x = 1;
+  float x = 1;
   // The y position of the source from the top.
-  double y = 2;
+  float y = 2;
   // The point on the source that the item is manipulated from. The sum of
   // 1=Left or 2=Right, and 4=Top or 8=Bottom, or omit to center on that axis.
   common.Alignment alignment = 3;
@@ -142,9 +142,9 @@ message Position {
 
 message Scale {
   // The x-scale factor of the source.
-  double x = 1;
+  float x = 1;
   // The y-scale factor of the source.
-  double y = 2;
+  float y = 2;
   // The scale filter of the source.
   Filter filter = 3;
 
@@ -176,9 +176,9 @@ message Bounds {
   // Alignment of the bounding box.
   common.Alignment alignment = 2;
   // Width of the bounding box.
-  double x = 3;
+  float x = 3;
   // Height of the bounding box.
-  double y = 4;
+  float y = 4;
 
   // Different kinds of bounds that can be applied to different items on the
   // scene.
@@ -199,5 +199,6 @@ message Bounds {
     BOUNDS_TYPE_MAX_ONLY = 6;
     // No bounds.
     BOUNDS_TYPE_NONE = 7;
+    BOUNDS_TYPE_UNKNOWN = 255;
   }
 }

@@ -109,14 +109,14 @@ accomplished with `SetProperties` and are therefore dropped.
 
 | Method                   | Status |
 | ------------------------ | ------ |
-| SetCurrent               | 🚫      |
-| GetCurrent               | 🚫      |
-| List                     | 🚫      |
-| Create                   | 🚫      |
+| SetCurrent               | 👍      |
+| GetCurrent               | 👍      |
+| List                     | 👍      |
+| Create                   | 👍      |
 | Reorder                  | 🚫      |
-| SetTransitionOverride    | 🚫      |
-| RemoveTransitionOverride | 🚫      |
-| GetTransitionOverride    | 🚫      |
+| SetTransitionOverride    | 👍      |
+| RemoveTransitionOverride | 👍      |
+| GetTransitionOverride    | 👍      |
 
 ### Sources
 

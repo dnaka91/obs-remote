@@ -1,12 +1,12 @@
-use std::{convert::TryFrom, time::Duration};
-
 use obs::{
     data,
     frontend::{preview_mode, transitions},
+    Duration,
 };
 use tonic::{Request, Response, Status};
 
 use self::transitions_server::Transitions;
+use super::common::DurationExt;
 use crate::precondition;
 
 tonic::include_proto!("obs_remote.transitions");
@@ -35,8 +35,7 @@ impl Transitions for Service {
 
         Ok(Response::new(GetCurrentReply {
             name: current.name(),
-            duration: (!current.transition_fixed())
-                .then(|| Duration::from_millis(transitions::duration() as u64).into()),
+            duration: (!current.transition_fixed()).then(|| transitions::duration().into_proto()),
         }))
     }
 
@@ -68,10 +67,13 @@ impl Transitions for Service {
             .into_inner()
             .duration
             .ok_or_else(|| Status::failed_precondition("duration must be set"))?;
-        let duration = Duration::try_from(duration)
-            .map_err(|_| Status::failed_precondition("invalid duration (must be positive)"))?;
+        let duration = Duration::from_proto(duration);
+        precondition!(
+            duration >= Duration::zero(),
+            "invalid duration (must be positive)"
+        );
 
-        transitions::set_duration(duration.as_millis() as i32);
+        transitions::set_duration(duration);
         Ok(Response::new(()))
     }
 
@@ -81,7 +83,7 @@ impl Transitions for Service {
         request: Request<()>,
     ) -> Result<Response<GetDurationReply>, Status> {
         Ok(Response::new(GetDurationReply {
-            duration: Some(Duration::from_millis(transitions::duration() as u64).into()),
+            duration: Some(transitions::duration().into_proto()),
         }))
     }
 

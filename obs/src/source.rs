@@ -134,6 +134,11 @@ impl Source {
         Data::from_raw(raw)
     }
 
+    pub fn private_settings(&self) -> Data {
+        let raw = unsafe { libobs_sys::obs_source_get_private_settings(self.raw.as_ptr()) };
+        Data::from_raw(raw)
+    }
+
     pub fn sync_offset(&self) -> i64 {
         unsafe { libobs_sys::obs_source_get_sync_offset(self.raw.as_ptr()) }
     }

@@ -1,3 +1,5 @@
+use chrono::Duration;
+
 use crate::source::Source;
 
 pub fn current() -> Source {
@@ -9,12 +11,13 @@ pub fn set_current(source: &Source) {
     unsafe { libobs_sys::obs_frontend_set_current_transition(source.as_ptr()) };
 }
 
-pub fn duration() -> i32 {
-    unsafe { libobs_sys::obs_frontend_get_transition_duration() }
+pub fn duration() -> Duration {
+    Duration::milliseconds(unsafe { libobs_sys::obs_frontend_get_transition_duration() }.into())
 }
 
-pub fn set_duration(duration: i32) {
-    unsafe { libobs_sys::obs_frontend_set_transition_duration(duration) };
+pub fn set_duration(duration: Duration) {
+    // TODO: maybe fail on truncation
+    unsafe { libobs_sys::obs_frontend_set_transition_duration(duration.num_milliseconds() as i32) };
 }
 
 pub fn release_tbar() {

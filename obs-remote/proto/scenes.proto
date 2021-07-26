@@ -101,6 +101,6 @@ message GetTransitionOverrideReply {
   // Name of the current overriding transition. Empty string if no override is
   // set.
   string name = 1;
-  // Transition duration. `-1` if no override is set.
-  int64 duration = 2;
+  // Transition duration.
+  google.protobuf.Duration duration = 2;
 }

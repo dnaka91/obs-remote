@@ -1,8 +1,4 @@
-use obs::{
-    frontend::{preview_mode, transitions},
-    scene::{self, Scene},
-    source::Source,
-};
+use obs::{Duration, frontend::{preview_mode, transitions}, scene::{self, Scene}, source::Source};
 use tonic::{Request, Response, Status};
 
 use self::studio_mode_server::StudioMode;
@@ -114,7 +110,7 @@ impl StudioMode for Service {
             }
 
             if let Some(duration) = info.duration {
-                transitions::set_duration(duration as i32);
+                transitions::set_duration(Duration::milliseconds(duration.into()));
             }
         }
 

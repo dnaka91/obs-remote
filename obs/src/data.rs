@@ -70,12 +70,24 @@ impl Data {
             .map(|value| value.into_string())
     }
 
+    pub fn int(&self, name: &str) -> Option<i64> {
+        self.get(name, libobs_sys::obs_data_get_int)
+    }
+
     pub fn set_bool(&mut self, name: &str, value: bool) {
         self.set(name, value, libobs_sys::obs_data_set_bool)
     }
 
     pub fn set_string(&mut self, name: &str, value: &str) {
         self.set(name, cstr_ptr!(value), libobs_sys::obs_data_set_string)
+    }
+
+    pub fn set_int(&mut self, name: &str, value: i64) {
+        self.set(name, value, libobs_sys::obs_data_set_int)
+    }
+
+    pub fn erase(&mut self, name: &str) {
+        unsafe { libobs_sys::obs_data_erase(self.raw.as_ptr(), cstr_ptr!(name)) };
     }
 
     fn get<T>(

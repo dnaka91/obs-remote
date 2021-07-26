@@ -191,3 +191,23 @@ pub(crate) const fn ns_to_timestamp(ns: u64) -> Timecode {
         milliseconds: (ms % 1000) as u32,
     }
 }
+
+pub(crate) trait DurationExt {
+    fn from_proto(duration: prost_types::Duration) -> Self;
+    fn into_proto(self) -> prost_types::Duration;
+}
+
+impl DurationExt for obs::Duration {
+    fn from_proto(duration: prost_types::Duration) -> Self {
+        Self::seconds(duration.seconds) + Self::nanoseconds(duration.nanos.into())
+    }
+
+    fn into_proto(self) -> prost_types::Duration {
+        prost_types::Duration {
+            seconds: self.num_seconds(),
+            nanos: (self - Self::seconds(self.num_seconds()))
+                .num_nanoseconds()
+                .expect("nanoseconds should never overflow") as i32,
+        }
+    }
+}

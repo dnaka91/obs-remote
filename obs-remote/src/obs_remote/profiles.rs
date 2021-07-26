@@ -1,4 +1,7 @@
+use obs::frontend::profiles;
 use tonic::{Request, Response, Status};
+
+use crate::precondition;
 
 use self::profiles_server::Profiles;
 
@@ -12,18 +15,24 @@ impl Profiles for Service {
         &self,
         request: Request<SetCurrentRequest>,
     ) -> Result<Response<()>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+        let name = request.into_inner().name;
+        precondition!(!name.is_empty(), "name mustn't be empty");
+        precondition!(profiles::list().contains(&name), "`{}` doesn't exist", name);
+
+        profiles::set_current(&name);
+
+        Ok(Response::new(()))
     }
 
     async fn get_current(&self, request: Request<()>) -> Result<Response<GetCurrentReply>, Status> {
         Ok(Response::new(GetCurrentReply {
-            name: obs::frontend::profiles::current(),
+            name: profiles::current(),
         }))
     }
 
     async fn list(&self, request: Request<()>) -> Result<Response<ListReply>, Status> {
         Ok(Response::new(ListReply {
-            profiles: obs::frontend::profiles::list(),
+            profiles: profiles::list(),
         }))
     }
 }

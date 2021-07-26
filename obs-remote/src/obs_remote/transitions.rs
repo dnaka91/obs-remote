@@ -154,6 +154,20 @@ impl Transitions for Service {
         &self,
         request: Request<SetTBarPositionRequest>,
     ) -> Result<Response<()>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+        let SetTBarPositionRequest { position, release } = request.into_inner();
+        precondition!((0.0..=1.0).contains(&position), "position out of range");
+        precondition!(preview_mode::active(), "studio mode isn't active");
+        precondition!(
+            !transitions::current().transition_fixed(),
+            "current transitions doesn't support T-Bar control"
+        );
+
+        transitions::set_tbar_position((position * 1024.0) as i32);
+
+        if release.unwrap_or(true) {
+            transitions::release_tbar();
+        }
+
+        Ok(Response::new(()))
     }
 }

@@ -51,7 +51,7 @@
 
 | Method     | Status |
 | ---------- | ------ |
-| SetCurrent | 🚫      |
+| SetCurrent | 👍      |
 | GetCurrent | 👍      |
 | List       | 👍      |
 
@@ -65,8 +65,8 @@
 | Stop               | 👍      |
 | Pause              | 👍      |
 | Resume             | 👍      |
-| SetRecordingFolder | 🚫      |
-| GetRecordingFolder | 🚫      |
+| SetRecordingFolder | 👍      |
+| GetRecordingFolder | 👍      |
 
 ### Replay Buffer
 
@@ -170,7 +170,7 @@ accomplished with `SetProperties` and are therefore dropped.
 | SetSettings  | 👍      |
 | GetSettings  | 👍      |
 | SaveSettings | 👍      |
-| SendCaptions | 🚫      |
+| SendCaptions | 👍      |
 
 ### Studio Mode
 
@@ -197,7 +197,7 @@ accomplished with `SetProperties` and are therefore dropped.
 | GetSettings     | 👍      |
 | SetSettings     | 👍      |
 | ReleaseTBar     | 👍      |
-| SetTBarPosition | 🚫      |
+| SetTBarPosition | 👍      |
 
 ### Virtual Cam
 

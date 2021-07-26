@@ -1,4 +1,5 @@
-use obs::frontend::recording;
+use obs::frontend::{profiles, recording};
+use tokio::fs;
 use tonic::{Request, Response, Status};
 
 use self::recording_server::Recording;
@@ -65,14 +66,34 @@ impl Recording for Service {
         &self,
         request: Request<SetRecordingFolderRequest>,
     ) -> Result<Response<()>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+        let rec_folder = request.into_inner().rec_folder;
+        fs::create_dir_all(&rec_folder).await.map_err(|e| {
+            Status::invalid_argument(format!("failed creating recording folder: {:?}", e))
+        })?;
+
+        let config = profiles::config();
+        config.set_string("AdvOut", "RecFilePath", &rec_folder);
+        config.set_string("SimpleOutput", "FilePath", &rec_folder);
+        config
+            .save()
+            .map_err(|e| Status::unknown(format!("failed saving config: {:?}", e)))?;
+
+        Ok(Response::new(()))
     }
 
     async fn get_recording_folder(
         &self,
         request: Request<()>,
     ) -> Result<Response<GetRecordingFolderReply>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+        let config = profiles::config();
+        let rec_folder = if config.string("Output", "Mode").as_deref() == Some("Advanced") {
+            config.string("AdvOut", "RecFilePath")
+        } else {
+            config.string("SimpleOutput", "FilePath")
+        }
+        .unwrap_or_default();
+
+        Ok(Response::new(GetRecordingFolderReply { rec_folder }))
     }
 }
 

@@ -172,11 +172,19 @@ message ListTypesReply {
     string display_name = 2;
     // Type. Value is one of the following: "input", "filter", "transition" or
     // "other".
-    common.SourceType ty = 3;
+    SourceType ty = 3;
     // Default settings of this source type.
     string default_settings = 4;
     // Source type capabilities.
     Capabilities caps = 5;
+
+    enum SourceType {
+      SOURCE_TYPE_UNSPECIFIED = 0;
+      SOURCE_TYPE_INPUT = 1;
+      SOURCE_TYPE_FILTER = 2;
+      SOURCE_TYPE_TRANSITION = 3;
+      SOURCE_TYPE_OTHER = 4;
+    }
 
     message Capabilities {
       // True if source of this type provide frames asynchronously.
@@ -194,6 +202,8 @@ message ListTypesReply {
       // True if sources of this type may cause a feedback loop if it's audio is
       // monitored and shouldn't be.
       bool do_not_self_monitor = 7;
+      // True if sources of this type are deprecated and should not be used.
+      bool is_deprecated = 8;
     }
   }
 }
@@ -210,7 +220,7 @@ message GetVolumeReply {
   string name = 1;
   // Volume of the source. Between `0.0` and `20.0` if using mul, under `26.0`
   // if using dB.
-  double volume = 2;
+  float volume = 2;
   // Indicates whether the source is muted.
   bool muted = 3;
 }
@@ -222,7 +232,7 @@ message SetVolumeRequest {
   // for dB. OBS will interpret dB values under -100.0 as Inf. Note: The OBS
   // volume sliders only reach a maximum of 1.0mul/0.0dB, however OBS actually
   // supports larger values.
-  double volume = 2;
+  float volume = 2;
   // Interpret `volume` data as decibels instead of amplitude/mul.
   bool use_decibel = 3;
 }
@@ -294,7 +304,7 @@ message SetNameRequest {
 message SetSyncOffsetRequest {
   // Source name.
   string source = 1;
-  // The desired audio sync offset (in nanoseconds).
+  // The desired audio sync offset.
   google.protobuf.Duration offset = 2;
 }
 
@@ -306,7 +316,7 @@ message GetSyncOffsetRequest {
 message GetSyncOffsetReply {
   // Source name.
   string name = 1;
-  // The audio sync offset (in nanoseconds).
+  // The audio sync offset.
   google.protobuf.Duration offset = 2;
 }
 

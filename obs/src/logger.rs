@@ -59,7 +59,7 @@ impl Log for ObsLogger {
             Level::Info | Level::Debug | Level::Trace => libobs_sys::LOG_INFO,
         };
 
-        for chunk in to_chunks(message.replace("%", "%%")) {
+        for chunk in to_chunks(&message.replace("%", "%%")) {
             if let Ok(chunk) = CString::new(chunk) {
                 unsafe { libobs_sys::blog(level as c_int, chunk.as_ptr()) }
             }
@@ -69,8 +69,8 @@ impl Log for ObsLogger {
     fn flush(&self) {}
 }
 
-fn to_chunks(value: String) -> impl Iterator<Item = String> {
-    std::iter::once(value)
+fn to_chunks(value: &str) -> impl Iterator<Item = &str> {
+    StringChunker { value, size: 4095 }
 }
 
 struct StringChunker<'a> {
@@ -89,6 +89,7 @@ impl<'a> Iterator for StringChunker<'a> {
             .last();
 
         if let Some((index, _)) = last {
+            let index = index + 1;
             let chunk = &self.value[..index];
             self.value = &self.value[index..];
 
@@ -111,5 +112,8 @@ mod tests {
         };
 
         assert_eq!(Some("hello"), chunker.next());
+        assert_eq!(Some(" worl"), chunker.next());
+        assert_eq!(Some("d!"), chunker.next());
+        assert_eq!(None, chunker.next());
     }
 }

@@ -51,6 +51,11 @@ impl Source {
         (!raw.is_null()).then(|| Self::from_raw(raw))
     }
 
+    pub fn by_output_channel(channel: u32) -> Option<Source> {
+        let raw = unsafe { libobs_sys::obs_get_output_source(channel) };
+        (!raw.is_null()).then(|| Self::from_raw(raw))
+    }
+
     pub fn audio_mixers(&self) -> [bool; 6] {
         let mixers = unsafe { libobs_sys::obs_source_get_audio_mixers(self.raw.as_ptr()) };
         [
@@ -63,6 +68,16 @@ impl Source {
         ]
     }
 
+    pub fn set_audio_mixers(&mut self, mixers: [bool; 6]) {
+        let mixers = if mixers[0] { 1 } else { 0 }
+            | if mixers[1] { 1 } else { 0 } << 1
+            | if mixers[2] { 1 } else { 0 } << 2
+            | if mixers[3] { 1 } else { 0 } << 3
+            | if mixers[4] { 1 } else { 0 } << 4
+            | if mixers[5] { 1 } else { 0 } << 5;
+        unsafe { libobs_sys::obs_source_set_audio_mixers(self.raw.as_ptr(), mixers) };
+    }
+
     pub fn balance_value(&self) -> f32 {
         unsafe { libobs_sys::obs_source_get_balance_value(self.raw.as_ptr()) }
     }
@@ -73,10 +88,6 @@ impl Source {
 
     pub fn base_width(&self) -> u32 {
         unsafe { libobs_sys::obs_source_get_base_width(self.raw.as_ptr()) }
-    }
-
-    pub fn display_name(name: &str) -> String {
-        unsafe { libobs_sys::obs_source_get_display_name(cstr_ptr!(name)) }.into_string()
     }
 
     pub fn filter_by_name(&self, name: &str) -> Option<Self> {
@@ -139,8 +150,21 @@ impl Source {
         Data::from_raw(raw)
     }
 
-    pub fn sync_offset(&self) -> i64 {
-        unsafe { libobs_sys::obs_source_get_sync_offset(self.raw.as_ptr()) }
+    pub fn sync_offset(&self) -> Duration {
+        Duration::nanoseconds(unsafe { libobs_sys::obs_source_get_sync_offset(self.raw.as_ptr()) })
+    }
+
+    pub fn set_sync_offset(&mut self, offset: Duration) {
+        // TODO: This conversions will fail anyways.
+        unsafe {
+            libobs_sys::obs_source_set_sync_offset(
+                self.raw.as_ptr(),
+                offset
+                    .num_nanoseconds()
+                    .or_else(|| offset.num_microseconds().map(|us| us * 1_000))
+                    .unwrap_or_else(|| offset.num_milliseconds() * 1_000_000),
+            )
+        };
     }
 
     pub fn ty(&self) -> SourceType {
@@ -203,6 +227,10 @@ impl Source {
 
     pub fn active(&self) -> bool {
         unsafe { libobs_sys::obs_source_active(self.raw.as_ptr()) }
+    }
+
+    pub fn audio_active(&self) -> bool {
+        unsafe { libobs_sys::obs_source_audio_active(self.raw.as_ptr()) }
     }
 
     pub fn showing(&self) -> bool {
@@ -479,6 +507,10 @@ pub fn list() -> Vec<Source> {
         libobs_sys::obs_source_get_ref,
         Source::from_raw,
     )
+}
+
+pub fn display_name(id: &str) -> String {
+    unsafe { libobs_sys::obs_source_get_display_name(cstr_ptr!(id)) }.into_string()
 }
 
 pub fn output_flags(id: &str) -> OutputFlags {

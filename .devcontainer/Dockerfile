@@ -3,6 +3,7 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-20.04
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && apt-get -y install \
     build-essential \
     clang \
+    clang-format \
     fish \
     libssl-dev \
     libx11-dev \

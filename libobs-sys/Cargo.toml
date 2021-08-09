@@ -9,7 +9,7 @@ license = "AGPL-3.0-only"
 [dependencies]
 
 [build-dependencies]
-bindgen = { version = "0.58.1", default-features = false, features = ["runtime", "which-rustfmt"] }
+bindgen = { version = "0.59.1", default-features = false, features = ["runtime", "which-rustfmt"] }
 
 [target.'cfg(all(unix, not(target_os = "macos")))'.build-dependencies]
 pkg-config = "0.3.19"

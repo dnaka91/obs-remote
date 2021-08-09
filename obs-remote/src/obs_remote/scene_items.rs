@@ -1,10 +1,13 @@
-use obs::{frontend, graphics, scene::{Scene, SceneItem}, source::Source};
+use obs::{
+    frontend, graphics,
+    scene::{Scene, SceneItem},
+    source::Source,
+};
 use tonic::{Request, Response, Status};
-
-use crate::precondition;
 
 use self::scene_items_server::SceneItems;
 use super::common::SceneItemTransform;
+use crate::precondition;
 
 tonic::include_proto!("obs_remote.scene_items");
 
@@ -48,7 +51,7 @@ impl SceneItems for Service {
         Ok(Response::new(GetPropertiesReply {
             name: item.source().name(),
             id: item.id(),
-            properties: Some(scene_item_data(&item)),
+            properties: Some(scene_item_data(item)),
         }))
     }
 
@@ -149,7 +152,7 @@ impl SceneItems for Service {
             Status::failed_precondition(format!("`{}` doesn't exist", source_name))
         })?;
 
-        precondition!(&*scene.source() != &source, "can't add scene to itself");
+        precondition!(*scene.source() != source, "can't add scene to itself");
 
         let id = graphics::scoped(|| {
             scene.atomic_update(|scene| {
@@ -196,7 +199,7 @@ impl SceneItems for Service {
 fn find_scene(scene_name: &str) -> Result<Scene, Status> {
     precondition!(!scene_name.is_empty(), "scene name mustn't be empty");
 
-    let source = Source::by_name(&scene_name)
+    let source = Source::by_name(scene_name)
         .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", scene_name)))?;
 
     Scene::from_source(source)
@@ -207,7 +210,7 @@ fn scene_or_current(scene_name: &str) -> Result<Scene, Status> {
     let source = if scene_name.is_empty() {
         frontend::scenes::current()
     } else {
-        Source::by_name(&scene_name)
+        Source::by_name(scene_name)
             .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", scene_name)))?
     };
 

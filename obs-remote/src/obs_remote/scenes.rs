@@ -1,7 +1,9 @@
-use obs::scene::SceneItem;
-use obs::source::{Source, SourceType};
-use obs::Duration;
-use obs::{frontend, scene::Scene};
+use obs::{
+    frontend,
+    scene::{Scene, SceneItem},
+    source::{Source, SourceType},
+    Duration,
+};
 use tonic::{Request, Response, Status};
 
 use self::scenes_server::Scenes;
@@ -101,8 +103,7 @@ impl Scenes for Service {
         data.set_int(
             "transition_duration",
             transition_duration
-                .map(|duration| Duration::from_proto(duration))
-                .unwrap_or_else(|| frontend::transitions::duration())
+                .map_or_else(frontend::transitions::duration, Duration::from_proto)
                 .num_milliseconds(),
         );
 

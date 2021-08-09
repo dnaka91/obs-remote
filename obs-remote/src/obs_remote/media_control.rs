@@ -2,10 +2,10 @@ use obs::{
     source::{MediaState, Source},
     Duration,
 };
-use prost_types::Duration as ProstDuration;
 use tonic::{Request, Response, Status};
 
 use self::media_control_server::MediaControl;
+use super::common::DurationExt;
 use crate::precondition;
 
 tonic::include_proto!("obs_remote.media_control");
@@ -55,12 +55,7 @@ impl MediaControl for Service {
         let duration = source_from_identifier(request)?.media_duration();
 
         Ok(Response::new(DurationReply {
-            duration: Some(ProstDuration {
-                seconds: duration.num_seconds(),
-                nanos: (duration - Duration::seconds(duration.num_seconds()))
-                    .num_nanoseconds()
-                    .unwrap() as i32,
-            }),
+            duration: Some(duration.into_proto()),
         }))
     }
 
@@ -71,12 +66,7 @@ impl MediaControl for Service {
         let time = source_from_identifier(request)?.media_time();
 
         Ok(Response::new(GetTimeReply {
-            timestamp: Some(ProstDuration {
-                seconds: time.num_seconds(),
-                nanos: (time - Duration::seconds(time.num_seconds()))
-                    .num_nanoseconds()
-                    .unwrap() as i32,
-            }),
+            timestamp: Some(time.into_proto()),
         }))
     }
 

@@ -69,8 +69,7 @@ impl Sources for Service {
                     display_name: source::display_name(&ty),
                     ty: Default::default(),
                     default_settings: source::defaults(&ty)
-                        .map(|data| data.to_json())
-                        .unwrap_or_else(|| "{}".to_owned()),
+                        .map_or_else(|| "{}".to_owned(), |data| data.to_json()),
                     caps: {
                         let flags = source::output_flags(&ty);
                         Some(Capabilities {

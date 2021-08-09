@@ -1,6 +1,11 @@
 #![deny(rust_2018_idioms, clippy::all, clippy::pedantic)]
-#![warn(clippy::nursery)]
-#![allow(unused_variables)]
+#![allow(
+    unused_variables,
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_precision_loss,
+    clippy::cast_sign_loss
+)]
 #![recursion_limit = "256"]
 
 use std::thread::JoinHandle;
@@ -74,6 +79,7 @@ impl Plugin for ObsRemotePlugin {
 }
 
 async fn run_server(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
+    #[allow(clippy::wildcard_imports)]
     use crate::obs_remote::*;
 
     let addr = if ipv6 {
@@ -124,6 +130,7 @@ async fn run_server(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
 }
 
 async fn run_server_v5(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
+    #[allow(clippy::wildcard_imports)]
     use crate::obs_remote::v5::*;
 
     let addr = if ipv6 {

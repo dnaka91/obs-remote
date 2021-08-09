@@ -202,6 +202,7 @@ impl DurationExt for obs::Duration {
         Self::seconds(duration.seconds) + Self::nanoseconds(duration.nanos.into())
     }
 
+    #[allow(clippy::cast_possible_truncation)]
     fn into_proto(self) -> prost_types::Duration {
         prost_types::Duration {
             seconds: self.num_seconds(),

@@ -1,4 +1,9 @@
-use obs::{Duration, frontend::{preview_mode, transitions}, scene::{self, Scene}, source::Source};
+use obs::{
+    frontend::{preview_mode, transitions},
+    scene::{self, Scene},
+    source::Source,
+    Duration,
+};
 use tonic::{Request, Response, Status};
 
 use self::studio_mode_server::StudioMode;

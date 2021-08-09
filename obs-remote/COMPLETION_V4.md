@@ -20,8 +20,8 @@
 | GetStats                | 👍      |
 | GetVideoInfo            | 👍      |
 | OpenProjector           | 👍      |
-| TriggerHotkeyByName     | 🚫      |
-| TriggerHotkeyBySequence | 🚫      |
+| TriggerHotkeyByName     | 👍      |
+| TriggerHotkeyBySequence | 👍      |
 
 ### Media Control
 

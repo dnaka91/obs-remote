@@ -13,6 +13,10 @@ impl Encoder {
         }
     }
 
+    pub(crate) fn as_ptr(&self) -> *mut libobs_sys::obs_encoder_t {
+        self.raw.as_ptr()
+    }
+
     pub fn codec(&self) -> String {
         unsafe { libobs_sys::obs_encoder_get_codec(self.raw.as_ptr()) }.into_string()
     }

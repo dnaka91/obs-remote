@@ -31,6 +31,10 @@ impl Output {
         }
     }
 
+    pub(crate) fn as_ptr(&self) -> *mut libobs_sys::obs_output_t {
+        self.raw.as_ptr()
+    }
+
     /// Get an output by its name.
     pub fn by_name(name: &str) -> Option<Self> {
         let raw = unsafe { libobs_sys::obs_get_output_by_name(cstr_ptr!(name)) };

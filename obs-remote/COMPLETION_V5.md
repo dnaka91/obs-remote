@@ -146,9 +146,9 @@
 
 | Method            | Status |
 | ----------------- | ------ |
-| List              | 🚫      |
-| TriggerByName     | 🚫      |
-| TriggerBySequence | 🚫      |
+| List              | 👍      |
+| TriggerByName     | 👍      |
+| TriggerBySequence | 👍      |
 
 ### Inputs
 

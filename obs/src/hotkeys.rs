@@ -99,6 +99,7 @@ impl HotkeyBinding {
     }
 }
 
+#[derive(Debug)]
 pub enum HotkeyRegisterer {
     Frontend,
     Source,

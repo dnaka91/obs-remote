@@ -81,31 +81,10 @@ impl Plugin for MainPlugin {
             info!("-----------------");
             info!("Service types: {:?}", obs::service::list_service_types());
 
-            info!("-----------------");
-            info!("Services");
+            list_services();
 
-            for service in obs::service::list_services() {
-                info!("-----------------");
-                info!("  Name: {}", service.name());
-                info!("  ID: {}", service.id());
-                info!(
-                    "  Display name: {}",
-                    obs::service::Service::display_name(&service.id()).unwrap()
-                );
-                let (video, audio) = service.max_bitrate();
-                info!("  Max Bitrate: video {} kbps / audio {} kbps", video, audio);
-                info!("  Max FPS: {}", service.max_fps());
-                info!("  URL: {}", service.url());
-            }
-
-            info!("-----------------");
-            info!("Outputs");
-
-            for output in obs::output::list_outputs() {
-                info!("-----------------");
-                info!("  Name: {}", output.name());
-                info!("  Flags: {:?}", output.flags());
-            }
+            list_outputs();
+            list_hotkeys();
         });
 
         true
@@ -161,5 +140,48 @@ fn list_encoders() {
             }
             _ => {}
         }
+    }
+}
+
+fn list_services() {
+    info!("-----------------");
+    info!("Services");
+
+    for service in obs::service::list_services() {
+        info!("-----------------");
+        info!("  Name: {}", service.name());
+        info!("  ID: {}", service.id());
+        info!(
+            "  Display name: {}",
+            obs::service::Service::display_name(&service.id()).unwrap()
+        );
+        let (video, audio) = service.max_bitrate();
+        info!("  Max Bitrate: video {} kbps / audio {} kbps", video, audio);
+        info!("  Max FPS: {}", service.max_fps());
+        info!("  URL: {}", service.url());
+    }
+}
+
+fn list_outputs() {
+    info!("-----------------");
+    info!("Outputs");
+
+    for output in obs::output::list_outputs() {
+        info!("-----------------");
+        info!("  Name: {}", output.name());
+        info!("  Flags: {:?}", output.flags());
+    }
+}
+
+fn list_hotkeys() {
+    info!("-----------------");
+    info!("Hotkeys");
+
+    for hotkey in obs::hotkeys::list() {
+        info!("-----------------");
+        info!("  ID: {}", hotkey.id());
+        info!("  Name: {}", hotkey.name());
+        info!("  Description: {}", hotkey.description());
+        info!("  Registerer: {:?}", hotkey.registerer_type());
     }
 }

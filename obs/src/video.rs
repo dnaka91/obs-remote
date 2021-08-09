@@ -191,7 +191,7 @@ impl ScaleType {
             Self::Bilinear => OBS_SCALE_BILINEAR,
             Self::Lanczos => OBS_SCALE_LANCZOS,
             Self::Area => OBS_SCALE_AREA,
-            Self::Unknown(value) => value,
+            Self::Unknown(value) => value as _,
         }
     }
 }

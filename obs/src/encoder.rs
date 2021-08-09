@@ -79,7 +79,7 @@ impl EncoderType {
         match ty {
             OBS_ENCODER_AUDIO => Self::Audio,
             OBS_ENCODER_VIDEO => Self::Video,
-            _ => Self::Unknown(ty),
+            _ => Self::Unknown(ty as _),
         }
     }
 }

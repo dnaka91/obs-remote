@@ -401,7 +401,7 @@ impl BoundsType {
             Self::ScaleToWidth => OBS_BOUNDS_SCALE_TO_WIDTH,
             Self::ScaleToHeight => OBS_BOUNDS_SCALE_TO_HEIGHT,
             Self::MaxOnly => OBS_BOUNDS_MAX_ONLY,
-            Self::Unknown(value) => value,
+            Self::Unknown(value) => value as _,
         }
     }
 }

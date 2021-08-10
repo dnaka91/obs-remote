@@ -135,11 +135,11 @@
 
 | Method               | Status |
 | -------------------- | ------ |
-| Version              | 🚫      |
+| Version              | 👍      |
 | BroadcastEvent       | 🚫      |
-| SystemStats          | 🚫      |
-| IsStudioModeEnabled  | 🚫      |
-| SetStudioModeEnabled | 🚫      |
+| SystemStats          | ❓      |
+| IsStudioModeEnabled  | 👍      |
+| SetStudioModeEnabled | 👍      |
 | Sleep                | 🚫      |
 
 ### Hotkeys

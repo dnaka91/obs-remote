@@ -27,7 +27,6 @@ message VersionReply {
   SemVer obs_version = 1;
   SemVer obs_remote_version = 2;
   uint32 rpc_version = 3;
-  repeated string supported_image_formats = 4;
 
   message SemVer {
     uint32 major = 1;

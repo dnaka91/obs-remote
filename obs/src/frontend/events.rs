@@ -1,45 +1,41 @@
 use std::{ffi::c_void, ptr::NonNull};
 
-pub fn add_callback<T>(handler: T) -> Handle<T>
-where
-    T: Handler,
-{
-    let raw = Box::into_raw(Box::new(handler));
-    unsafe { libobs_sys::obs_frontend_add_event_callback(Some(event_callback::<T>), raw.cast()) };
+pub fn add_callback<C: FnMut(Event)>(handler: C) -> Handle<C> {
+    let data = unsafe { NonNull::new_unchecked(Box::into_raw(Box::new(handler))) };
 
-    Handle(unsafe { NonNull::new_unchecked(raw) })
+    unsafe {
+        libobs_sys::obs_frontend_add_event_callback(Some(event_callback::<C>), data.as_ptr() as _)
+    };
+
+    Handle { data }
 }
 
-pub trait Handler {
-    fn handle(&mut self, event: Event);
+pub struct Handle<C: FnMut(Event)> {
+    data: NonNull<C>,
 }
 
-pub struct Handle<T: Handler>(NonNull<T>);
-
-impl<T: Handler> Drop for Handle<T> {
+impl<C: FnMut(Event)> Drop for Handle<C> {
     fn drop(&mut self) {
         unsafe {
             libobs_sys::obs_frontend_remove_event_callback(
-                Some(event_callback::<T>),
-                self.0.as_ptr().cast(),
+                Some(event_callback::<C>),
+                self.data.as_ptr() as _,
             );
-            Box::from_raw(self.0.as_ptr())
+            Box::from_raw(self.data.as_ptr());
         };
     }
 }
 
-unsafe impl<T: Handler> Send for Handle<T> {}
+unsafe impl<C: FnMut(Event)> Send for Handle<C> {}
 
-unsafe impl<T: Handler> Sync for Handle<T> {}
+unsafe impl<C: FnMut(Event)> Sync for Handle<C> {}
 
-unsafe extern "C" fn event_callback<T>(
+unsafe extern "C" fn event_callback<C: FnMut(Event)>(
     event: libobs_sys::obs_frontend_event::Type,
     private_data: *mut c_void,
-) where
-    T: Handler,
-{
-    let handler = &mut *private_data.cast::<T>();
-    handler.handle(Event::from_native(event));
+) {
+    let handler = &mut *private_data.cast::<C>();
+    (handler)(Event::from_native(event));
 }
 
 #[derive(Clone, Copy, Debug)]

@@ -27,60 +27,57 @@ impl SignalHandler {
         (!raw.is_null()).then(|| Self::from_raw(raw))
     }
 
-    pub fn connect<C: Callback>(&self, signal: &str, callback: C) -> Handle<C> {
+    pub fn connect<C: FnMut(&Calldata)>(&self, signal: &str, handler: C) -> Handle<C> {
         let signal = cstr!(signal);
-        let callback = Box::into_raw(Box::new(callback));
+        let data = unsafe { NonNull::new_unchecked(Box::into_raw(Box::new(handler))) };
+
         unsafe {
             libobs_sys::signal_handler_connect(
                 self.raw.as_ptr(),
                 signal.as_ptr(),
                 Some(signal_callback::<C>),
-                callback.cast(),
+                data.as_ptr() as _,
             )
         };
 
         Handle {
             handler: self.raw,
             signal,
-            callback: unsafe { NonNull::new_unchecked(callback) },
+            data,
         }
     }
 }
 
-pub trait Callback {
-    fn call(&mut self, data: &Calldata);
-}
-
-pub struct Handle<C: Callback> {
+pub struct Handle<C: FnMut(&Calldata)> {
     handler: NonNull<libobs_sys::signal_handler_t>,
     signal: CString,
-    callback: NonNull<C>,
+    data: NonNull<C>,
 }
 
-impl<C: Callback> Drop for Handle<C> {
+impl<C: FnMut(&Calldata)> Drop for Handle<C> {
     fn drop(&mut self) {
         unsafe {
             libobs_sys::signal_handler_disconnect(
                 self.handler.as_ptr(),
                 self.signal.as_ptr(),
                 Some(signal_callback::<C>),
-                self.callback.as_ptr().cast(),
+                self.data.as_ptr() as _,
             );
-            Box::from_raw(self.callback.as_ptr());
+            Box::from_raw(self.data.as_ptr());
         }
     }
 }
 
-unsafe impl<C: Callback> Send for Handle<C> {}
+unsafe impl<C: FnMut(&Calldata)> Send for Handle<C> {}
 
-unsafe impl<C: Callback> Sync for Handle<C> {}
+unsafe impl<C: FnMut(&Calldata)> Sync for Handle<C> {}
 
-unsafe extern "C" fn signal_callback<C: Callback>(
+unsafe extern "C" fn signal_callback<C: FnMut(&Calldata)>(
     param: *mut c_void,
     data: *mut libobs_sys::calldata_t,
 ) {
     let callback = &mut *param.cast::<C>();
-    callback.call(&Calldata { raw: data });
+    (callback)(&Calldata { raw: data });
 }
 
 pub struct Calldata {

@@ -1,3 +1,4 @@
+use log::info;
 use obs::frontend;
 use tonic::{Request, Response, Status};
 
@@ -11,6 +12,8 @@ pub struct GeneralService;
 impl general_server::General for GeneralService {
     async fn version(&self, request: Request<()>) -> Result<Response<VersionReply>, Status> {
         use self::version_reply::SemVer;
+
+        info!("General.Version request from {:?}", request.remote_addr());
 
         Ok(Response::new(VersionReply {
             obs_version: Some(SemVer {

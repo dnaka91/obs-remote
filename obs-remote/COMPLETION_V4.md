@@ -6,6 +6,134 @@
 
 ## Events
 
+### General events
+
+| Method                 | Status |
+| ---------------------- | ------ |
+| Heartbeat              | 🚫      |
+| BroadcastCustomMessage | 🚫      |
+
+### Media events
+
+| Method         | Status |
+| -------------- | ------ |
+| MediaPlaying   | 🚫      |
+| MediaPaused    | 🚫      |
+| MediaRestarted | 🚫      |
+| MediaStopped   | 🚫      |
+| MediaNext      | 🚫      |
+| MediaPrevious  | 🚫      |
+| MediaStarted   | 🚫      |
+| MediaEnded     | 🚫      |
+
+### Other events
+
+| Method  | Status |
+| ------- | ------ |
+| Exiting | 👍      |
+
+### Profiles events
+
+| Method             | Status |
+| ------------------ | ------ |
+| ProfileChanged     | 👍      |
+| ProfileListChanged | 👍      |
+
+### Recording events
+
+| Method            | Status |
+| ----------------- | ------ |
+| RecordingStarting | 👍      |
+| RecordingStarted  | 👍      |
+| RecordingStopping | 👍      |
+| RecordingStopped  | 👍      |
+| RecordingPaused   | 👍      |
+| RecordingResumed  | 👍      |
+
+### Replay Buffer events
+
+| Method         | Status |
+| -------------- | ------ |
+| ReplayStarting | 👍      |
+| ReplayStarted  | 👍      |
+| ReplayStopping | 👍      |
+| ReplayStopped  | 👍      |
+
+### Scene Items events
+
+| Method                     | Status |
+| -------------------------- | ------ |
+| SourceOrderChanged         | 🚫      |
+| SceneItemAdded             | 🚫      |
+| SceneItemRemoved           | 🚫      |
+| SceneItemVisibilityChanged | 🚫      |
+| SceneItemLockChanged       | 🚫      |
+| SceneItemTransformChanged  | 🚫      |
+| SceneItemSelected          | 🚫      |
+| SceneItemDeselected        | 🚫      |
+
+### Scenes events
+
+| Method                     | Status |
+| -------------------------- | ------ |
+| SwitchScenes               | 🚫      |
+| ScenesChanged              | 🚫      |
+| SceneCollectionChanged     | 👍      |
+| SceleCollectionListChanged | 👍      |
+
+### Sources events
+
+| Method                        | Status |
+| ----------------------------- | ------ |
+| SourceCreated                 | 🚫      |
+| SourceDestroyed               | 🚫      |
+| SourceVolumeChanged           | 🚫      |
+| SourceMuteStateChanged        | 🚫      |
+| SourceAudioDeactivated        | 🚫      |
+| SourceAudioActivated          | 🚫      |
+| SourceAudioSyncOffsetChanged  | 🚫      |
+| SourceAudioMixersChanged      | 🚫      |
+| SourceRenamed                 | 🚫      |
+| SourceFilterAdded             | 🚫      |
+| SourceFilterRemove            | 🚫      |
+| SourceFilterVisibilityChanged | 🚫      |
+| SourceFiltersReordered        | 🚫      |
+
+### Streaming events
+
+| Method         | Status |
+| -------------- | ------ |
+| StreamStarting | 👍      |
+| StreamStarted  | 👍      |
+| StreamStopping | 👍      |
+| StreamStopped  | 👍      |
+| StreamStatus   | 🚫      |
+
+### Studio Mode events
+
+| Method              | Status |
+| ------------------- | ------ |
+| PreviewSceneChanged | 🚫      |
+| StudioModeSwitched  | 👍      |
+
+### Transitions events
+
+| Method                    | Status |
+| ------------------------- | ------ |
+| SwitchTransition          | 👍      |
+| TransitionListChanged     | 👍      |
+| TransitionDurationChanged | 🚫      |
+| TransitionBegin           | 🚫      |
+| TransitionEnd             | 🚫      |
+| TransitionVideoEnd        | 🚫      |
+
+### Virtual Cam events
+
+| Method            | Status |
+| ----------------- | ------ |
+| VirtualCamStarted | 👍      |
+| VirtualCamStopped | 👍      |
+
 ## Requests
 
 ### General

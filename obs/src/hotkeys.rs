@@ -119,26 +119,26 @@ impl HotkeyRegisterer {
             OBS_HOTKEY_REGISTERER_OUTPUT => Self::Output,
             OBS_HOTKEY_REGISTERER_ENCODER => Self::Encoder,
             OBS_HOTKEY_REGISTERER_SERVICE => Self::Service,
-            v => Self::Unknown(v),
+            v => Self::Unknown(v as u32),
         }
     }
 }
 
 bitflags! {
     pub struct InteractionFlags: u32 {
-        const NONE = libobs_sys::obs_interaction_flags::INTERACT_NONE;
-        const CAPS_KEY = libobs_sys::obs_interaction_flags::INTERACT_CAPS_KEY;
-        const SHIFT_KEY = libobs_sys::obs_interaction_flags::INTERACT_SHIFT_KEY;
-        const CONTROL_KEY = libobs_sys::obs_interaction_flags::INTERACT_CONTROL_KEY;
-        const ALT_KEY = libobs_sys::obs_interaction_flags::INTERACT_ALT_KEY;
-        const MOUSE_LEFT = libobs_sys::obs_interaction_flags::INTERACT_MOUSE_LEFT;
-        const MOUSE_MIDDLE = libobs_sys::obs_interaction_flags::INTERACT_MOUSE_MIDDLE;
-        const MOUSE_RIGHT = libobs_sys::obs_interaction_flags::INTERACT_MOUSE_RIGHT;
-        const COMMAND_KEY = libobs_sys::obs_interaction_flags::INTERACT_COMMAND_KEY;
-        const NUMLOCK_KEY = libobs_sys::obs_interaction_flags::INTERACT_NUMLOCK_KEY;
-        const IS_KEY_PAD = libobs_sys::obs_interaction_flags::INTERACT_IS_KEY_PAD;
-        const IS_LEFT = libobs_sys::obs_interaction_flags::INTERACT_IS_LEFT;
-        const IS_RIGHT = libobs_sys::obs_interaction_flags::INTERACT_IS_RIGHT;
+        const NONE = libobs_sys::obs_interaction_flags::INTERACT_NONE as u32;
+        const CAPS_KEY = libobs_sys::obs_interaction_flags::INTERACT_CAPS_KEY as u32;
+        const SHIFT_KEY = libobs_sys::obs_interaction_flags::INTERACT_SHIFT_KEY as u32;
+        const CONTROL_KEY = libobs_sys::obs_interaction_flags::INTERACT_CONTROL_KEY as u32;
+        const ALT_KEY = libobs_sys::obs_interaction_flags::INTERACT_ALT_KEY as u32;
+        const MOUSE_LEFT = libobs_sys::obs_interaction_flags::INTERACT_MOUSE_LEFT as u32;
+        const MOUSE_MIDDLE = libobs_sys::obs_interaction_flags::INTERACT_MOUSE_MIDDLE as u32;
+        const MOUSE_RIGHT = libobs_sys::obs_interaction_flags::INTERACT_MOUSE_RIGHT as u32;
+        const COMMAND_KEY = libobs_sys::obs_interaction_flags::INTERACT_COMMAND_KEY as u32;
+        const NUMLOCK_KEY = libobs_sys::obs_interaction_flags::INTERACT_NUMLOCK_KEY as u32;
+        const IS_KEY_PAD = libobs_sys::obs_interaction_flags::INTERACT_IS_KEY_PAD as u32;
+        const IS_LEFT = libobs_sys::obs_interaction_flags::INTERACT_IS_LEFT as u32;
+        const IS_RIGHT = libobs_sys::obs_interaction_flags::INTERACT_IS_RIGHT as u32;
     }
 }
 
@@ -1430,7 +1430,7 @@ impl Key {
     }
 
     fn to_native(self) -> libobs_sys::obs_key::Type {
-        self as u32
+        self as _
     }
 
     pub fn from_name(name: &str) -> Option<Self> {

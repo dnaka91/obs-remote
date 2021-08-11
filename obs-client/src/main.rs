@@ -7,12 +7,18 @@ use crate::{
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {
-    let mut client = GeneralClient::connect("http://[::1]:50051").await?;
+    let mut client = GeneralClient::connect("http://[::1]:50051")
+        .await?
+        .send_gzip()
+        .accept_gzip();
     let version = client.get_version(()).await?.into_inner();
 
     println!("{:#?}", version);
 
-    let mut client = ProfilesClientV5::connect("http://[::1]:50052").await?;
+    let mut client = ProfilesClientV5::connect("http://[::1]:50052")
+        .await?
+        .send_gzip()
+        .accept_gzip();
     let version = client.list(()).await?.into_inner();
 
     println!("{:#?}", version);

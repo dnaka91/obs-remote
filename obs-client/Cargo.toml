@@ -10,7 +10,7 @@ anyhow = "1.0.42"
 prost = "0.8.0"
 prost-types = "0.8.0"
 tokio = { version = "1.9.0", features = ["macros", "rt"] }
-tonic = "0.5.2"
+tonic = { version = "0.5.2", features = ["compression"] }
 
 [build-dependencies]
-tonic-build = "0.5.2"
+tonic-build = { version = "0.5.2", features = ["compression"] }

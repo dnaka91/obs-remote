@@ -18,6 +18,12 @@ use tonic::transport::Server;
 
 pub mod obs_remote;
 
+macro_rules! new_service {
+    ($server:ident, $service:expr) => {
+        tonic_web::enable($server::new($service).accept_gzip().send_gzip())
+    };
+}
+
 struct ObsRemotePlugin {
     handle: Option<JoinHandle<Result<()>>>,
     shutdown: Option<watch::Sender<()>>,
@@ -96,25 +102,30 @@ async fn run_server(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
 
     info!("OBS Remote server (v4) starting up at {} ...", addr);
 
-    let signal2 = signal.clone();
-
     let result = Server::builder()
+        .accept_http1(true)
         .add_service(reflection)
-        .add_service(EventsServer::new(EventsService::new(signal2)))
-        .add_service(GeneralServer::new(GeneralService))
-        .add_service(MediaControlServer::new(MediaControlService))
-        .add_service(OutputsServer::new(OutputsService))
-        .add_service(ProfilesServer::new(ProfilesService))
-        .add_service(RecordingServer::new(RecordingService))
-        .add_service(ReplayBufferServer::new(ReplayBufferService))
-        .add_service(SceneCollectionsServer::new(SceneCollectionsService))
-        .add_service(SceneItemsServer::new(SceneItemsService))
-        .add_service(ScenesServer::new(ScenesService))
-        .add_service(SourcesServer::new(SourcesService))
-        .add_service(StreamingServer::new(StreamingService))
-        .add_service(StudioModeServer::new(StudioModeService))
-        .add_service(TransitionsServer::new(TransitionsService))
-        .add_service(VirtualCamServer::new(VirtualCamService))
+        .add_service(new_service!(
+            EventsServer,
+            EventsService::new(signal.clone())
+        ))
+        .add_service(new_service!(GeneralServer, GeneralService))
+        .add_service(new_service!(MediaControlServer, MediaControlService))
+        .add_service(new_service!(OutputsServer, OutputsService))
+        .add_service(new_service!(ProfilesServer, ProfilesService))
+        .add_service(new_service!(RecordingServer, RecordingService))
+        .add_service(new_service!(ReplayBufferServer, ReplayBufferService))
+        .add_service(new_service!(
+            SceneCollectionsServer,
+            SceneCollectionsService
+        ))
+        .add_service(new_service!(SceneItemsServer, SceneItemsService))
+        .add_service(new_service!(ScenesServer, ScenesService))
+        .add_service(new_service!(SourcesServer, SourcesService))
+        .add_service(new_service!(StreamingServer, StreamingService))
+        .add_service(new_service!(StudioModeServer, StudioModeService))
+        .add_service(new_service!(TransitionsServer, TransitionsService))
+        .add_service(new_service!(VirtualCamServer, VirtualCamService))
         .serve_with_shutdown(addr, async {
             signal.changed().await.ok();
         })
@@ -148,26 +159,30 @@ async fn run_server_v5(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()
     info!("OBS Remote server (v5) starting up at {} ...", addr);
 
     let result = Server::builder()
+        .accept_http1(true)
         .add_service(reflection)
-        .add_service(ConfigServer::new(ConfigService))
-        .add_service(EventsServer::new(EventsService))
-        .add_service(FiltersServer::new(FiltersService))
-        .add_service(GeneralServer::new(GeneralService))
-        .add_service(HotkeysServer::new(HotkeysService))
-        .add_service(InputsServer::new(InputsService))
-        .add_service(MediaInputsServer::new(MediaInputsService))
-        .add_service(OutputsServer::new(OutputsService))
-        .add_service(ProfilesServer::new(ProfilesService))
-        .add_service(ProjectorsServer::new(ProjectorsService))
-        .add_service(RecordingServer::new(RecordingService))
-        .add_service(ReplayBufferServer::new(ReplayBufferService))
-        .add_service(SceneCollectionsServer::new(SceneCollectionsService))
-        .add_service(SceneItemsServer::new(SceneItemsService))
-        .add_service(ScenesServer::new(ScenesService))
-        .add_service(SourcesServer::new(SourcesService))
-        .add_service(StreamingServer::new(StreamingService))
-        .add_service(TransitionsServer::new(TransitionsService))
-        .add_service(VirtualCamServer::new(VirtualCamService))
+        .add_service(new_service!(ConfigServer, ConfigService))
+        .add_service(new_service!(EventsServer, EventsService))
+        .add_service(new_service!(FiltersServer, FiltersService))
+        .add_service(new_service!(GeneralServer, GeneralService))
+        .add_service(new_service!(HotkeysServer, HotkeysService))
+        .add_service(new_service!(InputsServer, InputsService))
+        .add_service(new_service!(MediaInputsServer, MediaInputsService))
+        .add_service(new_service!(OutputsServer, OutputsService))
+        .add_service(new_service!(ProfilesServer, ProfilesService))
+        .add_service(new_service!(ProjectorsServer, ProjectorsService))
+        .add_service(new_service!(RecordingServer, RecordingService))
+        .add_service(new_service!(ReplayBufferServer, ReplayBufferService))
+        .add_service(new_service!(
+            SceneCollectionsServer,
+            SceneCollectionsService
+        ))
+        .add_service(new_service!(SceneItemsServer, SceneItemsService))
+        .add_service(new_service!(ScenesServer, ScenesService))
+        .add_service(new_service!(SourcesServer, SourcesService))
+        .add_service(new_service!(StreamingServer, StreamingService))
+        .add_service(new_service!(TransitionsServer, TransitionsService))
+        .add_service(new_service!(VirtualCamServer, VirtualCamService))
         .serve_with_shutdown(addr, async {
             signal.changed().await.ok();
         })

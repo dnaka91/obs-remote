@@ -10,11 +10,14 @@ exceptions = [
     { allow = ["AGPL-3.0"], name = "obs" },
     { allow = ["AGPL-3.0"], name = "obs-client" },
     { allow = ["AGPL-3.0"], name = "obs-remote" },
+    { allow = ["AGPL-3.0"], name = "obs-remote-apiv4" },
+    { allow = ["AGPL-3.0"], name = "obs-remote-apiv5" },
     { allow = ["AGPL-3.0"], name = "obs-rust" },
     { allow = ["Zlib"], name = "adler32" },
 ]
 
 [bans]
 skip = [
+    { name = "miniz_oxide", version = "=0.3.7" },
     { name = "which", version = "=3.1.1" },
 ]

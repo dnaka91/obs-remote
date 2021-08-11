@@ -11,6 +11,7 @@
     clippy::doc_markdown,
     clippy::enum_variant_names,
     clippy::module_name_repetitions,
+    clippy::must_use_candidate,
     clippy::option_if_let_else,
     clippy::similar_names,
     clippy::struct_excessive_bools,

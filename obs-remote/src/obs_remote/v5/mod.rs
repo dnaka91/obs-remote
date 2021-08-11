@@ -1,5 +1,7 @@
 #![allow(
     clippy::default_trait_access,
+    clippy::doc_markdown,
+    clippy::enum_variant_names,
     clippy::module_name_repetitions,
     clippy::option_if_let_else,
     clippy::similar_names,

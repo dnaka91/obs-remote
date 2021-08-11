@@ -3,6 +3,7 @@
 #![allow(non_snake_case)]
 #![allow(improper_ctypes)] // TODO: investigate
 #![allow(clippy::upper_case_acronyms)]
+#![allow(clippy::redundant_static_lifetimes)]
 #![allow(rustdoc::broken_intra_doc_links)]
 #![allow(rustdoc::bare_urls)]
 #![cfg_attr(test, allow(deref_nullptr))] // TODO: investigate

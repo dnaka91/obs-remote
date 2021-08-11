@@ -10,8 +10,7 @@ use tokio::sync::{broadcast, mpsc, watch, Mutex};
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 
-use self::event_reply::Event;
-use self::events_server::Events;
+use self::{event_reply::Event, events_server::Events};
 
 tonic::include_proto!("obs_remote.events");
 

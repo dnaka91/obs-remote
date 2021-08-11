@@ -8,8 +8,10 @@ allow = [
 exceptions = [
     { allow = ["AGPL-3.0"], name = "libobs-sys" },
     { allow = ["AGPL-3.0"], name = "obs" },
+    { allow = ["AGPL-3.0"], name = "obs-client" },
     { allow = ["AGPL-3.0"], name = "obs-remote" },
     { allow = ["AGPL-3.0"], name = "obs-rust" },
+    { allow = ["Zlib"], name = "adler32" },
 ]
 
 [bans]

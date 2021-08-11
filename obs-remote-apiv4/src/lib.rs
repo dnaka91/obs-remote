@@ -1,3 +1,11 @@
+#![deny(rust_2018_idioms, clippy::all, clippy::pedantic)]
+#![allow(
+    unused_variables,
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_precision_loss,
+    clippy::cast_sign_loss
+)]
 #![allow(
     clippy::default_trait_access,
     clippy::doc_markdown,
@@ -48,10 +56,5 @@ mod studio_mode;
 mod transitions;
 mod virtual_cam;
 
-pub mod v5;
-
-pub(crate) const FILE_DESCRIPTOR_SET_V4: &[u8] =
+pub const FILE_DESCRIPTOR_SET_V4: &[u8] =
     tonic::include_file_descriptor_set!("obs_remote_v4_descriptor");
-
-pub(crate) const FILE_DESCRIPTOR_SET_V5: &[u8] =
-    tonic::include_file_descriptor_set!("obs_remote_v5_descriptor");

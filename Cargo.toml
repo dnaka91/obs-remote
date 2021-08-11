@@ -1,5 +1,13 @@
 [workspace]
-members = ["libobs-sys", "obs", "obs-client", "obs-remote", "obs-rust"]
+members = [
+    "libobs-sys",
+    "obs",
+    "obs-client",
+    "obs-remote",
+    "obs-remote-apiv4",
+    "obs-remote-apiv5",
+    "obs-rust",
+]
 
 [profile.release]
 lto = true

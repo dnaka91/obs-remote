@@ -16,8 +16,6 @@ use obs::{declare_module, logger::ObsLogger, module_use_default_locale, Plugin};
 use tokio::sync::watch;
 use tonic::transport::Server;
 
-pub mod obs_remote;
-
 macro_rules! new_service {
     ($server:ident, $service:expr) => {
         tonic_web::enable($server::new($service).accept_gzip().send_gzip())
@@ -86,7 +84,7 @@ impl Plugin for ObsRemotePlugin {
 
 async fn run_server(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
     #[allow(clippy::wildcard_imports)]
-    use crate::obs_remote::*;
+    use obs_remote_apiv4::*;
 
     let addr = if ipv6 {
         "[::1]:50051"
@@ -97,7 +95,7 @@ async fn run_server(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
     .unwrap();
 
     let reflection = tonic_reflection::server::Builder::configure()
-        .register_encoded_file_descriptor_set(obs_remote::FILE_DESCRIPTOR_SET_V4)
+        .register_encoded_file_descriptor_set(FILE_DESCRIPTOR_SET_V4)
         .build()?;
 
     info!("OBS Remote server (v4) starting up at {} ...", addr);
@@ -142,7 +140,7 @@ async fn run_server(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
 
 async fn run_server_v5(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
     #[allow(clippy::wildcard_imports)]
-    use crate::obs_remote::v5::*;
+    use obs_remote_apiv5::*;
 
     let addr = if ipv6 {
         "[::1]:50052"
@@ -153,7 +151,7 @@ async fn run_server_v5(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()
     .unwrap();
 
     let reflection = tonic_reflection::server::Builder::configure()
-        .register_encoded_file_descriptor_set(obs_remote::FILE_DESCRIPTOR_SET_V5)
+        .register_encoded_file_descriptor_set(FILE_DESCRIPTOR_SET_V5)
         .build()?;
 
     info!("OBS Remote server (v5) starting up at {} ...", addr);

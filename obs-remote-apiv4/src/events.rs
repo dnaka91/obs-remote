@@ -2,6 +2,7 @@
 
 use std::sync::Arc;
 
+use log::info;
 use obs::{
     frontend::events::{self, Event as ObsEvent},
     signal::SignalHandler,
@@ -221,6 +222,8 @@ impl Events for Service {
 
             tokio::spawn(async move {
                 while let Ok(event) = event_rx.recv().await {
+                    info!("sending event to {:?}: {:?}", request.remote_addr(), event);
+
                     tx.send(Ok(EventReply {
                         stream_timecode: None,
                         rec_timecode: None,

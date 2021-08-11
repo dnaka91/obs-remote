@@ -1,3 +1,11 @@
+#![deny(rust_2018_idioms, clippy::all, clippy::pedantic)]
+#![allow(
+    unused_variables,
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_precision_loss,
+    clippy::cast_sign_loss
+)]
 #![allow(
     clippy::default_trait_access,
     clippy::doc_markdown,
@@ -52,3 +60,20 @@ mod sources;
 mod streaming;
 mod transitions;
 mod virtual_cam;
+
+#[macro_export]
+macro_rules! precondition {
+    ($cond:expr, $msg:literal) => {
+        if !($cond) {
+            return Err(Status::failed_precondition($msg));
+        }
+    };
+    ($cond:expr, $($arg:tt)*) => {
+        if !($cond) {
+            return Err(Status::failed_precondition(format!($($arg)*)));
+        }
+    };
+}
+
+pub const FILE_DESCRIPTOR_SET_V5: &[u8] =
+    tonic::include_file_descriptor_set!("obs_remote_v5_descriptor");

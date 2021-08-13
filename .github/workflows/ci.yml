@@ -68,7 +68,7 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: miri-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Build
+      - name: Miri test
         uses: actions-rs/cargo@v1
         with:
           command: miri

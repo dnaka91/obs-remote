@@ -16,4 +16,4 @@ cargo install cargo-edit
 
 echo "export PATH=$HOME/.cargo/bin:$PATH" >> $HOME/.bashrc
 mkdir -p $HOME/.config/fish
-echo "set -Up fish_user_paths $HOME/.cargo/bin" >> $HOME/.config/fish/config.fish
+echo "set -p fish_user_paths $HOME/.cargo/bin" >> $HOME/.config/fish/config.fish

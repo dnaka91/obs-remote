@@ -11,7 +11,9 @@ cat > $HOME/.cargo/config.toml <<-EOF
     rustflags = ["-C", "link-arg=-fuse-ld=lld"]
 EOF
 
-rustup install nightly
+rustup toolchain install nightly --component miri
+cargo +nightly miri setup
+
 cargo install cargo-edit
 
 echo "export PATH=$HOME/.cargo/bin:$PATH" >> $HOME/.bashrc

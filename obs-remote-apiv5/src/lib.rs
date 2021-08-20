@@ -62,6 +62,7 @@ mod streaming;
 mod transitions;
 mod virtual_cam;
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! precondition {
     ($cond:expr, $msg:literal) => {

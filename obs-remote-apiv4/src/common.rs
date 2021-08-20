@@ -154,6 +154,7 @@ impl From<((f32, f32), obs::scene::BoundsType, obs::scene::Alignment)> for Bound
     }
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! precondition {
     ($cond:expr, $msg:literal) => {

@@ -151,6 +151,7 @@ macro_rules! module_use_default_locale {
 }
 
 /// Internal macro to conveniently create a [`CString`](std::ffi::CString).
+#[doc(hidden)]
 #[macro_export]
 macro_rules! cstr {
     ($v:expr) => {
@@ -160,6 +161,7 @@ macro_rules! cstr {
 
 /// Internal macro that does the same as [`cstr`] but additionally turns the `CString` into a
 /// `*const c_char` pointer.
+#[doc(hidden)]
 #[macro_export]
 macro_rules! cstr_ptr {
     ($v:expr) => {

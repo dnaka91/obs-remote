@@ -28,6 +28,8 @@ pub mod scene;
 pub mod service;
 pub mod signal;
 pub mod source;
+#[cfg(feature = "tracing")]
+pub mod tracing;
 pub(crate) mod util;
 pub mod video;
 

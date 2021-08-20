@@ -12,7 +12,11 @@ use std::thread::JoinHandle;
 
 use anyhow::Result;
 use log::{error, info, Level};
-use obs::{declare_module, logger::ObsLogger, module_use_default_locale, Plugin};
+use obs::{
+    declare_module,
+    logger::{self, ObsLogger},
+    module_use_default_locale, Plugin,
+};
 use tokio::sync::watch;
 use tonic::transport::Server;
 
@@ -36,15 +40,9 @@ impl Plugin for ObsRemotePlugin {
     }
 
     fn load(&mut self) -> bool {
-        ObsLogger::init(
-            env!("CARGO_PKG_NAME"),
-            Level::Warn,
-            vec![
-                (env!("CARGO_CRATE_NAME"), Level::Trace),
-                ("obs", Level::Trace),
-            ],
-        )
-        .ok();
+        if !init_logger() {
+            return false;
+        }
 
         let (shutdown, signal) = watch::channel(());
         let handle = std::thread::spawn(|| {
@@ -79,6 +77,26 @@ impl Plugin for ObsRemotePlugin {
                 error!("{}", e);
             }
         }
+    }
+}
+
+fn init_logger() -> bool {
+    let result = ObsLogger::init(
+        env!("CARGO_PKG_NAME"),
+        Level::Warn,
+        vec![
+            (env!("CARGO_CRATE_NAME"), Level::Trace),
+            ("obs", Level::Trace),
+            ("obs_remote_apiv4", Level::Trace),
+            ("obs_remote_apiv5", Level::Trace),
+        ],
+    );
+
+    if let Err(e) = result {
+        logger::blog(Level::Error, &format!("failed setting up logger: {:?}", e));
+        false
+    } else {
+        true
     }
 }
 

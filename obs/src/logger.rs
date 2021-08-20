@@ -53,20 +53,25 @@ impl Log for ObsLogger {
             record.target(),
             record.args()
         );
-        let level = match record.level() {
-            Level::Error => libobs_sys::LOG_ERROR,
-            Level::Warn => libobs_sys::LOG_WARNING,
-            Level::Info | Level::Debug | Level::Trace => libobs_sys::LOG_INFO,
-        };
 
-        for chunk in to_chunks(&message.replace("%", "%%")) {
-            if let Ok(chunk) = CString::new(chunk) {
-                unsafe { libobs_sys::blog(level as c_int, chunk.as_ptr()) }
-            }
-        }
+        blog(record.level(), &message);
     }
 
     fn flush(&self) {}
+}
+
+pub fn blog(level: Level, message: &str) {
+    let level = match level {
+        Level::Error => libobs_sys::LOG_ERROR,
+        Level::Warn => libobs_sys::LOG_WARNING,
+        Level::Info | Level::Debug | Level::Trace => libobs_sys::LOG_INFO,
+    };
+
+    for chunk in to_chunks(&message.replace("%", "%%")) {
+        if let Ok(chunk) = CString::new(chunk) {
+            unsafe { libobs_sys::blog(level as c_int, chunk.as_ptr()) }
+        }
+    }
 }
 
 fn to_chunks(value: &str) -> impl Iterator<Item = &str> {

@@ -1,40 +1,42 @@
-use std::{ffi::c_void, ptr::NonNull};
+use std::{ffi::c_void, mem::ManuallyDrop};
 
-pub fn add_callback<C: FnMut(Event)>(handler: C) -> Handle<C> {
-    let data = unsafe { NonNull::new_unchecked(Box::into_raw(Box::new(handler))) };
+pub fn add_callback<C: Fn(Event) + 'static>(handler: C) -> Handle {
+    let mut data = Box::new(Box::new(handler) as Box<dyn Fn(Event)>);
 
     unsafe {
-        libobs_sys::obs_frontend_add_event_callback(Some(event_callback::<C>), data.as_ptr() as _)
+        libobs_sys::obs_frontend_add_event_callback(
+            Some(event_callback),
+            ((&mut *data) as *mut Box<dyn Fn(Event)>).cast(),
+        )
     };
 
     Handle { data }
 }
 
-pub struct Handle<C: FnMut(Event)> {
-    data: NonNull<C>,
+pub struct Handle {
+    data: Box<Box<dyn Fn(Event)>>,
 }
 
-impl<C: FnMut(Event)> Drop for Handle<C> {
+impl Drop for Handle {
     fn drop(&mut self) {
         unsafe {
             libobs_sys::obs_frontend_remove_event_callback(
-                Some(event_callback::<C>),
-                self.data.as_ptr() as _,
+                Some(event_callback),
+                ((&mut *self.data) as *mut Box<dyn Fn(Event)>).cast(),
             );
-            Box::from_raw(self.data.as_ptr());
         };
     }
 }
 
-unsafe impl<C: FnMut(Event)> Send for Handle<C> {}
+unsafe impl Send for Handle {}
 
-unsafe impl<C: FnMut(Event)> Sync for Handle<C> {}
+unsafe impl Sync for Handle {}
 
-unsafe extern "C" fn event_callback<C: FnMut(Event)>(
+unsafe extern "C" fn event_callback(
     event: libobs_sys::obs_frontend_event::Type,
     private_data: *mut c_void,
 ) {
-    let handler = &mut *private_data.cast::<C>();
+    let handler = ManuallyDrop::new(Box::from_raw(private_data.cast::<Box<dyn Fn(Event)>>()));
     (handler)(Event::from_native(event));
 }
 

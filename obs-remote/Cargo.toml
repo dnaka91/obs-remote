@@ -10,14 +10,14 @@ license = "AGPL-3.0-only"
 crate-type = ["cdylib"]
 
 [dependencies]
-anyhow = "1.0.42"
+anyhow = "1.0.43"
 log = { version = "0.4.14", features = ["std", "max_level_debug"] }
 obs = { path = "../obs" }
 obs-remote-apiv4 = { path = "../obs-remote-apiv4" }
 obs-remote-apiv5 = { path = "../obs-remote-apiv5" }
 prost = "0.8.0"
 prost-types = "0.8.0"
-tokio = { version = "1.9.0", features = ["macros", "rt", "sync"] }
+tokio = { version = "1.10.0", features = ["macros", "rt", "sync"] }
 tonic = { version = "0.5.2", features = ["compression"] }
 tonic-reflection = "0.2.0"
 tonic-web = "0.1.0"

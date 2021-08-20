@@ -153,7 +153,7 @@ macro_rules! module_use_default_locale {
 /// Internal macro to conveniently create a [`CString`](std::ffi::CString).
 #[macro_export]
 macro_rules! cstr {
-    ($v:ident) => {
+    ($v:expr) => {
         std::ffi::CString::new($v).expect("Invalid string containing 0 bytes")
     };
 }
@@ -162,7 +162,7 @@ macro_rules! cstr {
 /// `*const c_char` pointer.
 #[macro_export]
 macro_rules! cstr_ptr {
-    ($v:ident) => {
+    ($v:expr) => {
         std::ffi::CString::new($v)
             .expect("Invalid string containing 0 bytes")
             .as_ptr()

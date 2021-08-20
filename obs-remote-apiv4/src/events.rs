@@ -1,12 +1,14 @@
 #![allow(clippy::missing_panics_doc)]
 
-use std::sync::Arc;
+use std::{collections::HashMap, sync::Arc};
 
-use log::info;
+use log::{debug, info, warn};
 use obs::{
     frontend::events::{self, Event as ObsEvent},
-    signal::SignalHandler,
+    signal::{GlobalSignal, Handle, SignalHandler, SourceSignal},
+    source::Source,
 };
+use parking_lot::Mutex as StdMutex;
 use tokio::sync::{broadcast, mpsc, watch, Mutex};
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
@@ -23,6 +25,8 @@ impl Service {
     #[must_use]
     pub fn new(mut signal: watch::Receiver<()>) -> Self {
         let handler = SignalHandler::get().unwrap();
+        let mut handles = Vec::new();
+        let extra_handles = Arc::new(StdMutex::new(HashMap::new()));
         let (tx, _) = broadcast::channel(10);
 
         let event_handle = {
@@ -157,10 +161,19 @@ impl Service {
             })
         };
 
-        let source_create_handle = {
+        handles.push({
             let tx = tx.clone();
-            handler.connect("source_create", move |data| {
+            let extra_handles = Arc::clone(&extra_handles);
+            handler.connect(GlobalSignal::SourceCreate, move |data| {
                 if let Some(source) = data.get_source() {
+                    extra_handles
+                        .lock()
+                        .entry(source.name())
+                        .or_insert_with_key(|name| {
+                            debug!("connecting signals to new source `{}`", name);
+                            connect_source_signals(&*source, tx.clone())
+                        });
+
                     tx.send(Event::SourceCreated(SourceCreated {
                         name: source.name(),
                         ty: format!("{:?}", source.ty()),
@@ -170,12 +183,18 @@ impl Service {
                     .ok();
                 }
             })
-        };
+        });
 
-        let source_destroy_handle = {
+        handles.push({
             let tx = tx.clone();
-            handler.connect("source_destroy", move |data| {
+            let extra_handles = Arc::clone(&extra_handles);
+            handler.connect(GlobalSignal::SourceDestroy, move |data| {
                 if let Some(source) = data.get_source() {
+                    let name = source.name();
+                    if extra_handles.lock().remove(&name).is_some() {
+                        debug!("disconnected signal from old source `{}`", name);
+                    }
+
                     tx.send(Event::SourceDestroyed(SourceDestroyed {
                         name: source.name(),
                         ty: format!("{:?}", source.ty()),
@@ -184,7 +203,16 @@ impl Service {
                     .ok();
                 }
             })
-        };
+        });
+
+        debug!("connecting source signals...");
+
+        for source in obs::source::list() {
+            handles.extend(connect_source_signals(&source, tx.clone()));
+            debug!("connected signals for: {}", source.name());
+        }
+
+        debug!("all source signals connected");
 
         let tx = Arc::new(Mutex::new(Some(tx)));
         let tx2 = Arc::clone(&tx);
@@ -193,9 +221,13 @@ impl Service {
             signal.changed().await.ok();
             drop(event_handle);
             drop(handler);
-            // drop(handles);
-            drop(source_create_handle);
-            drop(source_destroy_handle);
+            drop(handles);
+
+            tokio::task::spawn_blocking(move || {
+                extra_handles.lock().clear();
+            })
+            .await
+            .ok();
 
             tx2.lock().await.take();
         });
@@ -250,4 +282,57 @@ fn recording_filename() -> String {
         .or_else(|| settings.item_by_name("path"))
         .and_then(|item| item.string())
         .unwrap_or_default()
+}
+
+macro_rules! get_data {
+    ($data:expr, $signal:expr, $name:literal) => {
+        if let Some(data) = $data {
+            data
+        } else {
+            warn!("{:?}: {} missing", $signal, $name);
+            return;
+        }
+    };
+}
+
+#[must_use]
+fn connect_source_signals(source: &Source, tx: broadcast::Sender<Event>) -> Vec<Handle> {
+    let handler = source.signal_handler();
+    let mut handles = Vec::new();
+
+    handles.push({
+        let tx = tx.clone();
+        handler.connect(SourceSignal::Rename, move |data| {
+            let source = get_data!(data.get_source(), SourceSignal::Rename, "source");
+            let new_name = get_data!(data.string("new_name"), SourceSignal::Rename, "new_name");
+            let previous_name =
+                get_data!(data.string("prev_name"), SourceSignal::Rename, "prev_name");
+
+            tx.send(Event::SourceRenamed({
+                let mut event = SourceRenamed {
+                    previous_name,
+                    new_name,
+                    source_type: Default::default(),
+                };
+                event.set_source_type(source.ty().into());
+                event
+            }))
+            .ok();
+        })
+    });
+
+    handles.push({
+        handler.connect(SourceSignal::Mute, move |data| {
+            let source = get_data!(data.get_source(), SourceSignal::Mute, "source");
+            let muted = get_data!(data.bool("muted"), SourceSignal::Mute, "muted");
+
+            tx.send(Event::SourceMuteStateChanged(SourceMuteStateChanged {
+                name: source.name(),
+                muted,
+            }))
+            .ok();
+        })
+    });
+
+    handles
 }

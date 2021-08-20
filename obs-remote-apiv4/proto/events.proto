@@ -503,7 +503,7 @@ message SourceRenamed {
   // New source name.
   string new_name = 2;
   // Type of source (input, scene, filter, transition).
-  string source_type = 3;
+  common.SourceType source_type = 3;
 }
 
 // A filter was added to a source.

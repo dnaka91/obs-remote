@@ -9,6 +9,7 @@ use chrono::Duration;
 use crate::{
     cstr_ptr,
     data::Data,
+    signal::{SignalHandler, SourceSignal},
     util::{self, StringConversion},
 };
 
@@ -299,6 +300,12 @@ impl Source {
 
     pub fn media_ended(&self) {
         unsafe { libobs_sys::obs_source_media_ended(self.raw.as_ptr()) };
+    }
+
+    pub fn signal_handler(&self) -> SignalHandler<SourceSignal> {
+        SignalHandler::from_raw(unsafe {
+            libobs_sys::obs_source_get_signal_handler(self.raw.as_ptr())
+        })
     }
 }
 

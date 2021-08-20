@@ -32,15 +32,9 @@
 	},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"bierner.emojisense",
-		"bierner.markdown-emoji",
 		"DavidAnson.vscode-markdownlint",
-		"eamodio.gitlens",
 		"EditorConfig.EditorConfig",
 		"eriklynd.json-tools",
-		"GitHub.vscode-pull-request-github",
-		"jgclark.vscode-todo-highlight",
-		"kevinkyang.auto-comment-blocks",
 		"matklad.rust-analyzer",
 		"nickdemayo.vscode-json-editor",
 		"plex.vscode-protolint",
@@ -50,7 +44,6 @@
 		"streetsidesoftware.code-spell-checker",
 		"tamasfe.even-better-toml",
 		"timonwong.shellcheck",
-		"Tyriar.sort-lines",
 		"vadimcn.vscode-lldb",
 		"yzhang.markdown-all-in-one",
 		"zxh404.vscode-proto3"

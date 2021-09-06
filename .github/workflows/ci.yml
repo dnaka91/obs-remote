@@ -50,7 +50,7 @@ jobs:
       - name: Setup Rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: nightly-2021-09-01
           override: true
           components: miri
       - name: Configure cache

@@ -1,5 +1,8 @@
 name: CI
 on: [pull_request, push]
+env:
+  CARGO_INCREMENTAL: 0
+  RUSTFLAGS: "-C debuginfo=0 -D warnings"
 jobs:
   build:
     name: Build
@@ -29,15 +32,7 @@ jobs:
           toolchain: stable
           override: true
       - name: Configure cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: build-${{ matrix.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        uses: Swatinem/rust-cache@v1
       - name: Build
         uses: actions-rs/cargo@v1
         with:
@@ -59,15 +54,7 @@ jobs:
           override: true
           components: miri
       - name: Configure cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: miri-cargo-${{ hashFiles('**/Cargo.lock') }}
+        uses: Swatinem/rust-cache@v1
       - name: Miri test
         uses: actions-rs/cargo@v1
         with:
@@ -100,15 +87,7 @@ jobs:
           toolchain: stable
           override: true
       - name: Configure cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: lint-cargo-${{ hashFiles('**/Cargo.lock') }}
+        uses: Swatinem/rust-cache@v1
       - name: Run clippy
         uses: actions-rs/cargo@v1
         with:

@@ -44,7 +44,7 @@ impl VirtualCam for Service {
     }
 }
 
-fn output_running_time(output: &Output) -> Option<u64> {
+fn output_running_time(output: &Output<'_>) -> Option<u64> {
     output.active().then(|| {
         let frame_time = output.video().frame_time();
         let total_frames = u64::from(output.total_frames());

@@ -1,4 +1,4 @@
-use std::{ptr::NonNull, time::Duration};
+use std::{marker::PhantomData, ptr::NonNull, time::Duration};
 
 use bitflags::bitflags;
 
@@ -11,23 +11,24 @@ use crate::{
     service::Service,
     util::{self, StringConversion},
     video::Video,
-    Ref,
 };
 
-pub struct Output {
+pub struct Output<'a> {
     raw: NonNull<libobs_sys::obs_output_t>,
+    life: PhantomData<&'a ()>,
 }
 
-impl Drop for Output {
+impl<'a> Drop for Output<'a> {
     fn drop(&mut self) {
         unsafe { libobs_sys::obs_output_release(self.raw.as_ptr()) }
     }
 }
 
-impl Output {
+impl<'a> Output<'a> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_output_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
+            life: PhantomData::default(),
         }
     }
 
@@ -48,9 +49,9 @@ impl Output {
 
     // TODO: can ben null?
     /// Returns the audio media context associated with this output.
-    pub fn audio(&self) -> Ref<'_, Self, Audio> {
+    pub fn audio(&self) -> Audio<'_> {
         let raw = unsafe { libobs_sys::obs_output_audio(self.raw.as_ptr()) };
-        Ref::new(Audio::from_raw(raw))
+        Audio::from_raw(raw)
     }
 
     /// Specifies whether the output can be paused.
@@ -73,10 +74,10 @@ impl Output {
     /// Returns the current audio encoder associated with this output.
     ///
     /// The idx parameter specifies the audio encoder index. Only used with outputs that have multiple audio outputs, otherwise the parameter is ignored.
-    pub fn audio_encoder(&self, idx: u64) -> Ref<'_, Self, Encoder> {
+    pub fn audio_encoder(&self, idx: u64) -> Encoder<'_> {
         let raw = unsafe { libobs_sys::obs_output_get_audio_encoder(self.raw.as_ptr(), idx) };
         let raw = unsafe { libobs_sys::obs_encoder_get_ref(raw) };
-        Ref::new(Encoder::from_raw(raw))
+        Encoder::from_raw(raw)
     }
 
     pub fn congestion(&self) -> f32 {
@@ -121,10 +122,10 @@ impl Output {
 
     // TODO: can be null?
     /// Gets the current service associated with this output.
-    pub fn service(&self) -> Ref<'_, Self, Service> {
+    pub fn service(&self) -> Service<'_> {
         let raw = unsafe { libobs_sys::obs_output_get_service(self.raw.as_ptr()) };
         let raw = unsafe { libobs_sys::obs_service_get_ref(raw) };
-        Ref::new(Service::from_raw(raw))
+        Service::from_raw(raw)
     }
 
     pub fn supported_audio_codecs(&self) -> String {
@@ -147,10 +148,10 @@ impl Output {
 
     // TODO: can be null?
     /// Returns the current video encoder associated with this output
-    pub fn video_encoder(&self) -> Ref<'_, Self, Encoder> {
+    pub fn video_encoder(&self) -> Encoder<'_> {
         let raw = unsafe { libobs_sys::obs_output_get_video_encoder(self.raw.as_ptr()) };
         let raw = unsafe { libobs_sys::obs_encoder_get_ref(raw) };
-        Ref::new(Encoder::from_raw(raw))
+        Encoder::from_raw(raw)
     }
 
     pub fn width(&self) -> u32 {
@@ -166,19 +167,17 @@ impl Output {
     }
 
     /// Returns the property list of an existing output, if any.
-    pub fn properties(&self) -> Option<Ref<'_, Self, Properties>> {
+    pub fn properties(&self) -> Option<Properties<'_>> {
         let raw = unsafe { libobs_sys::obs_output_properties(self.raw.as_ptr()) };
         if raw.is_null() {
             None
         } else {
-            Some(Ref::new(Properties::from_raw(raw)))
+            Some(Properties::from_raw(raw))
         }
     }
 
-    pub fn settings(&self) -> Ref<'_, Self, Data> {
-        Ref::new(Data::from_raw(unsafe {
-            libobs_sys::obs_output_get_settings(self.raw.as_ptr())
-        }))
+    pub fn settings(&self) -> Data<'_> {
+        Data::from_raw(unsafe { libobs_sys::obs_output_get_settings(self.raw.as_ptr()) })
     }
 
     pub fn reconnecting(&self) -> bool {
@@ -195,10 +194,8 @@ impl Output {
         unsafe { libobs_sys::obs_output_stop(self.raw.as_ptr()) }
     }
 
-    pub fn video(&self) -> Ref<'_, Self, Video> {
-        Ref::new(Video::from_raw(unsafe {
-            libobs_sys::obs_output_video(self.raw.as_ptr())
-        }))
+    pub fn video(&self) -> Video<'_> {
+        Video::from_raw(unsafe { libobs_sys::obs_output_video(self.raw.as_ptr()) })
     }
 
     pub fn output_caption_text2(&self, caption: &str, display_duration: f64) {
@@ -224,7 +221,7 @@ bitflags! {
     }
 }
 
-pub fn list_outputs() -> Vec<Output> {
+pub fn list_outputs() -> Vec<Output<'static>> {
     util::list_instances(
         libobs_sys::obs_enum_outputs,
         libobs_sys::obs_output_get_ref,

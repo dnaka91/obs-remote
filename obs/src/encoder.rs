@@ -1,15 +1,17 @@
-use std::{ffi::c_void, ptr::NonNull};
+use std::{ffi::c_void, marker::PhantomData, ptr::NonNull};
 
 use crate::util::StringConversion;
 
-pub struct Encoder {
+pub struct Encoder<'a> {
     raw: NonNull<libobs_sys::obs_encoder_t>,
+    life: PhantomData<&'a ()>,
 }
 
-impl Encoder {
+impl<'a> Encoder<'a> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_encoder_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
+            life: PhantomData::default(),
         }
     }
 
@@ -50,20 +52,20 @@ impl Encoder {
     }
 }
 
-pub fn list() -> Vec<Encoder> {
+pub fn list() -> Vec<Encoder<'static>> {
     unsafe extern "C" fn callback(
         param: *mut c_void,
         encoder: *mut libobs_sys::obs_encoder_t,
     ) -> bool {
         if !encoder.is_null() {
-            let param = &mut *param.cast::<Vec<Encoder>>();
+            let param = &mut *param.cast::<Vec<Encoder<'_>>>();
             param.push(Encoder::from_raw(encoder));
         }
 
         true
     }
 
-    let mut encoders = Vec::<Encoder>::new();
+    let mut encoders = Vec::<Encoder<'_>>::new();
     unsafe { libobs_sys::obs_enum_encoders(Some(callback), (&mut encoders as *mut Vec<_>).cast()) };
 
     encoders

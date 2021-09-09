@@ -113,7 +113,7 @@ impl MediaControl for Service {
     }
 }
 
-fn source_from_identifier(request: Request<Identifier>) -> Result<Source, Status> {
+fn source_from_identifier(request: Request<Identifier>) -> Result<Source<'static>, Status> {
     let name = request.into_inner().name;
     precondition!(!name.is_empty(), "name mustn't be empty");
 

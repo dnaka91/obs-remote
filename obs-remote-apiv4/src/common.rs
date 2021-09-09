@@ -169,7 +169,7 @@ macro_rules! precondition {
     };
 }
 
-pub(crate) fn recording_time(output: &Output) -> u64 {
+pub(crate) fn recording_time(output: &Output<'_>) -> u64 {
     output
         .active()
         .then(|| {

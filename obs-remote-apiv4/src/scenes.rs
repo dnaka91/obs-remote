@@ -154,7 +154,7 @@ impl Scenes for Service {
 
 // TODO: This is almost the same as for the scene items API.
 // TODO: Probably good to unify.
-fn source_data(item: &SceneItem) -> super::common::SceneItem {
+fn source_data(item: &SceneItem<'_>) -> super::common::SceneItem {
     let source = item.source();
     let scale = item.scale();
     let (x, y) = item.pos();

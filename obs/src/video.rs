@@ -1,12 +1,13 @@
-use std::ptr::NonNull;
+use std::{marker::PhantomData, ptr::NonNull};
 
 use crate::util::StringConversion;
 
-pub struct Video {
+pub struct Video<'a> {
     raw: NonNull<libobs_sys::video_t>,
+    life: PhantomData<&'a ()>,
 }
 
-impl Video {
+impl<'a> Video<'a> {
     pub fn get() -> Self {
         Self::from_raw(unsafe { libobs_sys::obs_get_video() })
     }
@@ -14,6 +15,7 @@ impl Video {
     pub(crate) fn from_raw(raw: *mut libobs_sys::video_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
+            life: PhantomData::default(),
         }
     }
 

@@ -1,15 +1,17 @@
-use std::ptr::NonNull;
+use std::{marker::PhantomData, ptr::NonNull};
 
 use crate::util::StringConversion;
 
-pub struct Audio {
+pub struct Audio<'a> {
     raw: NonNull<libobs_sys::audio_t>,
+    life: PhantomData<&'a ()>,
 }
 
-impl Audio {
+impl<'a> Audio<'a> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::audio_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
+            life: PhantomData::default(),
         }
     }
 

@@ -12,7 +12,7 @@ pub fn stop() {
     unsafe { libobs_sys::obs_frontend_stop_virtualcam() };
 }
 
-pub fn output() -> Output {
+pub fn output() -> Output<'static> {
     let raw = unsafe { libobs_sys::obs_frontend_get_virtualcam_output() };
     Output::from_raw(raw)
 }

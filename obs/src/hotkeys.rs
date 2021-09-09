@@ -1464,19 +1464,19 @@ impl KeyCombination {
     }
 }
 
-pub fn save_encoder(encoder: &Encoder) -> Data {
+pub fn save_encoder(encoder: &Encoder<'_>) -> Data<'static> {
     Data::from_raw(unsafe { libobs_sys::obs_hotkeys_save_encoder(encoder.as_ptr()) })
 }
 
-pub fn save_output(output: &Output) -> Data {
+pub fn save_output(output: &Output<'_>) -> Data<'static> {
     Data::from_raw(unsafe { libobs_sys::obs_hotkeys_save_output(output.as_ptr()) })
 }
 
-pub fn save_service(service: &Service) -> Data {
+pub fn save_service(service: &Service<'_>) -> Data<'static> {
     Data::from_raw(unsafe { libobs_sys::obs_hotkeys_save_service(service.as_ptr()) })
 }
 
-pub fn save_source(source: &Source) -> Data {
+pub fn save_source(source: &Source<'_>) -> Data<'static> {
     Data::from_raw(unsafe { libobs_sys::obs_hotkeys_save_source(source.as_ptr()) })
 }
 

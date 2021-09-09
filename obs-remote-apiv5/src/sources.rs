@@ -57,7 +57,7 @@ impl sources_server::Sources for SourcesService {
     }
 }
 
-fn take_source_screenshot(source: &Source) -> Option<RgbaImage> {
+fn take_source_screenshot(source: &Source<'_>) -> Option<RgbaImage> {
     use image::Rgba;
     use obs::{
         graphics,

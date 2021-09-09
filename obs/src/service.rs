@@ -1,4 +1,4 @@
-use std::{ffi::CStr, os::raw::c_char, ptr::NonNull};
+use std::{ffi::CStr, marker::PhantomData, os::raw::c_char, ptr::NonNull};
 
 use crate::{
     cstr_ptr,
@@ -6,20 +6,22 @@ use crate::{
     util::{self, StringConversion},
 };
 
-pub struct Service {
+pub struct Service<'a> {
     raw: NonNull<libobs_sys::obs_service_t>,
+    life: PhantomData<&'a ()>,
 }
 
-impl Drop for Service {
+impl<'a> Drop for Service<'a> {
     fn drop(&mut self) {
         unsafe { libobs_sys::obs_service_release(self.raw.as_ptr()) }
     }
 }
 
-impl Service {
+impl<'a> Service<'a> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_service_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
+            life: PhantomData::default(),
         }
     }
 
@@ -27,7 +29,7 @@ impl Service {
         self.raw.as_ptr()
     }
 
-    pub fn create(id: &str, name: &str, settings: &Data, hotkey_data: &Data) -> Self {
+    pub fn create(id: &str, name: &str, settings: &Data<'_>, hotkey_data: &Data<'_>) -> Self {
         Self::from_raw(unsafe {
             libobs_sys::obs_service_create(
                 cstr_ptr!(id),
@@ -73,7 +75,7 @@ impl Service {
         unsafe { libobs_sys::obs_service_get_name(self.raw.as_ptr()) }.into_string()
     }
 
-    pub fn settings(&self) -> Data {
+    pub fn settings(&self) -> Data<'_> {
         Data::from_raw(unsafe { libobs_sys::obs_service_get_settings(self.raw.as_ptr()) })
     }
 
@@ -86,7 +88,7 @@ impl Service {
     }
 
     /// Updates the settings of the service context.
-    pub fn update(&self, settings: &Data) {
+    pub fn update(&self, settings: &Data<'_>) {
         unsafe { libobs_sys::obs_service_update(self.raw.as_ptr(), settings.as_ptr()) };
     }
 }
@@ -95,7 +97,7 @@ pub fn list_service_types() -> Vec<String> {
     util::list_types(libobs_sys::obs_enum_service_types)
 }
 
-pub fn list_services() -> Vec<Service> {
+pub fn list_services() -> Vec<Service<'static>> {
     util::list_instances(
         libobs_sys::obs_enum_services,
         libobs_sys::obs_service_get_ref,

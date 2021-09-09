@@ -2,12 +2,12 @@ use chrono::Duration;
 
 use crate::source::Source;
 
-pub fn current() -> Source {
+pub fn current() -> Source<'static> {
     let raw = unsafe { libobs_sys::obs_frontend_get_current_transition() };
     Source::from_raw(raw)
 }
 
-pub fn set_current(source: &Source) {
+pub fn set_current(source: &Source<'_>) {
     unsafe { libobs_sys::obs_frontend_set_current_transition(source.as_ptr()) };
 }
 
@@ -32,7 +32,7 @@ pub fn set_tbar_position(position: i32) {
     unsafe { libobs_sys::obs_frontend_set_tbar_position(position) };
 }
 
-pub fn list() -> Vec<Source> {
+pub fn list() -> Vec<Source<'static>> {
     let mut sources = libobs_sys::obs_frontend_source_list::default();
     unsafe { libobs_sys::obs_frontend_get_transitions(&mut sources as *mut _) };
 

@@ -1,26 +1,27 @@
-use std::{os::raw::c_char, ptr::NonNull};
+use std::{marker::PhantomData, os::raw::c_char, ptr::NonNull};
 
 use anyhow::{ensure, Result};
 
 use crate::{cstr, cstr_ptr, util::StringConversion};
 
-pub struct Data {
+pub struct Data<'a> {
     raw: NonNull<libobs_sys::obs_data_t>,
+    life:PhantomData<&'a ()>
 }
 
-impl Drop for Data {
+impl<'a> Drop for Data<'a> {
     fn drop(&mut self) {
         unsafe { libobs_sys::obs_data_release(self.raw.as_ptr()) };
     }
 }
 
-impl Default for Data {
+impl<'a> Default for Data<'a> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl Data {
+impl<'a> Data<'a> {
     pub fn new() -> Self {
         Self::from_raw(unsafe { libobs_sys::obs_data_create() })
     }
@@ -28,6 +29,7 @@ impl Data {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_data_t) -> Self {
         Self {
             raw: { unsafe { NonNull::new_unchecked(raw) } },
+            life:PhantomData::default(),
         }
     }
 
@@ -150,15 +152,15 @@ impl DataArray {
         unsafe { libobs_sys::obs_data_array_erase(self.raw.as_ptr(), idx) };
     }
 
-    pub fn insert(&mut self, idx: u64, obj: Data) {
+    pub fn insert(&mut self, idx: u64, obj: Data<'_>) {
         unsafe { libobs_sys::obs_data_array_insert(self.raw.as_ptr(), idx, obj.raw.as_ptr()) };
     }
 
-    pub fn get(&self, idx: u64) -> Data {
+    pub fn get(&self, idx: u64) -> Data<'_> {
         Data::from_raw(unsafe { libobs_sys::obs_data_array_item(self.raw.as_ptr(), idx) })
     }
 
-    pub fn push_back(&mut self, obj: Data) {
+    pub fn push_back(&mut self, obj: Data<'_>) {
         unsafe { libobs_sys::obs_data_array_push_back(self.raw.as_ptr(), obj.raw.as_ptr()) };
     }
 

@@ -1,25 +1,25 @@
 use super::convert_string_list;
 use crate::source::Source;
 
-pub fn current() -> Source {
+pub fn current() -> Source<'static> {
     let raw = unsafe { libobs_sys::obs_frontend_get_current_scene() };
     Source::from_raw(raw)
 }
 
-pub fn set_current(scene: &Source) {
+pub fn set_current(scene: &Source<'_>) {
     unsafe { libobs_sys::obs_frontend_set_current_scene(scene.as_ptr()) };
 }
 
-pub fn current_preview() -> Option<Source> {
+pub fn current_preview() -> Option<Source<'static>> {
     let raw = unsafe { libobs_sys::obs_frontend_get_current_preview_scene() };
     (!raw.is_null()).then(|| Source::from_raw(raw))
 }
 
-pub fn set_current_preview(scene: &Source) {
+pub fn set_current_preview(scene: &Source<'_>) {
     unsafe { libobs_sys::obs_frontend_set_current_preview_scene(scene.as_ptr()) };
 }
 
-pub fn list() -> Vec<Source> {
+pub fn list() -> Vec<Source<'static>> {
     let mut list = libobs_sys::obs_frontend_source_list::default();
     unsafe { libobs_sys::obs_frontend_get_scenes((&mut list) as *mut _) };
 

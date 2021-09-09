@@ -1,5 +1,6 @@
 use std::{
     fmt::{self, Display},
+    marker::PhantomData,
     ptr::NonNull,
 };
 
@@ -14,12 +15,13 @@ use crate::{
 };
 
 #[derive(PartialEq, Eq)]
-pub struct Source {
+pub struct Source<'a> {
     raw: NonNull<libobs_sys::obs_source_t>,
+    life: PhantomData<&'a ()>,
     release: bool,
 }
 
-impl Drop for Source {
+impl<'a> Drop for Source<'a> {
     fn drop(&mut self) {
         if self.release {
             unsafe { libobs_sys::obs_source_release(self.raw.as_ptr()) };
@@ -28,10 +30,11 @@ impl Drop for Source {
     }
 }
 
-impl Source {
+impl<'a> Source<'a> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_source_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
+            life: PhantomData::default(),
             release: true,
         }
     }
@@ -39,6 +42,7 @@ impl Source {
     pub(crate) fn from_raw_no_release(raw: *mut libobs_sys::obs_source_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
+            life: PhantomData::default(),
             release: false,
         }
     }
@@ -47,12 +51,12 @@ impl Source {
         self.raw.as_ptr()
     }
 
-    pub fn by_name(name: &str) -> Option<Source> {
+    pub fn by_name(name: &str) -> Option<Source<'a>> {
         let raw = unsafe { libobs_sys::obs_get_source_by_name(cstr_ptr!(name)) };
         (!raw.is_null()).then(|| Self::from_raw(raw))
     }
 
-    pub fn by_output_channel(channel: u32) -> Option<Source> {
+    pub fn by_output_channel(channel: u32) -> Option<Source<'a>> {
         let raw = unsafe { libobs_sys::obs_get_output_source(channel) };
         (!raw.is_null()).then(|| Self::from_raw(raw))
     }
@@ -141,12 +145,12 @@ impl Source {
         })
     }
 
-    pub fn settings(&self) -> Data {
+    pub fn settings(&self) -> Data<'_> {
         let raw = unsafe { libobs_sys::obs_source_get_settings(self.raw.as_ptr()) };
         Data::from_raw(raw)
     }
 
-    pub fn private_settings(&self) -> Data {
+    pub fn private_settings(&self) -> Data<'_> {
         let raw = unsafe { libobs_sys::obs_source_get_private_settings(self.raw.as_ptr()) };
         Data::from_raw(raw)
     }
@@ -210,7 +214,7 @@ impl Source {
         unsafe { libobs_sys::obs_source_filter_count(self.raw.as_ptr()) }
     }
 
-    pub fn update(&self, settings: Data) {
+    pub fn update(&self, settings: Data<'_>) {
         unsafe { libobs_sys::obs_source_update(self.raw.as_ptr(), settings.as_ptr()) };
     }
 
@@ -508,7 +512,7 @@ pub fn list_transition_types() -> Vec<String> {
     util::list_types(libobs_sys::obs_enum_transition_types)
 }
 
-pub fn list() -> Vec<Source> {
+pub fn list() -> Vec<Source<'static>> {
     util::list_instances(
         libobs_sys::obs_enum_sources,
         libobs_sys::obs_source_get_ref,
@@ -526,7 +530,7 @@ pub fn output_flags(id: &str) -> OutputFlags {
     })
 }
 
-pub fn defaults(id: &str) -> Option<Data> {
+pub fn defaults(id: &str) -> Option<Data<'static>> {
     let raw = unsafe { libobs_sys::obs_get_source_defaults(cstr_ptr!(id)) };
     (!raw.is_null()).then(|| {
         unsafe { libobs_sys::obs_data_addref(raw) };

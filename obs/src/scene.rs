@@ -1,23 +1,25 @@
-use std::{ffi::c_void, ops::Deref, ptr::NonNull};
+use std::{ffi::c_void, marker::PhantomData, ops::Deref, ptr::NonNull};
 
 use bitflags::bitflags;
 
-use crate::{cstr_ptr, graphics::Vec2, source::Source, video::ScaleType, Ref};
+use crate::{cstr_ptr, graphics::Vec2, source::Source, video::ScaleType};
 
-pub struct Scene {
+pub struct Scene<'a> {
     raw: NonNull<libobs_sys::obs_scene_t>,
+    life: PhantomData<&'a ()>,
 }
 
-impl Drop for Scene {
+impl<'a> Drop for Scene<'a> {
     fn drop(&mut self) {
         unsafe { libobs_sys::obs_scene_release(self.raw.as_ptr()) }
     }
 }
 
-impl Scene {
+impl<'a> Scene<'a> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_scene_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
+            life: PhantomData::default(),
         }
     }
 
@@ -25,7 +27,7 @@ impl Scene {
         Self::from_raw(unsafe { libobs_sys::obs_scene_create(cstr_ptr!(name)) })
     }
 
-    pub fn from_source(source: Source) -> Option<Self> {
+    pub fn from_source(source: Source<'a>) -> Option<Self> {
         let raw = unsafe { libobs_sys::obs_scene_from_source(source.as_ptr()) };
         if raw.is_null() {
             None
@@ -35,7 +37,7 @@ impl Scene {
         }
     }
 
-    pub fn list_items(&self) -> Ref<'_, Self, Vec<SceneItem>> {
+    pub fn list_items(&self) -> Vec<SceneItem<'_>> {
         unsafe extern "C" fn callback(
             _scene: *mut libobs_sys::obs_scene_t,
             item: *mut libobs_sys::obs_sceneitem_t,
@@ -44,14 +46,14 @@ impl Scene {
             if !item.is_null() {
                 libobs_sys::obs_sceneitem_addref(item);
 
-                let param = &mut *param.cast::<Vec<SceneItem>>();
+                let param = &mut *param.cast::<Vec<SceneItem<'_>>>();
                 param.push(SceneItem::from_raw(item));
             }
 
             true
         }
 
-        let mut param = Vec::<SceneItem>::new();
+        let mut param = Vec::<SceneItem<'_>>::new();
         unsafe {
             libobs_sys::obs_scene_enum_items(
                 self.raw.as_ptr(),
@@ -60,17 +62,17 @@ impl Scene {
             )
         };
 
-        Ref::new(param)
+        param
     }
 
-    pub fn source(&self) -> Ref<'_, Self, Source> {
-        Ref::new(Source::from_raw(unsafe {
+    pub fn source(&self) -> Source<'_> {
+        Source::from_raw(unsafe {
             let raw = libobs_sys::obs_scene_get_source(self.raw.as_ptr());
             libobs_sys::obs_source_get_ref(raw)
-        }))
+        })
     }
 
-    pub fn into_source(self) -> Source {
+    pub fn into_source(self) -> Source<'a> {
         Source::from_raw(unsafe {
             let raw = libobs_sys::obs_scene_get_source(self.raw.as_ptr());
             libobs_sys::obs_source_get_ref(raw)
@@ -79,7 +81,7 @@ impl Scene {
 
     pub fn atomic_update<F, T>(&mut self, update: F) -> T
     where
-        F: FnOnce(&mut Self) -> T,
+        F: FnOnce(&mut Scene<'_>) -> T,
         T: Default,
     {
         struct Param<F, T> {
@@ -89,7 +91,7 @@ impl Scene {
 
         unsafe extern "C" fn callback<F, T>(param: *mut c_void, raw: *mut libobs_sys::obs_scene_t)
         where
-            F: FnOnce(&mut Scene) -> T,
+            F: FnOnce(&mut Scene<'_>) -> T,
         {
             let param = &mut *param.cast::<Param<F, T>>();
             if let Some(update) = param.update.take() {
@@ -113,27 +115,29 @@ impl Scene {
         param.result.unwrap_or_default()
     }
 
-    pub fn add(&mut self, source: &Source) -> SceneItem {
+    pub fn add(&mut self, source: &Source<'_>) -> SceneItem<'_> {
         let raw = unsafe { libobs_sys::obs_scene_add(self.raw.as_ptr(), source.as_ptr()) };
         unsafe { libobs_sys::obs_sceneitem_addref(raw) };
         SceneItem::from_raw(raw)
     }
 }
 
-pub struct SceneItem {
+pub struct SceneItem<'a> {
     raw: NonNull<libobs_sys::obs_sceneitem_t>,
+    life: PhantomData<&'a ()>,
 }
 
-impl Drop for SceneItem {
+impl<'a> Drop for SceneItem<'a> {
     fn drop(&mut self) {
         unsafe { libobs_sys::obs_sceneitem_release(self.raw.as_ptr()) };
     }
 }
 
-impl SceneItem {
+impl<'a> SceneItem<'a> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_sceneitem_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
+            life: PhantomData::default(),
         }
     }
 
@@ -221,22 +225,22 @@ impl SceneItem {
         unsafe { libobs_sys::obs_sceneitem_is_group(self.raw.as_ptr()) }
     }
 
-    pub fn source(&self) -> Ref<'_, Self, Source> {
-        Ref::new(Source::from_raw(unsafe {
+    pub fn source(&self) -> Source<'_> {
+        Source::from_raw(unsafe {
             let raw = libobs_sys::obs_sceneitem_get_source(self.raw.as_ptr());
             libobs_sys::obs_source_get_ref(raw)
-        }))
-    }
-
-    pub fn parent_scene(&self) -> Option<Ref<'_, Self, Scene>> {
-        let raw = unsafe { libobs_sys::obs_sceneitem_get_scene(self.raw.as_ptr()) };
-        (!raw.is_null()).then(|| {
-            unsafe { libobs_sys::obs_scene_addref(raw) };
-            Ref::new(Scene::from_raw(raw))
         })
     }
 
-    pub fn list_group_items(&self) -> Option<Ref<'_, Self, Vec<Self>>> {
+    pub fn parent_scene(&self) -> Option<Scene<'_>> {
+        let raw = unsafe { libobs_sys::obs_sceneitem_get_scene(self.raw.as_ptr()) };
+        (!raw.is_null()).then(|| {
+            unsafe { libobs_sys::obs_scene_addref(raw) };
+            Scene::from_raw(raw)
+        })
+    }
+
+    pub fn list_group_items(&self) -> Option<Vec<Self>> {
         if !self.is_group() {
             return None;
         }
@@ -249,7 +253,7 @@ impl SceneItem {
             if !item.is_null() {
                 libobs_sys::obs_sceneitem_addref(item);
 
-                let param = &mut *param.cast::<Vec<SceneItem>>();
+                let param = &mut *param.cast::<Vec<SceneItem<'_>>>();
                 param.push(SceneItem::from_raw(item));
             }
 
@@ -265,7 +269,7 @@ impl SceneItem {
             )
         };
 
-        Some(Ref::new(param))
+        Some(param)
     }
 
     pub fn remove(&self) {
@@ -274,7 +278,7 @@ impl SceneItem {
 
     pub fn update<F>(&mut self, f: F)
     where
-        F: FnOnce(&mut EditableSceneItem<'_>),
+        F: FnOnce(&mut EditableSceneItem<'_,'_>),
     {
         unsafe { libobs_sys::obs_sceneitem_defer_update_begin(self.raw.as_ptr()) };
         f(&mut EditableSceneItem(self));
@@ -282,9 +286,9 @@ impl SceneItem {
     }
 }
 
-pub struct EditableSceneItem<'a>(&'a mut SceneItem);
+pub struct EditableSceneItem<'a, 'b>(&'a mut SceneItem<'b>);
 
-impl<'a> EditableSceneItem<'a> {
+impl<'a,'b> EditableSceneItem<'a,'b> {
     pub fn set_pos(&mut self, pos: (f32, f32)) {
         let pos = Vec2::new(pos.0, pos.1);
         unsafe { libobs_sys::obs_sceneitem_set_pos(self.0.raw.as_ptr(), pos.as_ptr()) };
@@ -335,8 +339,8 @@ impl<'a> EditableSceneItem<'a> {
     }
 }
 
-impl<'a> Deref for EditableSceneItem<'a> {
-    type Target = SceneItem;
+impl<'a,'b> Deref for EditableSceneItem<'a,'b> {
+    type Target = SceneItem<'b>;
 
     fn deref(&self) -> &Self::Target {
         self.0

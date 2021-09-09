@@ -18,8 +18,8 @@ impl From<obs::output::Flags> for output::OutputFlags {
     }
 }
 
-impl From<obs::output::Output> for Output {
-    fn from(value: obs::output::Output) -> Self {
+impl<'a> From<obs::output::Output<'a>> for Output {
+    fn from(value: obs::output::Output<'a>) -> Self {
         Self {
             name: value.name(),
             ty: value.id(),

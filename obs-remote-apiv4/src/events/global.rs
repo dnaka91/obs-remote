@@ -157,7 +157,7 @@ pub fn connect_signals(
                     .entry(source.name())
                     .or_insert_with_key(|name| {
                         debug!("connecting signals to new source `{}`", name);
-                        sources::connect_signals(&*source, tx.clone())
+                        sources::connect_signals(&source, tx.clone())
                     });
 
                 tx.send(Event::SourceCreated(SourceCreated {

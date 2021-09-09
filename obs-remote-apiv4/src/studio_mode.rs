@@ -27,7 +27,7 @@ impl StudioMode for Service {
         &self,
         request: Request<()>,
     ) -> Result<Response<GetPreviewSceneReply>, Status> {
-        fn get_data(item: &scene::SceneItem) -> SceneItem {
+        fn get_data(item: &scene::SceneItem<'_>) -> SceneItem {
             let pos = item.pos();
             let scale = item.scale();
             let item_source = item.source();
@@ -66,11 +66,9 @@ impl StudioMode for Service {
         let name = source.name();
         let scene = Scene::from_source(source)
             .ok_or_else(|| Status::internal("current source is not a scene"))?;
+        let sources = scene.list_items().iter().map(get_data).collect();
 
-        Ok(Response::new(GetPreviewSceneReply {
-            name,
-            sources: scene.list_items().iter().map(get_data).collect(),
-        }))
+        Ok(Response::new(GetPreviewSceneReply { name, sources }))
     }
 
     async fn set_preview_scene(

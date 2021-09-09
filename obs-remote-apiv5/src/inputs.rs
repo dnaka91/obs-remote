@@ -76,10 +76,11 @@ impl inputs_server::Inputs for InputsService {
 
         let source = Source::by_name(&name)
             .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+        let settings = source.settings().to_json();
 
         Ok(Response::new(SettingsReply {
             kind: source.id(),
-            settings: source.settings().to_json(),
+            settings,
         }))
     }
 

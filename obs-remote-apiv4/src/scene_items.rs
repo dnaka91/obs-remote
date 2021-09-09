@@ -47,9 +47,10 @@ impl SceneItems for Service {
         let scene = scene_or_current(&scene_name)?;
         let mut items = scene.list_items();
         let item = find_scene_item(&mut items, item.as_ref())?;
+        let name = item.source().name();
 
         Ok(Response::new(GetPropertiesReply {
-            name: item.source().name(),
+            name,
             id: item.id(),
             properties: Some(scene_item_data(item)),
         }))
@@ -152,7 +153,7 @@ impl SceneItems for Service {
             Status::failed_precondition(format!("`{}` doesn't exist", source_name))
         })?;
 
-        precondition!(*scene.source() != source, "can't add scene to itself");
+        precondition!(scene.source() != source, "can't add scene to itself");
 
         let id = graphics::scoped(|| {
             scene.atomic_update(|scene| {
@@ -184,8 +185,9 @@ impl SceneItems for Service {
             to_scene.atomic_update(|scene| {
                 let item = scene.add(&ref_item.source());
                 item.set_visible(ref_item.visible());
+                let name = item.source().name();
 
-                (item.source().name(), item.id())
+                (name, item.id())
             })
         });
 
@@ -196,7 +198,7 @@ impl SceneItems for Service {
     }
 }
 
-fn find_scene(scene_name: &str) -> Result<Scene, Status> {
+fn find_scene(scene_name: &str) -> Result<Scene<'static>, Status> {
     precondition!(!scene_name.is_empty(), "scene name mustn't be empty");
 
     let source = Source::by_name(scene_name)
@@ -206,7 +208,7 @@ fn find_scene(scene_name: &str) -> Result<Scene, Status> {
         .ok_or_else(|| Status::failed_precondition("requested source is not a scene"))
 }
 
-fn scene_or_current(scene_name: &str) -> Result<Scene, Status> {
+fn scene_or_current(scene_name: &str) -> Result<Scene<'static>, Status> {
     let source = if scene_name.is_empty() {
         frontend::scenes::current()
     } else {
@@ -218,10 +220,10 @@ fn scene_or_current(scene_name: &str) -> Result<Scene, Status> {
         .ok_or_else(|| Status::failed_precondition("requested source is not a scene"))
 }
 
-fn find_scene_item<'a>(
-    list: &'a mut [SceneItem],
+fn find_scene_item<'a, 'b>(
+    list: &'a mut [SceneItem<'b>],
     item: Option<&Identifier>,
-) -> Result<&'a mut SceneItem, Status> {
+) -> Result<&'a mut SceneItem<'b>, Status> {
     use self::identifier::Value;
 
     let identifier = item
@@ -239,7 +241,7 @@ fn find_scene_item<'a>(
     .ok_or_else(|| Status::failed_precondition("scene item doesn't exist"))
 }
 
-fn scene_item_data(item: &SceneItem) -> SceneItemTransform {
+fn scene_item_data(item: &SceneItem<'_>) -> SceneItemTransform {
     let source = item.source();
     let scale = item.scale();
 

@@ -106,10 +106,9 @@ impl Transitions for Service {
             .ok_or_else(|| {
                 Status::failed_precondition(format!("transition `{}` doesn't exist", name))
             })?;
+        let settings = transition.settings().to_json();
 
-        Ok(Response::new(GetSettingsReply {
-            settings: transition.settings().to_json(),
-        }))
+        Ok(Response::new(GetSettingsReply { settings }))
     }
 
     async fn set_settings(
@@ -133,9 +132,9 @@ impl Transitions for Service {
         transition.update(data);
         transition.update_properties();
 
-        Ok(Response::new(SetSettingsReply {
-            settings: transition.settings().to_json(),
-        }))
+        let settings = transition.settings().to_json();
+
+        Ok(Response::new(SetSettingsReply { settings }))
     }
 
     async fn release_t_bar(&self, request: Request<()>) -> Result<Response<()>, Status> {

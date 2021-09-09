@@ -20,7 +20,7 @@ pub fn pause(pause: bool) {
     unsafe { libobs_sys::obs_frontend_recording_pause(pause) };
 }
 
-pub fn output() -> Output {
+pub fn output() -> Output<'static> {
     let raw = unsafe { libobs_sys::obs_frontend_get_recording_output() };
     Output::from_raw(raw)
 }

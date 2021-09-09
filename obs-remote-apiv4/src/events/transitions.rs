@@ -8,7 +8,7 @@ use super::event_reply::Event;
 use crate::get_data;
 
 #[must_use]
-pub fn connect_signals(source: &Source, tx: broadcast::Sender<Event>) -> Vec<Handle> {
+pub fn connect_signals(source: &Source<'_>, tx: broadcast::Sender<Event>) -> Vec<Handle> {
     let handler = source.signal_handler();
     let mut handles = Vec::new();
 

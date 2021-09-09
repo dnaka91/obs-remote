@@ -29,8 +29,8 @@ impl From<service::StreamType> for StreamType {
     }
 }
 
-impl From<Data> for StreamSettings {
-    fn from(value: Data) -> Self {
+impl<'a> From<Data<'a>> for StreamSettings {
+    fn from(value: Data<'a>) -> Self {
         Self {
             server: value.string("server"),
             key: value.string("key"),
@@ -41,7 +41,7 @@ impl From<Data> for StreamSettings {
     }
 }
 
-impl From<StreamSettings> for Data {
+impl From<StreamSettings> for Data<'static> {
     fn from(value: StreamSettings) -> Self {
         let mut data = Self::new();
 

@@ -2,8 +2,6 @@
 
 use std::{
     ffi::CStr,
-    marker::PhantomData,
-    ops::{Deref, DerefMut},
     os::raw::c_char,
 };
 
@@ -244,32 +242,4 @@ pub fn master_volume() -> f32 {
 
 pub fn render_main_texture() {
     unsafe { libobs_sys::obs_render_main_texture() };
-}
-
-pub struct Ref<'a, S, T> {
-    source: PhantomData<&'a S>,
-    value: T,
-}
-
-impl<'a, S, T> Deref for Ref<'a, S, T> {
-    type Target = T;
-
-    fn deref(&self) -> &Self::Target {
-        &self.value
-    }
-}
-
-impl<'a, S, T> DerefMut for Ref<'a, S, T> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.value
-    }
-}
-
-impl<'a, S, T> Ref<'a, S, T> {
-    pub(crate) fn new(value: T) -> Self {
-        Self {
-            source: PhantomData,
-            value,
-        }
-    }
 }

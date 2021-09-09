@@ -1,9 +1,6 @@
 #![deny(rust_2018_idioms)]
 
-use std::{
-    ffi::CStr,
-    os::raw::c_char,
-};
+use std::{ffi::CStr, os::raw::c_char};
 
 pub use chrono::Duration;
 

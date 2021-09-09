@@ -278,7 +278,7 @@ impl<'a> SceneItem<'a> {
 
     pub fn update<F>(&mut self, f: F)
     where
-        F: FnOnce(&mut EditableSceneItem<'_,'_>),
+        F: FnOnce(&mut EditableSceneItem<'_, '_>),
     {
         unsafe { libobs_sys::obs_sceneitem_defer_update_begin(self.raw.as_ptr()) };
         f(&mut EditableSceneItem(self));
@@ -288,7 +288,7 @@ impl<'a> SceneItem<'a> {
 
 pub struct EditableSceneItem<'a, 'b>(&'a mut SceneItem<'b>);
 
-impl<'a,'b> EditableSceneItem<'a,'b> {
+impl<'a, 'b> EditableSceneItem<'a, 'b> {
     pub fn set_pos(&mut self, pos: (f32, f32)) {
         let pos = Vec2::new(pos.0, pos.1);
         unsafe { libobs_sys::obs_sceneitem_set_pos(self.0.raw.as_ptr(), pos.as_ptr()) };
@@ -339,7 +339,7 @@ impl<'a,'b> EditableSceneItem<'a,'b> {
     }
 }
 
-impl<'a,'b> Deref for EditableSceneItem<'a,'b> {
+impl<'a, 'b> Deref for EditableSceneItem<'a, 'b> {
     type Target = SceneItem<'b>;
 
     fn deref(&self) -> &Self::Target {

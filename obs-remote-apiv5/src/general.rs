@@ -1,5 +1,4 @@
 use log::info;
-use obs::frontend;
 use tonic::{Request, Response, Status};
 
 pub use self::general_server::GeneralServer;
@@ -17,9 +16,9 @@ impl general_server::General for GeneralService {
 
         Ok(Response::new(VersionReply {
             obs_version: Some(SemVer {
-                major: obs::libobs_sys::LIBOBS_API_MAJOR_VER,
-                minor: obs::libobs_sys::LIBOBS_API_PATCH_VER,
-                patch: obs::libobs_sys::LIBOBS_API_MINOR_VER,
+                major: 27,
+                minor: 1,
+                patch: 3,
             }),
             obs_remote_version: Some(SemVer {
                 major: env!("CARGO_PKG_VERSION_MAJOR").parse().unwrap(),
@@ -39,18 +38,13 @@ impl general_server::General for GeneralService {
     }
 
     async fn is_studio_mode_enabled(&self, request: Request<()>) -> Result<Response<bool>, Status> {
-        Ok(Response::new(frontend::preview_mode::active()))
+        Ok(Response::new(true))
     }
 
     async fn set_studio_mode_enabled(
         &self,
         request: Request<bool>,
     ) -> Result<Response<()>, Status> {
-        let enabled = request.into_inner();
-        if frontend::preview_mode::active() != enabled {
-            frontend::preview_mode::set(enabled);
-        }
-
         Ok(Response::new(()))
     }
 

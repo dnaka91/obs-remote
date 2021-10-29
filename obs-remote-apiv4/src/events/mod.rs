@@ -3,18 +3,12 @@
 use std::{collections::HashMap, sync::Arc};
 
 use log::{debug, info};
-use obs::signal::{GlobalSignal, SignalHandler};
 use parking_lot::Mutex as StdMutex;
 use tokio::sync::{broadcast, mpsc, watch, Mutex};
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 
 use self::events_server::Events;
-
-mod filters;
-mod global;
-mod sources;
-mod transitions;
 
 tonic::include_proto!("obs_remote.events");
 
@@ -25,18 +19,10 @@ pub struct Service {
 impl Service {
     #[must_use]
     pub fn new(mut signal: watch::Receiver<()>) -> Self {
-        let extra_handles = Arc::new(StdMutex::new(HashMap::new()));
+        let extra_handles = Arc::new(StdMutex::new(HashMap::<String, String>::new()));
         let (tx, _) = broadcast::channel(10);
 
-        let event_handle = global::add_callback(tx.clone());
-        let mut handles = global::connect_signals(tx.clone(), Arc::clone(&extra_handles));
-
         debug!("connecting source signals...");
-
-        for source in obs::source::list() {
-            handles.extend(sources::connect_signals(&source, tx.clone()));
-            debug!("connected signals for: {}", source.name());
-        }
 
         debug!("all source signals connected");
 
@@ -45,8 +31,6 @@ impl Service {
 
         tokio::spawn(async move {
             signal.changed().await.ok();
-            drop(event_handle);
-            drop(handles);
 
             tokio::task::spawn_blocking(move || {
                 extra_handles.lock().clear();
@@ -96,17 +80,6 @@ impl Events for Service {
             Err(Status::aborted("server shutting down"))
         }
     }
-}
-
-fn recording_filename() -> String {
-    let output = obs::frontend::recording::output();
-    let settings = output.settings();
-
-    settings
-        .item_by_name("url")
-        .or_else(|| settings.item_by_name("path"))
-        .and_then(|item| item.string())
-        .unwrap_or_default()
 }
 
 #[doc(hidden)]

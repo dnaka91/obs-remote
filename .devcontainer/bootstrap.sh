@@ -11,11 +11,6 @@ cat > $HOME/.cargo/config.toml <<-EOF
     rustflags = ["-C", "link-arg=-fuse-ld=lld"]
 EOF
 
-rustup toolchain install nightly --component miri
-cargo +nightly miri setup
-
-cargo install cargo-edit
-
 echo "export PATH=$HOME/.cargo/bin:$PATH" >> $HOME/.bashrc
 mkdir -p $HOME/.config/fish
 echo "set -p fish_user_paths $HOME/.cargo/bin" >> $HOME/.config/fish/config.fish

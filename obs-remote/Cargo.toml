@@ -12,7 +12,6 @@ crate-type = ["cdylib"]
 [dependencies]
 anyhow = "1.0.43"
 log = { version = "0.4.14", features = ["std", "max_level_debug"] }
-obs = { path = "../obs" }
 obs-remote-apiv4 = { path = "../obs-remote-apiv4" }
 obs-remote-apiv5 = { path = "../obs-remote-apiv5" }
 prost = "0.8.0"

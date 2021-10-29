@@ -1,13 +1,6 @@
-use std::collections::HashMap;
-
-use obs::{
-    source::{self, OutputFlags, Source, Volume},
-    Duration,
-};
 use tonic::{Request, Response, Status};
 
 use self::sources_server::Sources;
-use super::common::DurationExt;
 use crate::precondition;
 
 tonic::include_proto!("obs_remote.sources");
@@ -41,61 +34,7 @@ impl Sources for Service {
         &self,
         request: Request<ListTypesRequest>,
     ) -> Result<Response<ListTypesReply>, Status> {
-        use self::list_types_reply::{
-            source_type::{self, Capabilities},
-            SourceType,
-        };
-
-        let type_mapping = source::list_input_types()
-            .into_iter()
-            .map(|ty| (ty, source_type::SourceType::Input))
-            .chain(
-                source::list_filter_types()
-                    .into_iter()
-                    .map(|ty| (ty, source_type::SourceType::Filter)),
-            )
-            .chain(
-                source::list_transition_types()
-                    .into_iter()
-                    .map(|ty| (ty, source_type::SourceType::Transition)),
-            )
-            .collect::<HashMap<_, _>>();
-
-        let types = source::list_source_types()
-            .into_iter()
-            .map(|ty| {
-                let mut source_type = SourceType {
-                    type_id: Default::default(),
-                    display_name: source::display_name(&ty),
-                    ty: Default::default(),
-                    default_settings: source::defaults(&ty)
-                        .map_or_else(|| "{}".to_owned(), |data| data.to_json()),
-                    caps: {
-                        let flags = source::output_flags(&ty);
-                        Some(Capabilities {
-                            is_async: flags.contains(OutputFlags::ASYNC),
-                            has_video: flags.contains(OutputFlags::VIDEO),
-                            has_audio: flags.contains(OutputFlags::AUDIO),
-                            can_interact: flags.contains(OutputFlags::INTERACTION),
-                            is_composite: flags.contains(OutputFlags::COMPOSITE),
-                            do_not_duplicate: flags.contains(OutputFlags::DO_NOT_DUPLICATE),
-                            do_not_self_monitor: flags.contains(OutputFlags::DO_NOT_SELF_MONITOR),
-                            is_deprecated: flags.contains(OutputFlags::DEPRECATED),
-                        })
-                    },
-                };
-                source_type.set_ty(
-                    type_mapping
-                        .get(&ty)
-                        .copied()
-                        .unwrap_or(source_type::SourceType::Other),
-                );
-                source_type.type_id = ty;
-                source_type
-            })
-            .collect();
-
-        Ok(Response::new(ListTypesReply { types }))
+        Ok(Response::new(ListTypesReply { types: vec![] }))
     }
 
     async fn get_volume(
@@ -108,19 +47,10 @@ impl Sources for Service {
         } = request.into_inner();
         precondition!(!source.is_empty(), "source mustn't be empty");
 
-        let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
-        let volume = source.volume();
-        let volume = if use_decibel {
-            volume.as_db()
-        } else {
-            volume.as_mul()
-        };
-
         Ok(Response::new(GetVolumeReply {
-            name: source.name(),
-            volume,
-            muted: source.muted(),
+            name: source,
+            volume: 15.0,
+            muted: false,
         }))
     }
 
@@ -136,15 +66,6 @@ impl Sources for Service {
             "volume is out of range"
         );
 
-        let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
-
-        source.set_volume(if use_decibel {
-            Volume::Db(volume)
-        } else {
-            Volume::Mul(volume)
-        });
-
         Ok(Response::new(()))
     }
 
@@ -155,17 +76,13 @@ impl Sources for Service {
         let source = request.into_inner().source;
         precondition!(!source.is_empty(), "source mustn't be empty");
 
-        let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
-        let mixers = source.audio_mixers();
-
         Ok(Response::new(GetTracksReply {
-            track_1: mixers[0],
-            track_2: mixers[1],
-            track_3: mixers[2],
-            track_4: mixers[3],
-            track_5: mixers[4],
-            track_6: mixers[5],
+            track_1: true,
+            track_2: true,
+            track_3: true,
+            track_4: false,
+            track_5: false,
+            track_6: false,
         }))
     }
 
@@ -178,14 +95,6 @@ impl Sources for Service {
         precondition!(!source.is_empty(), "source mustn't be empty");
         precondition!((1..=6).contains(&track), "track must be between 1 and 6");
 
-        let mut source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
-
-        let mut mixers = source.audio_mixers();
-        mixers[track as usize] = active;
-
-        source.set_audio_mixers(mixers);
-
         Ok(Response::new(()))
     }
 
@@ -196,23 +105,15 @@ impl Sources for Service {
         let source = request.into_inner().source;
         precondition!(!source.is_empty(), "source mustn't be empty");
 
-        let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
-
         Ok(Response::new(GetMuteReply {
-            name: source.name(),
-            muted: source.muted(),
+            name: source,
+            muted: false,
         }))
     }
 
     async fn set_mute(&self, request: Request<SetMuteRequest>) -> Result<Response<()>, Status> {
         let SetMuteRequest { source, mute } = request.into_inner();
         precondition!(!source.is_empty(), "source mustn't be empty");
-
-        let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
-
-        source.set_muted(mute);
 
         Ok(Response::new(()))
     }
@@ -224,11 +125,6 @@ impl Sources for Service {
         let source = request.into_inner().source;
         precondition!(!source.is_empty(), "source mustn't be empty");
 
-        let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
-
-        source.set_muted(!source.muted());
-
         Ok(Response::new(()))
     }
 
@@ -239,10 +135,7 @@ impl Sources for Service {
         let source = request.into_inner().source_name;
         precondition!(!source.is_empty(), "source mustn't be empty");
 
-        let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
-
-        Ok(Response::new(source.active()))
+        Ok(Response::new(true))
     }
 
     async fn get_audio_active(
@@ -252,10 +145,7 @@ impl Sources for Service {
         let source = request.into_inner().source_name;
         precondition!(!source.is_empty(), "source mustn't be empty");
 
-        let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
-
-        Ok(Response::new(source.audio_active()))
+        Ok(Response::new(true))
     }
 
     async fn set_name(&self, request: Request<SetNameRequest>) -> Result<Response<()>, Status> {
@@ -271,10 +161,6 @@ impl Sources for Service {
 
         let offset =
             offset.ok_or_else(|| Status::failed_precondition("offset must be specified"))?;
-        let mut source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
-
-        source.set_sync_offset(Duration::from_proto(offset));
 
         Ok(Response::new(()))
     }
@@ -286,12 +172,9 @@ impl Sources for Service {
         let source = request.into_inner().source;
         precondition!(!source.is_empty(), "source mustn't be empty");
 
-        let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
-
         Ok(Response::new(GetSyncOffsetReply {
-            name: source.name(),
-            offset: Some(source.sync_offset().into_proto()),
+            name: source,
+            offset: None,
         }))
     }
 
@@ -341,16 +224,12 @@ impl Sources for Service {
         &self,
         request: Request<()>,
     ) -> Result<Response<GetSpecialSourcesReply>, Status> {
-        fn get_source_name(channel: u32) -> Option<String> {
-            Source::by_output_channel(channel).map(|source| source.name())
-        }
-
         Ok(Response::new(GetSpecialSourcesReply {
-            desktop_1: get_source_name(1),
-            desktop_2: get_source_name(2),
-            mic_1: get_source_name(3),
-            mic_2: get_source_name(4),
-            mic_3: get_source_name(5),
+            desktop_1: None,
+            desktop_2: None,
+            mic_1: None,
+            mic_2: None,
+            mic_3: None,
         }))
     }
 

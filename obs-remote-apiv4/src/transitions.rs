@@ -1,12 +1,6 @@
-use obs::{
-    data,
-    frontend::{preview_mode, transitions},
-    Duration,
-};
 use tonic::{Request, Response, Status};
 
 use self::transitions_server::Transitions;
-use super::common::DurationExt;
 use crate::precondition;
 
 tonic::include_proto!("obs_remote.transitions");
@@ -16,26 +10,17 @@ pub struct Service;
 #[tonic::async_trait]
 impl Transitions for Service {
     async fn list(&self, request: Request<()>) -> Result<Response<ListReply>, Status> {
-        use self::list_reply::Transition;
-
-        let current = transitions::current();
-
         Ok(Response::new(ListReply {
-            current: transitions::current().name(),
-            transitions: transitions::list()
-                .into_iter()
-                .map(|t| Transition { name: t.name() })
-                .collect(),
+            current: "test".to_owned(),
+            transitions: vec![],
         }))
     }
 
     #[allow(clippy::cast_sign_loss)]
     async fn get_current(&self, request: Request<()>) -> Result<Response<GetCurrentReply>, Status> {
-        let current = transitions::current();
-
         Ok(Response::new(GetCurrentReply {
-            name: current.name(),
-            duration: (!current.transition_fixed()).then(|| transitions::duration().into_proto()),
+            name: "test".to_owned(),
+            duration: None,
         }))
     }
 
@@ -45,15 +30,6 @@ impl Transitions for Service {
     ) -> Result<Response<()>, Status> {
         let name = request.into_inner().name;
         precondition!(!name.is_empty(), "transition name mustn't be empty");
-
-        transitions::set_current(
-            &transitions::list()
-                .into_iter()
-                .find(|t| t.name() == name)
-                .ok_or_else(|| {
-                    Status::failed_precondition(format!("transition `{}` doesn't exist", name))
-                })?,
-        );
 
         Ok(Response::new(()))
     }
@@ -67,13 +43,7 @@ impl Transitions for Service {
             .into_inner()
             .duration
             .ok_or_else(|| Status::failed_precondition("duration must be set"))?;
-        let duration = Duration::from_proto(duration);
-        precondition!(
-            duration >= Duration::zero(),
-            "invalid duration (must be positive)"
-        );
 
-        transitions::set_duration(duration);
         Ok(Response::new(()))
     }
 
@@ -82,15 +52,11 @@ impl Transitions for Service {
         &self,
         request: Request<()>,
     ) -> Result<Response<GetDurationReply>, Status> {
-        Ok(Response::new(GetDurationReply {
-            duration: Some(transitions::duration().into_proto()),
-        }))
+        Ok(Response::new(GetDurationReply { duration: None }))
     }
 
     async fn position(&self, request: Request<()>) -> Result<Response<PositionReply>, Status> {
-        Ok(Response::new(PositionReply {
-            position: transitions::current().transition_time(),
-        }))
+        Ok(Response::new(PositionReply { position: 5.0 }))
     }
 
     async fn get_settings(
@@ -100,15 +66,9 @@ impl Transitions for Service {
         let name = request.into_inner().name;
         precondition!(!name.is_empty(), "transition name mustn't be empty");
 
-        let transition = transitions::list()
-            .into_iter()
-            .find(|source| source.name() == name)
-            .ok_or_else(|| {
-                Status::failed_precondition(format!("transition `{}` doesn't exist", name))
-            })?;
-        let settings = transition.settings().to_json();
-
-        Ok(Response::new(GetSettingsReply { settings }))
+        Ok(Response::new(GetSettingsReply {
+            settings: "{}".to_owned(),
+        }))
     }
 
     async fn set_settings(
@@ -119,33 +79,12 @@ impl Transitions for Service {
         precondition!(!name.is_empty(), "transition name mustn't be empty");
         precondition!(!settings.is_empty(), "settings mustn't be empty");
 
-        let transition = transitions::list()
-            .into_iter()
-            .find(|source| source.name() == name)
-            .ok_or_else(|| {
-                Status::failed_precondition(format!("transition `{}` doesn't exist", name))
-            })?;
-
-        let data = data::Data::from_json(&settings)
-            .map_err(|e| Status::failed_precondition(format!("invalid JSON data: {:?}", e)))?;
-
-        transition.update(data);
-        transition.update_properties();
-
-        let settings = transition.settings().to_json();
-
-        Ok(Response::new(SetSettingsReply { settings }))
+        Ok(Response::new(SetSettingsReply {
+            settings: "{}".to_owned(),
+        }))
     }
 
     async fn release_t_bar(&self, request: Request<()>) -> Result<Response<()>, Status> {
-        precondition!(preview_mode::active(), "studio mode isn't enabled");
-        precondition!(
-            !transitions::current().transition_fixed(),
-            "current transition doesn't support t-bar control"
-        );
-
-        transitions::release_tbar();
-
         Ok(Response::new(()))
     }
 
@@ -155,17 +94,6 @@ impl Transitions for Service {
     ) -> Result<Response<()>, Status> {
         let SetTBarPositionRequest { position, release } = request.into_inner();
         precondition!((0.0..=1.0).contains(&position), "position out of range");
-        precondition!(preview_mode::active(), "studio mode isn't active");
-        precondition!(
-            !transitions::current().transition_fixed(),
-            "current transitions doesn't support T-Bar control"
-        );
-
-        transitions::set_tbar_position((position * 1024.0) as i32);
-
-        if release.unwrap_or(true) {
-            transitions::release_tbar();
-        }
 
         Ok(Response::new(()))
     }

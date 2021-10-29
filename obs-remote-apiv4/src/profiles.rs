@@ -1,4 +1,3 @@
-use obs::frontend::profiles;
 use tonic::{Request, Response, Status};
 
 use self::profiles_server::Profiles;
@@ -16,22 +15,17 @@ impl Profiles for Service {
     ) -> Result<Response<()>, Status> {
         let name = request.into_inner().name;
         precondition!(!name.is_empty(), "name mustn't be empty");
-        precondition!(profiles::list().contains(&name), "`{}` doesn't exist", name);
-
-        profiles::set_current(&name);
 
         Ok(Response::new(()))
     }
 
     async fn get_current(&self, request: Request<()>) -> Result<Response<GetCurrentReply>, Status> {
         Ok(Response::new(GetCurrentReply {
-            name: profiles::current(),
+            name: "test".to_owned(),
         }))
     }
 
     async fn list(&self, request: Request<()>) -> Result<Response<ListReply>, Status> {
-        Ok(Response::new(ListReply {
-            profiles: profiles::list(),
-        }))
+        Ok(Response::new(ListReply { profiles: vec![] }))
     }
 }

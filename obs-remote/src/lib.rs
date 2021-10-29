@@ -4,19 +4,16 @@
     clippy::cast_possible_truncation,
     clippy::cast_possible_wrap,
     clippy::cast_precision_loss,
-    clippy::cast_sign_loss
+    clippy::cast_sign_loss,
+    clippy::new_without_default,
+    clippy::missing_panics_doc
 )]
 #![recursion_limit = "256"]
 
 use std::thread::JoinHandle;
 
 use anyhow::Result;
-use log::{error, info, Level};
-use obs::{
-    declare_module,
-    logger::{self, ObsLogger},
-    module_use_default_locale, Plugin,
-};
+use log::{error, info};
 use tokio::sync::watch;
 use tonic::transport::Server;
 
@@ -26,20 +23,21 @@ macro_rules! new_service {
     };
 }
 
-struct ObsRemotePlugin {
+pub struct ObsRemotePlugin {
     handle: Option<JoinHandle<Result<()>>>,
     shutdown: Option<watch::Sender<()>>,
 }
 
-impl Plugin for ObsRemotePlugin {
-    fn new() -> Self {
+impl ObsRemotePlugin {
+    #[must_use]
+    pub fn new() -> Self {
         Self {
             handle: None,
             shutdown: None,
         }
     }
 
-    fn load(&mut self) -> bool {
+    pub fn load(&mut self) -> bool {
         if !init_logger() {
             return false;
         }
@@ -66,7 +64,7 @@ impl Plugin for ObsRemotePlugin {
         true
     }
 
-    fn unload(&mut self) {
+    pub fn unload(&mut self) {
         if let Some(shutdown) = self.shutdown.take() {
             info!("shutting down server...");
             shutdown.send(()).ok();
@@ -81,23 +79,7 @@ impl Plugin for ObsRemotePlugin {
 }
 
 fn init_logger() -> bool {
-    let result = ObsLogger::init(
-        env!("CARGO_PKG_NAME"),
-        Level::Warn,
-        vec![
-            (env!("CARGO_CRATE_NAME"), Level::Trace),
-            ("obs", Level::Trace),
-            ("obs_remote_apiv4", Level::Trace),
-            ("obs_remote_apiv5", Level::Trace),
-        ],
-    );
-
-    if let Err(e) = result {
-        logger::blog(Level::Error, &format!("failed setting up logger: {:?}", e));
-        false
-    } else {
-        true
-    }
+    true
 }
 
 async fn run_server(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
@@ -212,6 +194,3 @@ async fn run_server_v5(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()
 
     result.map_err(Into::into)
 }
-
-declare_module!(ObsRemotePlugin);
-module_use_default_locale!("en-US");

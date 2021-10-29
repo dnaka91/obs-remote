@@ -1,11 +1,6 @@
-use obs::{
-    source::{MediaState, Source},
-    Duration,
-};
 use tonic::{Request, Response, Status};
 
 use self::media_control_server::MediaControl;
-use super::common::DurationExt;
 use crate::precondition;
 
 tonic::include_proto!("obs_remote.media_control");
@@ -18,33 +13,26 @@ impl MediaControl for Service {
         let ToggleRequest { name, play_pause } = request.into_inner();
         precondition!(!name.is_empty(), "name mustn't be empty");
 
-        let source = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
-
-        let play_pause = play_pause.unwrap_or_else(|| source.media_state() == MediaState::Playing);
-
-        source.media_play_pause(play_pause);
-
         Ok(Response::new(()))
     }
 
     async fn restart(&self, request: Request<Identifier>) -> Result<Response<()>, Status> {
-        source_from_identifier(request)?.media_restart();
+        source_from_identifier(request)?;
         Ok(Response::new(()))
     }
 
     async fn stop(&self, request: Request<Identifier>) -> Result<Response<()>, Status> {
-        source_from_identifier(request)?.media_stop();
+        source_from_identifier(request)?;
         Ok(Response::new(()))
     }
 
     async fn next(&self, request: Request<Identifier>) -> Result<Response<()>, Status> {
-        source_from_identifier(request)?.media_next();
+        source_from_identifier(request)?;
         Ok(Response::new(()))
     }
 
     async fn previous(&self, request: Request<Identifier>) -> Result<Response<()>, Status> {
-        source_from_identifier(request)?.media_previous();
+        source_from_identifier(request)?;
         Ok(Response::new(()))
     }
 
@@ -52,22 +40,18 @@ impl MediaControl for Service {
         &self,
         request: Request<Identifier>,
     ) -> Result<Response<DurationReply>, Status> {
-        let duration = source_from_identifier(request)?.media_duration();
+        source_from_identifier(request)?;
 
-        Ok(Response::new(DurationReply {
-            duration: Some(duration.into_proto()),
-        }))
+        Ok(Response::new(DurationReply { duration: None }))
     }
 
     async fn get_time(
         &self,
         request: Request<Identifier>,
     ) -> Result<Response<GetTimeReply>, Status> {
-        let time = source_from_identifier(request)?.media_time();
+        source_from_identifier(request)?;
 
-        Ok(Response::new(GetTimeReply {
-            timestamp: Some(time.into_proto()),
-        }))
+        Ok(Response::new(GetTimeReply { timestamp: None }))
     }
 
     async fn set_time(&self, request: Request<SetTimeRequest>) -> Result<Response<()>, Status> {
@@ -76,13 +60,6 @@ impl MediaControl for Service {
 
         let timestamp =
             timestamp.ok_or_else(|| Status::failed_precondition("timestamp must be defined"))?;
-
-        let source = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
-
-        source.media_set_time(
-            Duration::seconds(timestamp.seconds) + Duration::nanoseconds(timestamp.nanos.into()),
-        );
 
         Ok(Response::new(()))
     }
@@ -93,30 +70,23 @@ impl MediaControl for Service {
 
         let offset = offset.ok_or_else(|| Status::failed_precondition("offset must be defined"))?;
 
-        let source = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
-
-        let time = source.media_time()
-            + Duration::seconds(offset.seconds)
-            + Duration::nanoseconds(offset.nanos.into());
-
-        source.media_set_time(time);
-
         Ok(Response::new(()))
     }
 
     async fn state(&self, request: Request<Identifier>) -> Result<Response<StateReply>, Status> {
-        let mut reply = StateReply::default();
-        reply.set_state(source_from_identifier(request)?.media_state().into());
+        let reply = StateReply::default();
+        source_from_identifier(request)?;
 
         Ok(Response::new(reply))
     }
 }
 
-fn source_from_identifier(request: Request<Identifier>) -> Result<Source<'static>, Status> {
+fn source_from_identifier(request: Request<Identifier>) -> Result<(), Status> {
     let name = request.into_inner().name;
     precondition!(!name.is_empty(), "name mustn't be empty");
 
-    Source::by_name(&name)
-        .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))
+    Err(Status::failed_precondition(format!(
+        "`{}` doesn't exist",
+        name
+    )))
 }

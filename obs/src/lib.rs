@@ -2,7 +2,7 @@
 
 use std::{ffi::CStr, os::raw::c_char};
 
-pub use chrono::Duration;
+pub use time::Duration;
 
 use crate::util::StringConversion;
 

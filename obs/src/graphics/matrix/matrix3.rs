@@ -28,48 +28,56 @@ impl Matrix3 {
     }
 
     #[inline]
+    #[must_use]
     pub fn translate(self, v: Vec3) -> Self {
         let mut dst = Self::default();
         dst.0.t = unsafe { *(Vec3::from_raw(self.0.t) - v).as_ptr() };
         dst
     }
 
+    #[must_use]
     pub fn rotate(self, q: Quat) -> Self {
         let mut dst = Self::default();
         unsafe { libobs_sys::matrix3_rotate(dst.as_ptr_mut(), self.as_ptr(), q.as_ptr()) };
         dst
     }
 
+    #[must_use]
     pub fn rotate_aa(self, aa: Axisang) -> Self {
         let mut dst = Self::default();
         unsafe { libobs_sys::matrix3_rotate_aa(dst.as_ptr_mut(), self.as_ptr(), aa.as_ptr()) };
         dst
     }
 
+    #[must_use]
     pub fn scale(self, v: Vec3) -> Self {
         let mut dst = Self::default();
         unsafe { libobs_sys::matrix3_scale(dst.as_ptr_mut(), self.as_ptr(), v.as_ptr()) };
         dst
     }
 
+    #[must_use]
     pub fn transpose(self) -> Self {
         let mut dst = Self::default();
         unsafe { libobs_sys::matrix3_transpose(dst.as_ptr_mut(), self.as_ptr()) };
         dst
     }
 
+    #[must_use]
     pub fn inv(self) -> Self {
         let mut dst = Self::default();
         unsafe { libobs_sys::matrix3_inv(dst.as_ptr_mut(), self.as_ptr()) };
         dst
     }
 
+    #[must_use]
     pub fn mirror(self, p: Plane) -> Self {
         let mut dst = Self::default();
         unsafe { libobs_sys::matrix3_mirror(dst.as_ptr_mut(), self.as_ptr(), p.as_ptr()) };
         dst
     }
 
+    #[must_use]
     pub fn mirrorv(self, v: Vec3) -> Self {
         let mut dst = Self::default();
         unsafe { libobs_sys::matrix3_mirrorv(dst.as_ptr_mut(), self.as_ptr(), v.as_ptr()) };
@@ -77,16 +85,19 @@ impl Matrix3 {
     }
 
     #[inline]
+    #[must_use]
     pub fn translate3f(self, x: f32, y: f32, z: f32) -> Self {
         self.translate(Vec3::new(x, y, z))
     }
 
     #[inline]
+    #[must_use]
     pub fn rotate_aa4f(self, x: f32, y: f32, z: f32, rot: f32) -> Self {
         self.rotate_aa(Axisang::new(x, y, z, rot))
     }
 
     #[inline]
+    #[must_use]
     pub fn scale3f(self, x: f32, y: f32, z: f32) -> Self {
         self.scale(Vec3::new(x, y, z))
     }

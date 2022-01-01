@@ -5,7 +5,7 @@ use std::{
 };
 
 use bitflags::bitflags;
-use chrono::Duration;
+use time::Duration;
 
 use crate::{
     cstr_ptr,
@@ -160,16 +160,13 @@ impl<'a> Source<'a> {
     }
 
     pub fn set_sync_offset(&mut self, offset: Duration) {
-        // TODO: This conversions will fail anyways.
-        unsafe {
-            libobs_sys::obs_source_set_sync_offset(
-                self.raw.as_ptr(),
-                offset
-                    .num_nanoseconds()
-                    .or_else(|| offset.num_microseconds().map(|us| us * 1_000))
-                    .unwrap_or_else(|| offset.num_milliseconds() * 1_000_000),
-            )
-        };
+        // TODO: This conversions will always fail.
+        let offset = i64::try_from(offset.whole_nanoseconds())
+            .or_else(|_| i64::try_from(offset.whole_microseconds() * 1_000))
+            .or_else(|_| i64::try_from(offset.whole_milliseconds() * 1_000_000))
+            .unwrap_or_else(|_| offset.whole_seconds().saturating_mul(1_000_000_000));
+
+        unsafe { libobs_sys::obs_source_set_sync_offset(self.raw.as_ptr(), offset) };
     }
 
     pub fn ty(&self) -> SourceType {
@@ -287,9 +284,10 @@ impl<'a> Source<'a> {
     }
 
     pub fn media_set_time(&self, duration: Duration) {
-        unsafe {
-            libobs_sys::obs_source_media_set_time(self.raw.as_ptr(), duration.num_milliseconds())
-        };
+        let ms = i64::try_from(duration.whole_milliseconds())
+            .unwrap_or_else(|_| duration.whole_seconds().saturating_mul(1000));
+
+        unsafe { libobs_sys::obs_source_media_set_time(self.raw.as_ptr(), ms) };
     }
 
     pub fn media_state(&self) -> MediaState {
@@ -559,6 +557,7 @@ impl Volume {
         }
     }
 
+    #[must_use]
     pub fn into_mul(self) -> Self {
         match self {
             Self::Mul(_) => self,
@@ -566,6 +565,7 @@ impl Volume {
         }
     }
 
+    #[must_use]
     pub fn into_db(self) -> Self {
         match self {
             Self::Mul(_) => Self::Mul(self.as_mul()),

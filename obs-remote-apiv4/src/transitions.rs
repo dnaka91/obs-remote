@@ -69,7 +69,7 @@ impl Transitions for Service {
             .ok_or_else(|| Status::failed_precondition("duration must be set"))?;
         let duration = Duration::from_proto(duration);
         precondition!(
-            duration >= Duration::zero(),
+            duration >= Duration::ZERO,
             "invalid duration (must be positive)"
         );
 

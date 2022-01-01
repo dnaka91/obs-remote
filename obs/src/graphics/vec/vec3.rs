@@ -82,6 +82,7 @@ impl Vec3 {
     }
 
     #[inline]
+    #[must_use]
     pub fn cross(self, rhs: Self) -> Self {
         let s1v1 = unsafe {
             _mm_shuffle_ps(
@@ -118,6 +119,7 @@ impl Vec3 {
         unsafe { libobs_sys::vec3_plane_dist(self.as_ptr(), plane.as_ptr()) }
     }
 
+    #[must_use]
     pub fn transform(self, m: Matrix4) -> Self {
         let mut dst = Self::default();
         unsafe {
@@ -126,6 +128,7 @@ impl Vec3 {
         dst
     }
 
+    #[must_use]
     pub fn rotate(self, m: Matrix3) -> Self {
         let mut dst = Self::default();
         unsafe {
@@ -134,6 +137,7 @@ impl Vec3 {
         dst
     }
 
+    #[must_use]
     pub fn transform3x4(self, m: Matrix3) -> Self {
         let mut dst = Self::default();
         unsafe {
@@ -142,6 +146,7 @@ impl Vec3 {
         dst
     }
 
+    #[must_use]
     pub fn mirror(self, p: Plane) -> Self {
         let mut dst = Self::default();
         unsafe {
@@ -150,6 +155,7 @@ impl Vec3 {
         dst
     }
 
+    #[must_use]
     pub fn mirrorv(self, vec: Vec3) -> Self {
         let mut dst = Self::default();
         unsafe {
@@ -158,6 +164,7 @@ impl Vec3 {
         dst
     }
 
+    #[must_use]
     pub fn rand(self, positive_only: bool) -> Self {
         let mut dst = Self::default();
         unsafe {

@@ -95,6 +95,7 @@ impl Quat {
     }
 
     #[inline]
+    #[must_use]
     pub fn inv(self) -> Self {
         Self::new(-self.x(), -self.y(), -self.z(), self.w())
     }
@@ -121,6 +122,7 @@ impl Quat {
     }
 
     #[inline]
+    #[must_use]
     pub fn norm(self) -> Self {
         let dot = self.dot(self);
         Self::new_m(if dot > 0.0 {
@@ -147,29 +149,34 @@ impl Quat {
         dst
     }
 
+    #[must_use]
     pub fn set_look_dir(mut self, dir: Vec3) -> Self {
         unsafe { libobs_sys::quat_set_look_dir(self.as_ptr_mut(), dir.as_ptr()) };
         self
     }
 
+    #[must_use]
     pub fn log(self) -> Self {
         let mut dst = Self::default();
         unsafe { libobs_sys::quat_log(dst.as_ptr_mut(), self.as_ptr()) };
         dst
     }
 
+    #[must_use]
     pub fn exp(self) -> Self {
         let mut dst = Self::default();
         unsafe { libobs_sys::quat_exp(dst.as_ptr_mut(), self.as_ptr()) };
         dst
     }
 
+    #[must_use]
     pub fn interpolate(self, q2: Self, t: f32) -> Self {
         let mut dst = Self::default();
         unsafe { libobs_sys::quat_interpolate(dst.as_ptr_mut(), self.as_ptr(), q2.as_ptr(), t) };
         dst
     }
 
+    #[must_use]
     pub fn get_tangent(self, prev: Self, next: Self) -> Self {
         let mut dst = Self::default();
         unsafe {
@@ -183,6 +190,7 @@ impl Quat {
         dst
     }
 
+    #[must_use]
     pub fn interpolate_cubic(self, q2: Self, m1: Self, m2: Self, t: f32) -> Self {
         let mut dst = Self::default();
         unsafe {

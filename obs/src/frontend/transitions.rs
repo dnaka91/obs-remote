@@ -1,4 +1,6 @@
-use chrono::Duration;
+use std::os::raw::c_int;
+
+use time::Duration;
 
 use crate::source::Source;
 
@@ -17,7 +19,9 @@ pub fn duration() -> Duration {
 
 pub fn set_duration(duration: Duration) {
     // TODO: maybe fail on truncation
-    unsafe { libobs_sys::obs_frontend_set_transition_duration(duration.num_milliseconds() as i32) };
+    unsafe {
+        libobs_sys::obs_frontend_set_transition_duration(duration.whole_milliseconds() as c_int)
+    };
 }
 
 pub fn release_tbar() {

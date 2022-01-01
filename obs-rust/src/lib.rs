@@ -42,7 +42,7 @@ impl Plugin for MainPlugin {
                     info!("Monitoring type: {:?}", source.monitoring_type());
                     info!("Name: {}", source.name());
                     info!("Output flags: {:?}", source.output_flags());
-                    info!("Sync offset: {}", source.sync_offset());
+                    info!("Sync offset: {:?}", source.sync_offset());
                     info!("Type: {:?}", source.ty());
                     info!("Unversioned ID: {}", source.unversioned_id());
                     info!("Volume: {}", source.volume());

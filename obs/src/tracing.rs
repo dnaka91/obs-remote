@@ -5,7 +5,7 @@ use tracing_subscriber::fmt::MakeWriter;
 
 pub struct ObsWriter;
 
-impl MakeWriter for ObsWriter {
+impl MakeWriter<'static> for ObsWriter {
     type Writer = Self;
 
     fn make_writer(&self) -> Self::Writer {

@@ -39,6 +39,7 @@ impl Plane {
         self.0.dist = d;
     }
 
+    #[must_use]
     pub fn transform(self, m: Matrix4) -> Self {
         let mut dst = Self::default();
         unsafe {
@@ -47,6 +48,7 @@ impl Plane {
         dst
     }
 
+    #[must_use]
     pub fn transform3x4(self, m: Matrix3) -> Self {
         let mut dst = Self::default();
         unsafe {

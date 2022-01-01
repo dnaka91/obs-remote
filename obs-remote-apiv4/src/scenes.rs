@@ -104,7 +104,7 @@ impl Scenes for Service {
             "transition_duration",
             transition_duration
                 .map_or_else(frontend::transitions::duration, Duration::from_proto)
-                .num_milliseconds(),
+                .whole_milliseconds() as i64,
         );
 
         Ok(Response::new(()))

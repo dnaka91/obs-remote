@@ -48,9 +48,13 @@ pub trait VecX<T>:
     fn dot(self, rhs: Self) -> T;
     fn len(self) -> T;
     fn dist(self, rhs: Self) -> T;
+    #[must_use]
     fn norm(self) -> Self;
     fn close(self, rhs: Self, epsilon: T) -> bool;
+    #[must_use]
     fn abs(self) -> Self;
+    #[must_use]
     fn floor(self) -> Self;
+    #[must_use]
     fn ceil(self) -> Self;
 }

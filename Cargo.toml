@@ -1,14 +1,6 @@
 [workspace]
 resolver = "2"
-members = [
-    "libobs-sys",
-    "obs",
-    "obs-client",
-    "obs-remote",
-    "obs-remote-apiv4",
-    "obs-remote-apiv5",
-    "obs-rust",
-]
+members = ["crates/*"]
 
 [profile.release]
 lto = true

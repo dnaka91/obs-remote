@@ -95,6 +95,7 @@ pub enum ColorFormat {
     RgbaUnorm,
     BgrxUnorm,
     BgraUnorm,
+    Rg16,
 }
 
 impl ColorFormat {
@@ -124,6 +125,7 @@ impl ColorFormat {
             Self::RgbaUnorm => GS_RGBA_UNORM,
             Self::BgrxUnorm => GS_BGRX_UNORM,
             Self::BgraUnorm => GS_BGRA_UNORM,
+            Self::Rg16 => GS_RG16,
         }
     }
 }
@@ -182,6 +184,29 @@ impl BlendType {
             Self::DstAlpha => GS_BLEND_DSTALPHA,
             Self::InvDstAlpha => GS_BLEND_INVDSTALPHA,
             Self::SrcAlphaSat => GS_BLEND_SRCALPHASAT,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum BlendOpType {
+    Add,
+    Subtract,
+    ReverseSubtract,
+    Min,
+    Max,
+}
+
+impl BlendOpType {
+    fn to_native(self) -> libobs_sys::gs_blend_op_type::Type {
+        use libobs_sys::gs_blend_op_type::*;
+
+        match self {
+            Self::Add => GS_BLEND_OP_ADD,
+            Self::Subtract => GS_BLEND_OP_SUBTRACT,
+            Self::ReverseSubtract => GS_BLEND_OP_REVERSE_SUBTRACT,
+            Self::Min => GS_BLEND_OP_MIN,
+            Self::Max => GS_BLEND_OP_MAX,
         }
     }
 }
@@ -319,6 +344,10 @@ pub fn blend_state_pop() {
 
 pub fn blend_function(src: BlendType, dst: BlendType) {
     unsafe { libobs_sys::gs_blend_function(src.to_native(), dst.to_native()) };
+}
+
+pub fn blend_op(op: BlendOpType) {
+    unsafe { libobs_sys::gs_blend_op(op.to_native()) };
 }
 
 pub fn stage_texture(dst: &StageSurface, src: &Texture) {

@@ -136,6 +136,10 @@ pub fn add_callback(tx: broadcast::Sender<Event>) -> Handle {
             tx.send(Event::VirtualCamStopped(VirtualCamStopped {})).ok();
         }
         ObsEvent::TBarValueChanged => {}
+        ObsEvent::SceneCollectionChanging => {}
+        ObsEvent::ProfileChanging => {}
+        ObsEvent::ScriptingShutdown => {}
+        ObsEvent::Unknown(_) => {}
     })
 }
 

@@ -175,23 +175,21 @@ impl Calldata {
     }
 
     pub fn get_source(&self) -> Option<Source<'_>> {
-        self.ptr("source").map(|p| {
-            // unsafe { libobs_sys::obs_source_addref(p.as_ptr()) };
-            Source::from_raw_no_release(p.as_ptr())
-        })
+        self.ptr("source")
+            .map(|p| Source::from_raw_no_release(p.as_ptr()))
     }
 
     pub fn get_filter(&self) -> Option<Source<'_>> {
         self.ptr("filter").map(|p| {
-            unsafe { libobs_sys::obs_source_addref(p.as_ptr()) };
-            Source::from_raw(p.as_ptr())
+            let ptr = unsafe { libobs_sys::obs_source_get_ref(p.as_ptr()) };
+            Source::from_raw(ptr)
         })
     }
 
     pub fn get_scene(&self) -> Option<Scene<'_>> {
         self.ptr("scene").map(|p| {
-            unsafe { libobs_sys::obs_scene_addref(p.as_ptr()) };
-            Scene::from_raw(p.as_ptr())
+            let ptr = unsafe { libobs_sys::obs_scene_get_ref(p.as_ptr()) };
+            Scene::from_raw(ptr)
         })
     }
 
@@ -204,8 +202,8 @@ impl Calldata {
 
     pub fn get_output(&self) -> Option<Output<'_>> {
         self.ptr("output").map(|p| {
-            unsafe { libobs_sys::obs_output_addref(p.as_ptr()) };
-            Output::from_raw(p.as_ptr())
+            let ptr = unsafe { libobs_sys::obs_output_get_ref(p.as_ptr()) };
+            Output::from_raw(ptr)
         })
     }
 }

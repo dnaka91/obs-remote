@@ -76,6 +76,10 @@ pub enum Event {
     VirtualcamStarted,
     VirtualcamStopped,
     TBarValueChanged,
+    SceneCollectionChanging,
+    ProfileChanging,
+    ScriptingShutdown,
+    Unknown(u32),
 }
 
 impl Event {
@@ -117,7 +121,10 @@ impl Event {
             OBS_FRONTEND_EVENT_VIRTUALCAM_STARTED => Self::VirtualcamStarted,
             OBS_FRONTEND_EVENT_VIRTUALCAM_STOPPED => Self::VirtualcamStopped,
             OBS_FRONTEND_EVENT_TBAR_VALUE_CHANGED => Self::TBarValueChanged,
-            _ => unreachable!(),
+            OBS_FRONTEND_EVENT_SCENE_COLLECTION_CHANGING => Self::SceneCollectionChanging,
+            OBS_FRONTEND_EVENT_PROFILE_CHANGING => Self::ProfileChanging,
+            OBS_FRONTEND_EVENT_SCRIPTING_SHUTDOWN => Self::ScriptingShutdown,
+            _ => Self::Unknown(value as _),
         }
     }
 }

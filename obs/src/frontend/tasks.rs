@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::ffi::c_void;
 
 pub(crate) fn queue<T>(ty: TaskType, param: T, task: fn(T), wait: bool) {
@@ -24,9 +26,18 @@ pub(crate) fn queue<T>(ty: TaskType, param: T, task: fn(T), wait: bool) {
     };
 }
 
+pub(crate) fn in_task_thread(ty: TaskType) -> bool {
+    unsafe { libobs_sys::obs_in_task_thread(ty.to_native()) }
+}
+
+pub(crate) fn wait_for_destroy_queue() -> bool {
+    unsafe { libobs_sys::obs_wait_for_destroy_queue() }
+}
+
 #[derive(Clone, Copy, Debug)]
 pub(crate) enum TaskType {
-    #[allow(dead_code)]
+    Audio,
+    Destroy,
     Graphics,
     Ui,
 }
@@ -36,6 +47,8 @@ impl TaskType {
         use libobs_sys::obs_task_type::*;
 
         match self {
+            Self::Audio => OBS_TASK_AUDIO,
+            Self::Destroy => OBS_TASK_DESTROY,
             Self::Graphics => OBS_TASK_GRAPHICS,
             Self::Ui => OBS_TASK_UI,
         }

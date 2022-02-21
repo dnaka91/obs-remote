@@ -1,5 +1,4 @@
 use log::info;
-use obs::frontend;
 use tonic::{Request, Response, Status};
 
 pub use self::general_server::GeneralServer;
@@ -30,31 +29,19 @@ impl general_server::General for GeneralService {
         }))
     }
 
+    async fn stats(&self, request: Request<()>) -> Result<Response<StatsReply>, Status> {
+        Err(Status::unimplemented("not implemented!"))
+    }
+
     async fn broadcast_event(&self, request: Request<()>) -> Result<Response<()>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn system_stats(&self, request: Request<()>) -> Result<Response<()>, Status> {
+    async fn call_vendor(&self, request: Request<()>) -> Result<Response<()>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn is_studio_mode_enabled(&self, request: Request<()>) -> Result<Response<bool>, Status> {
-        Ok(Response::new(frontend::preview_mode::active()))
-    }
-
-    async fn set_studio_mode_enabled(
-        &self,
-        request: Request<bool>,
-    ) -> Result<Response<()>, Status> {
-        let enabled = request.into_inner();
-        if frontend::preview_mode::active() != enabled {
-            frontend::preview_mode::set(enabled);
-        }
-
-        Ok(Response::new(()))
-    }
-
-    async fn sleep(&self, request: Request<prost_types::Duration>) -> Result<Response<()>, Status> {
+    async fn sleep(&self, request: Request<SleepRequest>) -> Result<Response<()>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 }

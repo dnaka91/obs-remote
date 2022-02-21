@@ -2,7 +2,12 @@ use std::{ffi::c_void, marker::PhantomData, ops::Deref, ptr::NonNull};
 
 use bitflags::bitflags;
 
-use crate::{cstr_ptr, graphics::Vec2, source::Source, video::ScaleType};
+use crate::{
+    cstr_ptr,
+    graphics::Vec2,
+    source::Source,
+    video::{BlendingType, ScaleType},
+};
 
 pub struct Scene<'a> {
     raw: NonNull<libobs_sys::obs_scene_t>,
@@ -29,12 +34,8 @@ impl<'a> Scene<'a> {
 
     pub fn from_source(source: Source<'a>) -> Option<Self> {
         let raw = unsafe { libobs_sys::obs_scene_from_source(source.as_ptr()) };
-        if raw.is_null() {
-            None
-        } else {
-            unsafe { libobs_sys::obs_scene_addref(raw) };
-            Some(Self::from_raw(raw))
-        }
+
+        (!raw.is_null()).then(|| Self::from_raw(unsafe { libobs_sys::obs_scene_get_ref(raw) }))
     }
 
     pub fn list_items(&self) -> Vec<SceneItem<'_>> {
@@ -120,6 +121,10 @@ impl<'a> Scene<'a> {
         unsafe { libobs_sys::obs_sceneitem_addref(raw) };
         SceneItem::from_raw(raw)
     }
+
+    pub fn prune_sources(&mut self) {
+        unsafe { libobs_sys::obs_scene_prune_sources(self.raw.as_ptr()) };
+    }
 }
 
 pub struct SceneItem<'a> {
@@ -174,6 +179,12 @@ impl<'a> SceneItem<'a> {
     pub fn scale_filter(&self) -> ScaleType {
         ScaleType::from_native(unsafe {
             libobs_sys::obs_sceneitem_get_scale_filter(self.raw.as_ptr())
+        })
+    }
+
+    pub fn blending_mode(&self) -> BlendingType {
+        BlendingType::from_native(unsafe {
+            libobs_sys::obs_sceneitem_get_blending_mode(self.raw.as_ptr())
         })
     }
 
@@ -234,10 +245,7 @@ impl<'a> SceneItem<'a> {
 
     pub fn parent_scene(&self) -> Option<Scene<'_>> {
         let raw = unsafe { libobs_sys::obs_sceneitem_get_scene(self.raw.as_ptr()) };
-        (!raw.is_null()).then(|| {
-            unsafe { libobs_sys::obs_scene_addref(raw) };
-            Scene::from_raw(raw)
-        })
+        (!raw.is_null()).then(|| Scene::from_raw(unsafe { libobs_sys::obs_scene_get_ref(raw) }))
     }
 
     pub fn list_group_items(&self) -> Option<Vec<Self>> {
@@ -310,6 +318,12 @@ impl<'a, 'b> EditableSceneItem<'a, 'b> {
     pub fn set_scale_filter(&mut self, filter: ScaleType) {
         unsafe {
             libobs_sys::obs_sceneitem_set_scale_filter(self.0.raw.as_ptr(), filter.to_native())
+        };
+    }
+
+    pub fn set_blending_mode(&mut self, mode: BlendingType) {
+        unsafe {
+            libobs_sys::obs_sceneitem_set_blending_mode(self.0.raw.as_ptr(), mode.to_native())
         };
     }
 

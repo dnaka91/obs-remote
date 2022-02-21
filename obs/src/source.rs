@@ -51,12 +51,18 @@ impl<'a> Source<'a> {
         self.raw.as_ptr()
     }
 
-    pub fn by_name(name: &str) -> Option<Source<'a>> {
+    pub fn by_name(name: &str) -> Option<Self> {
         let raw = unsafe { libobs_sys::obs_get_source_by_name(cstr_ptr!(name)) };
         (!raw.is_null()).then(|| Self::from_raw(raw))
     }
 
-    pub fn by_output_channel(channel: u32) -> Option<Source<'a>> {
+    pub fn transition_by_name(name: &str) -> Option<Self> {
+        let raw = unsafe { libobs_sys::obs_get_transition_by_name(cstr_ptr!(name)) };
+
+        (!raw.is_null()).then(|| Self::from_raw(raw))
+    }
+
+    pub fn by_output_channel(channel: u32) -> Option<Self> {
         let raw = unsafe { libobs_sys::obs_get_output_source(channel) };
         (!raw.is_null()).then(|| Self::from_raw(raw))
     }
@@ -469,6 +475,9 @@ bitflags! {
         const CEA_708 = libobs_sys::OBS_SOURCE_CEA_708;
         /// Source understands SRGB rendering.
         const SRGB = libobs_sys::OBS_SOURCE_SRGB;
+        /// Source type prefers not to have its properties shown on creation (prefers to rely on
+        /// defaults first).
+        const CAP_DONT_SHOW_PROPERTIES = libobs_sys::OBS_SOURCE_CAP_DONT_SHOW_PROPERTIES;
     }
 }
 

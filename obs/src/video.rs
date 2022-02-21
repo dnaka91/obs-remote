@@ -197,3 +197,47 @@ impl ScaleType {
         }
     }
 }
+
+#[derive(Clone, Copy, Debug)]
+pub enum BlendingType {
+    Normal,
+    Additive,
+    Subtract,
+    Screen,
+    Multiply,
+    Lighten,
+    Darken,
+    Unknown(u32),
+}
+
+impl BlendingType {
+    pub(crate) fn from_native(value: libobs_sys::obs_blending_type::Type) -> Self {
+        use libobs_sys::obs_blending_type::*;
+
+        match value {
+            OBS_BLEND_NORMAL => Self::Normal,
+            OBS_BLEND_ADDITIVE => Self::Additive,
+            OBS_BLEND_SUBTRACT => Self::Subtract,
+            OBS_BLEND_SCREEN => Self::Screen,
+            OBS_BLEND_MULTIPLY => Self::Multiply,
+            OBS_BLEND_LIGHTEN => Self::Lighten,
+            OBS_BLEND_DARKEN => Self::Darken,
+            _ => Self::Unknown(value as _),
+        }
+    }
+
+    pub(crate) fn to_native(self) -> libobs_sys::obs_blending_type::Type {
+        use libobs_sys::obs_blending_type::*;
+
+        match self {
+            Self::Normal => OBS_BLEND_NORMAL,
+            Self::Additive => OBS_BLEND_ADDITIVE,
+            Self::Subtract => OBS_BLEND_SUBTRACT,
+            Self::Screen => OBS_BLEND_SCREEN,
+            Self::Multiply => OBS_BLEND_MULTIPLY,
+            Self::Lighten => OBS_BLEND_LIGHTEN,
+            Self::Darken => OBS_BLEND_LIGHTEN,
+            Self::Unknown(value) => value as _,
+        }
+    }
+}

@@ -4,20 +4,31 @@ package obs_remote.v5.replay_buffer;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
 
 service ReplayBuffer {
+  // Gets the status of the replay buffer output.
+  //
   // Original: GetReplayBufferStatus
-  rpc Status(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Status(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  // Toggles the state of the replay buffer output.
+  //
   // Original: ToggleReplayBuffer
-  rpc Toggle(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Toggle(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  // Starts the replay buffer output.
+  //
   // Original: StartReplayBuffer
   rpc Start(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Stops the replay buffer output.
+  //
   // Original: StopReplayBuffer
   rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Saves the contents of the replay buffer output.
+  //
   // Original: SaveReplayBuffer
   rpc Save(google.protobuf.Empty) returns (google.protobuf.Empty);
-  // Original: GetReplayBufferTime
-  rpc Time(google.protobuf.Empty) returns (google.protobuf.Timestamp);
-  // Original: SetReplayBufferTime
-  rpc SetTime(google.protobuf.Timestamp) returns (google.protobuf.Empty);
+  // Gets the filename of the last replay buffer save file.
+  //
+  // Original: GetLastReplayBufferReplay
+  rpc LastReplay(google.protobuf.Empty) returns (google.protobuf.StringValue);
 }

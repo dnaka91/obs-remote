@@ -2,17 +2,60 @@ syntax = "proto3";
 
 package obs_remote.v5.config;
 
+import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 
 service Config {
-  // Original: -
-  rpc GlobalPersistentData(google.protobuf.Empty)
+  // Gets the value of a "slot" from the selected persistent data realm.
+  //
+  // Original: GetPersistentData
+  rpc GlobalPersistentData(google.protobuf.StringValue)
+      returns (google.protobuf.Any);
+  // Sets the value of a "slot" from the selected persistent data realm.
+  //
+  // Original: SetPersistentData
+  rpc SetGlobalPersistentData(SetGlobalPersistentDataRequest)
       returns (google.protobuf.Empty);
+  // Gets the current video settings.
+  //
+  // Note: To get the true FPS value, divide the FPS numerator by the FPS
+  // denominator.
+  //
+  // Original: GetVideoSettings
+  rpc VideoSettings(google.protobuf.Empty) returns (Settings);
+  // Sets the current video settings.
+  //
   // Original: -
-  rpc SetGlobalPersistentData(google.protobuf.Empty)
-      returns (google.protobuf.Empty);
-  // Original: -
-  rpc VideoSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
-  // Original: -
-  rpc SetVideoSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SetVideoSettings(Settings) returns (google.protobuf.Empty);
+}
+
+message SetGlobalPersistentDataRequest {
+  // The name of the slot to save data to.
+  string name = 1;
+  // The value to apply to the slot.
+  google.protobuf.Any value = 2;
+}
+
+message Settings {
+  // Fractional FPS value.
+  Fps fps = 1;
+  // Base (canvas) resolution.
+  Size base = 2;
+  // Output resolution.
+  Size output = 3;
+
+  message Fps {
+    // Numerator of the fractional FPS value.
+    double numerator = 1;
+    // Denominator of the fractional FPS value.
+    double denominator = 2;
+  }
+
+  message Size {
+    // Width of the resolution in pixels.
+    uint32 width = 1;
+    // Height of the resolution in pixels.
+    uint32 height = 2;
+  }
 }

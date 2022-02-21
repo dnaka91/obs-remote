@@ -8,11 +8,11 @@ pub struct ReplayBufferService;
 
 #[tonic::async_trait]
 impl replay_buffer_server::ReplayBuffer for ReplayBufferService {
-    async fn status(&self, request: Request<()>) -> Result<Response<()>, Status> {
+    async fn status(&self, request: Request<()>) -> Result<Response<bool>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn toggle(&self, request: Request<()>) -> Result<Response<()>, Status> {
+    async fn toggle(&self, request: Request<()>) -> Result<Response<bool>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
@@ -28,14 +28,7 @@ impl replay_buffer_server::ReplayBuffer for ReplayBufferService {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn time(&self, request: Request<()>) -> Result<Response<prost_types::Timestamp>, Status> {
-        Err(Status::unimplemented("not implemented!"))
-    }
-
-    async fn set_time(
-        &self,
-        request: Request<prost_types::Timestamp>,
-    ) -> Result<Response<()>, Status> {
+    async fn last_replay(&self, request: Request<()>) -> Result<Response<String>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 }

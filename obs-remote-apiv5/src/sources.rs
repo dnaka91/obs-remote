@@ -1,7 +1,10 @@
-use image::{DynamicImage, RgbaImage};
+use std::io::Cursor;
+
+use image::{imageops::FilterType, DynamicImage, ImageOutputFormat, RgbaImage};
 use obs::source::{Source, SourceType};
 use tonic::{Request, Response, Status};
 
+use self::screenshot_request::{resize::Filter, ImageFormat};
 pub use self::sources_server::SourcesServer;
 use crate::precondition;
 
@@ -11,10 +14,6 @@ pub struct SourcesService;
 
 #[tonic::async_trait]
 impl sources_server::Sources for SourcesService {
-    async fn list(&self, request: Request<()>) -> Result<Response<()>, Status> {
-        Err(Status::unimplemented("not implemented!"))
-    }
-
     async fn is_active(&self, request: Request<String>) -> Result<Response<IsActiveReply>, Status> {
         let name = request.into_inner();
         precondition!(!name.is_empty(), "name mustn't be empty");
@@ -39,22 +38,60 @@ impl sources_server::Sources for SourcesService {
         &self,
         request: Request<ScreenshotRequest>,
     ) -> Result<Response<Vec<u8>>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+        let details = request.into_inner();
+        let image = screenshot(&details).unwrap();
+
+        Ok(Response::new(image))
     }
 
     async fn save_screenshot(
         &self,
         request: Request<SaveScreenshotRequest>,
     ) -> Result<Response<()>, Status> {
-        let source = Source::by_name("OBWS-TEST-Text").unwrap();
-        let image = take_source_screenshot(&source).unwrap();
+        let SaveScreenshotRequest { file_path, details } = request.into_inner();
+        let details =
+            details.ok_or_else(|| Status::failed_precondition("details must be specified"))?;
+        let image = screenshot(&details).unwrap();
 
-        DynamicImage::ImageRgba8(image)
-            .save("/Users/dominik.nakamura/Projects/.private/public/obs-remote/test.png")
-            .unwrap();
+        std::fs::write(file_path, image).unwrap();
 
         Ok(Response::new(()))
     }
+}
+
+fn screenshot(details: &ScreenshotRequest) -> Option<Vec<u8>> {
+    let source = Source::by_name(&details.name).unwrap();
+
+    let image = take_source_screenshot(&source)?;
+    let mut image = DynamicImage::ImageRgba8(image);
+
+    if let Some(resize) = &details.resize {
+        image = image.resize(
+            resize.width,
+            resize.height,
+            match resize.filter() {
+                Filter::Unspecified | Filter::Cubic => FilterType::CatmullRom,
+                Filter::Nearest => FilterType::Nearest,
+                Filter::Linear => FilterType::Triangle,
+                Filter::Gaussian => FilterType::Gaussian,
+                Filter::Lanczos3 => FilterType::Lanczos3,
+            },
+        );
+    }
+
+    let mut buf = Cursor::new(Vec::new());
+
+    image
+        .write_to(
+            &mut buf,
+            match details.format() {
+                ImageFormat::Unspecified | ImageFormat::Png => ImageOutputFormat::Png,
+                ImageFormat::Jpg => ImageOutputFormat::Jpeg(details.compression as _),
+            },
+        )
+        .unwrap();
+
+    Some(buf.into_inner())
 }
 
 fn take_source_screenshot(source: &Source<'_>) -> Option<RgbaImage> {
@@ -78,7 +115,7 @@ fn take_source_screenshot(source: &Source<'_>) -> Option<RgbaImage> {
 
         tex_render.begin((width, height)).then(|| {
             gs::clear(ClearFlags::COLOR, Vec4::default(), 0.0, 0);
-            gs::ortho(0.0, width as f32, 0.0, height as f32, -100.0, -100.0);
+            gs::ortho(0.0, width as f32, 0.0, height as f32, -100.0, 100.0);
 
             gs::blend_state_push();
             gs::blend_function(BlendType::One, BlendType::Zero);

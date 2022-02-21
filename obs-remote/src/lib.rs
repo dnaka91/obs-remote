@@ -96,6 +96,7 @@ fn init_logger() -> bool {
         logger::blog(Level::Error, &format!("failed setting up logger: {:?}", e));
         false
     } else {
+        log_panics::init();
         true
     }
 }

@@ -6,27 +6,69 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
 service Sources {
-  // Original: GetSourceList
-  rpc List(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Gets the active and show state of a source.
+  //
   // Original: GetSourceActive
   rpc IsActive(google.protobuf.StringValue) returns (IsActiveReply);
+  // Gets a screenshot of a source.
+  //
+  // The `width` and `height` parameters are treated as "scale to inner",
+  // meaning the smallest ratio will be used and the aspect ratio of the
+  // original resolution is kept. If `size` is not specified, the compressed
+  // image will use the full resolution of the source.
+  //
   // Original: GetSourceScreenshot
   rpc Screenshot(ScreenshotRequest) returns (google.protobuf.BytesValue);
+  // Saves a screenshot of a source to the filesystem.
+  //
+  // The `width` and `height` parameters are treated as "scale to inner",
+  // meaning the smallest ratio will be used and the aspect ratio of the
+  // original resolution is kept. If `size` is not specified, the compressed
+  // image will use the full resolution of the source.
+  //
   // Original: SaveSourceScreenshot
   rpc SaveScreenshot(SaveScreenshotRequest) returns (google.protobuf.Empty);
 }
 
 message IsActiveReply {
+  // Whether the source is showing in Program.
   bool active = 1;
+  // Whether the source is showing in the UI (Preview, Projector, Properties).
   bool showing = 2;
 }
 
 message ScreenshotRequest {
+  // Name of the source to take a screenshot of.
   string name = 1;
-  uint32 width = 2;
-  uint32 height = 3;
-  ImageFormat format = 4;
-  uint32 compression = 5;
+  // Image compression format to use.
+  ImageFormat format = 2;
+  // Optional width and height to scale the screenshot to.
+  Resize resize = 3;
+  // Compression quality to use. 0 for high compression, 100 for uncompressed.
+  uint32 compression = 4;
+
+  message Resize {
+    // Width to scale the screenshot to.
+    uint32 width = 1;
+    // Height to scale the screenshot to.
+    uint32 height = 2;
+    // Resizing filter to use.
+    Filter filter = 3;
+
+    enum Filter {
+      FILTER_UNSPECIFIED = 0;
+      // Nearest neighbor sampling.
+      FILTER_NEAREST = 1;
+      // Linear (triangle) sampling.
+      FILTER_LINEAR = 2;
+      // Cubic (Catmull-Rom) sampling. Default if filter is unspecified.
+      FILTER_CUBIC = 3;
+      // Gaussian sampling.
+      FILTER_GAUSSIAN = 4;
+      // Lanczos (with window 3) sampling.
+      FILTER_LANCZOS3 = 5;
+    }
+  }
 
   enum ImageFormat {
     IMAGE_FORMAT_UNSPECIFIED = 0;
@@ -36,6 +78,8 @@ message ScreenshotRequest {
 }
 
 message SaveScreenshotRequest {
+  // Path to save the screenshot file to.
   string file_path = 1;
+  // Details about the screenshot and image.
   ScreenshotRequest details = 2;
 }

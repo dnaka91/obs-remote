@@ -16,12 +16,52 @@ pub fn current() -> String {
     value
 }
 
+/// Get the file path for the current active profile.
+pub fn current_path() -> String {
+    let raw = unsafe { libobs_sys::obs_frontend_get_current_profile_path() as *const c_char };
+    let value = raw.into_string();
+
+    unsafe { libobs_sys::bfree(raw as *mut _) };
+
+    value
+}
+
 /// Activate the given profile.
 pub fn set_current(name: &str) {
     tasks::queue(
         TaskType::Ui,
         name,
         |name| unsafe { libobs_sys::obs_frontend_set_current_profile(cstr_ptr!(name)) },
+        true,
+    );
+}
+
+/// Create a new profile.
+pub fn create_profile(name: &str) {
+    tasks::queue(
+        TaskType::Ui,
+        name,
+        |name| unsafe { libobs_sys::obs_frontend_create_profile(cstr_ptr!(name)) },
+        true,
+    );
+}
+
+/// Duplicate an existing profile.
+pub fn duplicate_profile(name: &str) {
+    tasks::queue(
+        TaskType::Ui,
+        name,
+        |name| unsafe { libobs_sys::obs_frontend_duplicate_profile(cstr_ptr!(name)) },
+        true,
+    );
+}
+
+/// Delete an existing profile.
+pub fn delete_profile(name: &str) {
+    tasks::queue(
+        TaskType::Ui,
+        name,
+        |name| unsafe { libobs_sys::obs_frontend_delete_profile(cstr_ptr!(name)) },
         true,
     );
 }

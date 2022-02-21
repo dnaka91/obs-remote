@@ -50,6 +50,11 @@ impl<'a> Encoder<'a> {
     pub fn sample_rate(&self) -> u32 {
         unsafe { libobs_sys::obs_encoder_get_sample_rate(self.raw.as_ptr()) }
     }
+
+    /// For audio encoders, returns the frame size of the audio packet.
+    pub fn frame_size(&self) -> u64 {
+        unsafe { libobs_sys::obs_encoder_get_frame_size(self.raw.as_ptr()) }
+    }
 }
 
 pub fn list() -> Vec<Encoder<'static>> {

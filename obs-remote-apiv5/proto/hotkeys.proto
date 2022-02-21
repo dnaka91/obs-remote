@@ -5,21 +5,35 @@ package obs_remote.v5.hotkeys;
 import "google/protobuf/empty.proto";
 
 service Hotkeys {
+  // Gets an array of all hotkey names in OBS.
+  //
   // Original: GetHotkeyList
   rpc List(google.protobuf.Empty) returns (ListReply);
+  // Triggers a hotkey using its name.
+  //
   // Original: TriggerHotkeyByName
   rpc TriggerByName(TriggerByNameRequest) returns (google.protobuf.Empty);
+  // Triggers a hotkey using a sequence of keys.
+  //
   // Original: TriggerHotkeyBySequence
   rpc TriggerBySequence(TriggerBySequenceRequest)
       returns (google.protobuf.Empty);
 }
 
-message ListReply { repeated string hotkeys = 1; }
+message ListReply {
+  // Array of hotkey names.
+  repeated string hotkeys = 1;
+}
 
-message TriggerByNameRequest { string name = 1; }
+message TriggerByNameRequest {
+  // Name of the hotkey to trigger.
+  string name = 1;
+}
 
 message TriggerBySequenceRequest {
+  // The OBS key code to use.
   KeyCode code = 1;
+  // Object containing key modifiers to apply.
   KeyModifiers modifiers = 2;
 
   enum KeyCode {
@@ -664,9 +678,13 @@ message TriggerBySequenceRequest {
   }
 
   message KeyModifiers {
+    // Press Shift.
     bool shift = 1;
+    // Press CTRL.
     bool control = 2;
+    // Press ALT.
     bool alt = 3;
+    // Press CMD (Mac).
     bool command = 4;
   }
 }

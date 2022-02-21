@@ -47,8 +47,6 @@ pub fn list() -> Vec<Source<'static>> {
 
     for i in 0..num {
         let source = unsafe { *array.add(i) };
-        // unsafe { libobs_sys::obs_source_addref(source) };
-
         source_list.push(Source::from_raw(source));
     }
 

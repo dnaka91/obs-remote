@@ -8,11 +8,11 @@ pub struct VirtualCamService;
 
 #[tonic::async_trait]
 impl virtual_cam_server::VirtualCam for VirtualCamService {
-    async fn status(&self, request: Request<()>) -> Result<Response<()>, Status> {
+    async fn status(&self, request: Request<()>) -> Result<Response<bool>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn toggle(&self, request: Request<()>) -> Result<Response<()>, Status> {
+    async fn toggle(&self, request: Request<()>) -> Result<Response<bool>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 

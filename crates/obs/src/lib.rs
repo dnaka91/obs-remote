@@ -10,6 +10,7 @@ pub mod audio;
 pub mod config;
 pub mod data;
 pub mod encoder;
+pub mod filter;
 pub mod frontend;
 pub mod graphics;
 pub mod gs;

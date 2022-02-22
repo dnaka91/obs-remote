@@ -65,15 +65,18 @@ mod virtual_cam;
 #[doc(hidden)]
 #[macro_export]
 macro_rules! precondition {
-    ($cond:expr, $msg:literal) => {
-        if !($cond) {
-            return Err(Status::failed_precondition($msg));
-        }
-    };
     ($cond:expr, $($arg:tt)*) => {
         if !($cond) {
             return Err(Status::failed_precondition(format!($($arg)*)));
         }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! precondition_fn {
+    ($($arg:tt)*) => {
+        || Status::failed_precondition(format!($($arg)*))
     };
 }
 

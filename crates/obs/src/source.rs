@@ -10,6 +10,7 @@ use time::Duration;
 use crate::{
     cstr_ptr,
     data::Data,
+    filter::Filter,
     signal::{SignalHandler, SourceSignal},
     util::{self, StringConversion},
 };
@@ -101,7 +102,16 @@ impl<'a> Source<'a> {
         unsafe { libobs_sys::obs_source_get_base_width(self.raw.as_ptr()) }
     }
 
-    pub fn filter_by_name(&self, name: &str) -> Option<Self> {
+    pub fn filters(&self) -> Vec<Self> {
+        util::list_instances_of(
+            self.raw.as_ptr(),
+            libobs_sys::obs_source_enum_filters,
+            libobs_sys::obs_source_get_ref,
+            Self::from_raw,
+        )
+    }
+
+    pub fn filter_by_name(&self, name: &str) -> Option<Filter<'_>> {
         let raw = unsafe {
             libobs_sys::obs_source_get_filter_by_name(self.raw.as_ptr(), cstr_ptr!(name))
         };
@@ -109,7 +119,7 @@ impl<'a> Source<'a> {
         if raw.is_null() {
             None
         } else {
-            Some(Self::from_raw(raw))
+            Some(Filter::from_raw(raw, self))
         }
     }
 
@@ -225,6 +235,10 @@ impl<'a> Source<'a> {
         unsafe { libobs_sys::obs_source_update_properties(self.raw.as_ptr()) };
     }
 
+    pub fn reset_settings(&self, settings: Data<'_>) {
+        unsafe { libobs_sys::obs_source_reset_settings(self.raw.as_ptr(), settings.as_ptr()) };
+    }
+
     pub fn is_group(&self) -> bool {
         unsafe { libobs_sys::obs_source_is_group(self.raw.as_ptr()) }
     }
@@ -235,6 +249,14 @@ impl<'a> Source<'a> {
 
     pub fn active(&self) -> bool {
         unsafe { libobs_sys::obs_source_active(self.raw.as_ptr()) }
+    }
+
+    pub fn enabled(&self) -> bool {
+        unsafe { libobs_sys::obs_source_enabled(self.raw.as_ptr()) }
+    }
+
+    pub fn set_enabled(&mut self, enabled: bool) {
+        unsafe { libobs_sys::obs_source_set_enabled(self.raw.as_ptr(), enabled) };
     }
 
     pub fn audio_active(&self) -> bool {

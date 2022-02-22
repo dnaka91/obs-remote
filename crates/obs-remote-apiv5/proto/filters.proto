@@ -6,20 +6,112 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
 service Filters {
+  // Gets an array of all of a source's filters.
+  //
   // Original: GetSourceFilterList
-  rpc List(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc List(google.protobuf.StringValue) returns (ListReply);
+
+  // Gets the default settings for a filter kind.
+  //
   // Original: GetSourceFilterDefaultSettings
-  rpc DefaultSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
-  // Original: GetSourceFilter
-  rpc Get(google.protobuf.Empty) returns (google.protobuf.Empty);
-  // Original: SetSourceFilterIndex
-  rpc SetIndex(google.protobuf.UInt32Value) returns (google.protobuf.Empty);
-  // Original: SetSourceFilterSettings
-  rpc SetSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
-  // Original: SetSourceFilterEnabled
-  rpc SetEnabled(google.protobuf.BoolValue) returns (google.protobuf.Empty);
+  rpc DefaultSettings(google.protobuf.StringValue)
+      returns (google.protobuf.StringValue);
+
+  // Creates a new filter, adding it to the specified source.
+  //
   // Original: CreateSourceFilter
-  rpc Create(google.protobuf.Empty) returns (google.protobuf.Empty);
-  // Original: DeleteSourceFilter
-  rpc Delete(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Create(CreateRequest) returns (google.protobuf.Empty);
+
+  // Removes a filter from a source.
+  //
+  // Original: RemoveSourceFilter
+  rpc Remove(Identifier) returns (google.protobuf.Empty);
+
+  // Gets the info for a specific source filter.
+  //
+  // Original: GetSourceFilter
+  rpc Get(Identifier) returns (Filter);
+
+  // Sets the name of a source filter (rename).
+  //
+  // Original: SetSourceFilterName
+  rpc SetName(SetNameRequest) returns (google.protobuf.Empty);
+
+  // Sets the index position of a filter on a source.
+  //
+  // Original: SetSourceFilterIndex
+  rpc SetIndex(SetIndexRequest) returns (google.protobuf.Empty);
+
+  // Sets the enable state of a source filter.
+  //
+  // Original: SetSourceFilterEnabled
+  rpc SetEnabled(SetEnabledRequest) returns (google.protobuf.Empty);
+
+  // Sets the settings of a source filter.
+  //
+  // Original: SetSourceFilterSettings
+  rpc SetSettings(SetSettingsRequest) returns (google.protobuf.Empty);
+}
+
+message ListReply { repeated Filter filters = 1; }
+
+message CreateRequest {
+  // Identifier for the filter of a specific source.
+  Identifier identifier = 1;
+  // The kind of filter to be created.
+  string kind = 2;
+  // Settings object to initialize the filter with.
+  google.protobuf.StringValue settings = 3;
+}
+
+message SetNameRequest {
+  // Identifier for the filter of a specific source.
+  Identifier identifier = 1;
+  // New name for the filter.
+  string new_name = 2;
+}
+
+message SetIndexRequest {
+  // Identifier for the filter of a specific source.
+  Identifier identifier = 1;
+  // New index position of the filter.
+  uint32 index = 2;
+}
+
+message SetEnabledRequest {
+  // Identifier for the filter of a specific source.
+  Identifier identifier = 1;
+  // New enable state of the filter.
+  bool enabled = 2;
+}
+
+message SetSettingsRequest {
+  // Identifier for the filter of a specific source.
+  Identifier identifier = 1;
+  // Object of settings to apply.
+  string settings = 2;
+  // Apply the settings on top of existing ones (default), or reset the filter
+  // to its defaults and then apply the settings.
+  google.protobuf.BoolValue overlay = 3;
+}
+
+message Filter {
+  // Whether the filter is enabled.
+  bool enabled = 1;
+  // ndex of the filter in the list, beginning at 0.
+  uint32 index = 2;
+  // The kind of filter.
+  string kind = 3;
+  // Name of the filter.
+  string name = 4;
+  // Settings object associated with the filter.
+  string settings = 5;
+}
+
+// Identifier for the filter of a specific source.
+message Identifier {
+  // Name fo the source the filter is on or to be added to.
+  string source = 1;
+  // Name of the filter to edit.
+  string filter = 2;
 }

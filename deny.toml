@@ -15,3 +15,9 @@ exceptions = [
     { allow = ["AGPL-3.0"], name = "obs-rust" },
     { allow = ["Zlib"], name = "adler32" },
 ]
+
+[bans]
+skip = [
+    { name = "miniz_oxide", version = "=0.4.4" },
+    { name = "tokio-util", version = "=0.6.9" },
+]

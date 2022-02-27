@@ -1,8 +1,8 @@
 {
     "protoc": {
         "options": [
-            "-Icrates/obs-remote-apiv4/proto",
-            "-Icrates/obs-remote-apiv5/proto"
+            "-Icrates/api-legacy/proto",
+            "-Iproto"
         ]
     }
 }

@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package obs_remote.legacy.json;
+
+message Value {
+  oneof value {
+    Object object = 1;
+    Array array = 2;
+    string string = 3;
+    Number number = 4;
+    bool boolean = 5;
+    Null null = 6;
+  }
+}
+
+message Object {
+  map<string, Value> values = 1;
+}
+
+message Array {
+  repeated Value values = 1;
+}
+
+message Number {
+  oneof value {
+    int64 integer = 1;
+    double double = 2;
+  }
+}
+
+message Null {
+}

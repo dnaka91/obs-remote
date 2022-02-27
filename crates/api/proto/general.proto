@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package obs_remote.general;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+
+service General {
+  // Gets data about the current plugin and RPC version.
+  //
+  // Original: GetVersion
+  rpc Version(google.protobuf.Empty) returns (VersionReply);
+  // Gets statistics about OBS Studio, OBS Remote, and the current session.
+  //
+  // Original: GetStats
+  rpc Stats(google.protobuf.Empty) returns (StatsReply);
+  // Broadcasts a custom event to all WebSocket clients. Receivers are clients
+  // which are identified and subscribed.
+  //
+  // Original: BroadcastCustomEvent
+  rpc BroadcastEvent(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: CallVendorRequest
+  rpc CallVendor(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Sleeps for a time duration or number of frames.
+  //
+  // Original: -
+  rpc Sleep(SleepRequest) returns (google.protobuf.Empty);
+}
+
+message VersionReply {
+  // Current OBS Studio version.
+  SemVer obs_version = 1;
+  // Current OBS Remote version.
+  SemVer obs_remote_version = 2;
+  /// Latest OBS Remote RPC version.
+  uint32 rpc_version = 3;
+
+  message SemVer {
+    uint32 major = 1;
+    uint32 minor = 2;
+    uint32 patch = 3;
+  }
+}
+
+message StatsReply {
+  // Current CPU usage in percent.
+  float cpu_usage = 1;
+  // Amount of memory in MB currently being used by OBS.
+  uint32 memory_usage = 2;
+  // Available disk space on the device being used for recording storage.
+  uint32 disk_space = 3;
+  // Current FPS being rendered.
+  float fps = 4;
+  Rendering rendering = 5;
+  Output output = 6;
+  WebSocket websocket = 7;
+
+  message Rendering {
+    // Average time that OBS is taking to render a frame.
+    google.protobuf.Duration average_frame_time = 1;
+    // Number of frames skipped by OBS in the render thread.
+    uint64 skipped_frames = 2;
+    // Total number of frames outputted by the render thread.
+    uint64 total_frames = 3;
+  }
+
+  message Output {
+    // Number of frames skipped by OBS in the output thread.
+    uint64 skipped_frames = 1;
+    // Total number of frames outputted by the output thread.
+    uint64 total_frames = 2;
+  }
+
+  message WebSocket {
+    // Total number of messages received by obs-websocket from the client.
+    uint32 incoming = 1;
+    // Total number of messages sent by obs-websocket to the client.
+    uint32 outgoing = 2;
+  }
+}
+
+message SleepRequest {
+  oneof sleep {
+    // Duration to sleep for.
+    google.protobuf.Duration duration = 1;
+    // Number of frames to sleep for.
+    uint32 frames = 2;
+  }
+}

@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package obs_remote.transitions;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+service Transitions {
+  // Original: GetTransitionList
+  rpc List(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: GetCurrentTransition
+  rpc Current(google.protobuf.Empty) returns (google.protobuf.StringValue);
+  // Original: SetCurrentTransition
+  rpc SetCurrent(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  // Original: SetCurrentTransitionDuration
+  rpc SetCurrentDuration(google.protobuf.Duration)
+      returns (google.protobuf.Empty);
+  // Original: GetTransitionSettings
+  rpc Settings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: SetTransitionSettings
+  rpc SetSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: ReleaseTbar
+  rpc ReleaseTBar(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: SetTbarPosition
+  rpc SetTBarPosition(google.protobuf.FloatValue)
+      returns (google.protobuf.Empty);
+  // Original: TriggerStudioModeTransition
+  rpc TriggerStudioModeTransition(google.protobuf.Empty)
+      returns (google.protobuf.Empty);
+  // Original: CreateTransition
+  rpc Create(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: DeleteTransition
+  rpc Delete(google.protobuf.Empty) returns (google.protobuf.Empty);
+}

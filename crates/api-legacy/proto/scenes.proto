@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package obs_remote.legacy.scenes;
+
+import "common.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+
+// API functions related to scenes.
+service Scenes {
+  // Switch to the specified scene.
+  rpc SetCurrent(SetCurrentRequest) returns (google.protobuf.Empty);
+  // Get the current scene's name and source items.
+  rpc GetCurrent(google.protobuf.Empty) returns (GetCurrentReply);
+  // Get a list of scenes in the currently active profile.
+  rpc List(google.protobuf.Empty) returns (ListReply);
+  // Create a new scene scene.
+  rpc Create(CreateRequest) returns (google.protobuf.Empty);
+  // Changes the order of scene items in the requested scene.
+  rpc Reorder(ReorderRequest) returns (google.protobuf.Empty);
+  // Set a scene to use a specific transition override.
+  rpc SetTransitionOverride(SetTransitionOverrideRequest)
+      returns (google.protobuf.Empty);
+  // Remove any transition override on a scene.
+  rpc RemoveTransitionOverride(RemoveTransitionOverrideRequest)
+      returns (google.protobuf.Empty);
+  // Get the current scene transition override.
+  rpc GetTransitionOverride(GetTransitionOverrideRequest)
+      returns (GetTransitionOverrideReply);
+}
+
+message SetCurrentRequest {
+  // Name of the scene to switch to.
+  string name = 1;
+}
+
+message GetCurrentReply {
+  // Name of the currently active scene.
+  string name = 1;
+  // Ordered list of the current scene's source items.
+  repeated common.SceneItem sources = 2;
+}
+
+message ListReply {
+  // Name of the currently active scene.
+  string current = 1;
+  // Ordered list of the current profile's scenes.
+  repeated Scene scenes = 2;
+
+  message Scene {
+    // Name of the scene.
+    string name = 1;
+    // Ordered list of the scene's source items.
+    repeated common.SceneItem sources = 2;
+  }
+}
+
+message CreateRequest {
+  // Name of the scene to create.
+  string name = 1;
+}
+
+message ReorderRequest {
+  // Name of the scene to reorder (defaults to current).
+  string scene = 1;
+  // Ordered list of objects with name and/or id specified. Id preferred due to
+  // uniqueness per scene.
+  repeated SceneItem items = 2;
+
+  message SceneItem {
+    // Id of a specific scene item. Unique on a scene by scene basis.
+    int64 id = 1;
+    // Name of a scene item. Sufficiently unique if no scene items share sources
+    // within the scene.
+    string name = 2;
+  }
+}
+
+message SetTransitionOverrideRequest {
+  // Name of the scene to switch to.
+  string scene_name = 1;
+  // Name of the transition to use.
+  string transition_name = 2;
+  // Duration in milliseconds of the transition if transition is not fixed.
+  // Defaults to the current duration specified in the UI if there is no current
+  // override and this value is not given.
+  google.protobuf.Duration transition_duration = 3;
+}
+
+message RemoveTransitionOverrideRequest {
+  // Name of the scene to remove the override from.
+  string name = 1;
+}
+
+message GetTransitionOverrideRequest {
+  // Name of the scene to get the override for.
+  string name = 1;
+}
+
+message GetTransitionOverrideReply {
+  // Name of the current overriding transition. Empty string if no override is
+  // set.
+  string name = 1;
+  // Transition duration.
+  google.protobuf.Duration duration = 2;
+}

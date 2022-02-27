@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package obs_remote.legacy.replay_buffer;
+
+import "google/protobuf/empty.proto";
+
+// API functions related to the replay buffer.
+service ReplayBuffer {
+  // Get the status of the OBS replay buffer.
+  rpc Status(google.protobuf.Empty) returns (StatusReply);
+  // Toggle the Replay Buffer on/off (depending on the current state of the
+  // replay buffer).
+  rpc Toggle(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Start recording into the Replay Buffer. Will return an `error` if the
+  // Replay Buffer is already active or if the "Save Replay Buffer" hotkey is
+  // not set in OBS' settings. Setting this hotkey is mandatory, even when
+  // triggering saves only through obs-websocket.
+  rpc Start(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Stop recording into the Replay Buffer. Will return an `error` if the Replay
+  // Buffer is not active.
+  rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Flush and save the contents of the Replay Buffer to disk. This is basically
+  // the same as triggering the "Save Replay Buffer" hotkey. Will return an
+  // `error` if the Replay Buffer is not active.
+  rpc Save(google.protobuf.Empty) returns (google.protobuf.Empty);
+}
+
+message StatusReply {
+  // Current recording status.
+  bool active = 1;
+}

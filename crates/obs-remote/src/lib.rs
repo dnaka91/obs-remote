@@ -51,12 +51,10 @@ impl Plugin for ObsRemotePlugin {
                 .build()
                 .unwrap()
                 .block_on(async {
-                    let v4_ipv4 = run_server(signal.clone(), false);
-                    let v4_ipv6 = run_server(signal.clone(), true);
-                    let v5_ipv4 = run_server_v5(signal.clone(), false);
-                    let v5_ipv6 = run_server_v5(signal, true);
+                    let ipv4 = run_server(signal.clone(), false);
+                    let ipv6 = run_server(signal, true);
 
-                    tokio::try_join!(v4_ipv4, v4_ipv6, v5_ipv4, v5_ipv6).map(|_| ())
+                    tokio::try_join!(ipv4, ipv6).map(|_| ())
                 })
         });
 
@@ -87,7 +85,6 @@ fn init_logger() -> bool {
         vec![
             (env!("CARGO_CRATE_NAME"), Level::Trace),
             ("obs", Level::Trace),
-            ("obs_remote_apiv4", Level::Trace),
             ("obs_remote_apiv5", Level::Trace),
         ],
     );
@@ -103,63 +100,7 @@ fn init_logger() -> bool {
 
 async fn run_server(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
     #[allow(clippy::wildcard_imports)]
-    use obs_remote_apiv4::*;
-
-    let addr = if ipv6 {
-        "[::1]:50051"
-    } else {
-        "127.0.0.1:50051"
-    }
-    .parse()
-    .unwrap();
-
-    let reflection = tonic_reflection::server::Builder::configure()
-        .register_encoded_file_descriptor_set(FILE_DESCRIPTOR_SET_V4)
-        .build()?;
-
-    info!("OBS Remote server (v4) starting up at {} ...", addr);
-
-    let result = Server::builder()
-        .accept_http1(true)
-        .add_service(reflection)
-        .add_service(new_service!(
-            EventsServer,
-            EventsService::new(signal.clone())
-        ))
-        .add_service(new_service!(GeneralServer, GeneralService))
-        .add_service(new_service!(MediaControlServer, MediaControlService))
-        .add_service(new_service!(OutputsServer, OutputsService))
-        .add_service(new_service!(ProfilesServer, ProfilesService))
-        .add_service(new_service!(RecordingServer, RecordingService))
-        .add_service(new_service!(ReplayBufferServer, ReplayBufferService))
-        .add_service(new_service!(
-            SceneCollectionsServer,
-            SceneCollectionsService
-        ))
-        .add_service(new_service!(SceneItemsServer, SceneItemsService))
-        .add_service(new_service!(ScenesServer, ScenesService))
-        .add_service(new_service!(SourcesServer, SourcesService))
-        .add_service(new_service!(StreamingServer, StreamingService))
-        .add_service(new_service!(StudioModeServer, StudioModeService))
-        .add_service(new_service!(TransitionsServer, TransitionsService))
-        .add_service(new_service!(VirtualCamServer, VirtualCamService))
-        .serve_with_shutdown(addr, async {
-            signal.changed().await.ok();
-        })
-        .await;
-
-    if let Err(e) = &result {
-        error!("{}", e);
-    } else {
-        info!("server (v4) shut down");
-    }
-
-    result.map_err(Into::into)
-}
-
-async fn run_server_v5(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
-    #[allow(clippy::wildcard_imports)]
-    use obs_remote_apiv5::*;
+    use api::*;
 
     let addr = if ipv6 {
         "[::1]:50052"
@@ -170,10 +111,10 @@ async fn run_server_v5(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()
     .unwrap();
 
     let reflection = tonic_reflection::server::Builder::configure()
-        .register_encoded_file_descriptor_set(FILE_DESCRIPTOR_SET_V5)
+        .register_encoded_file_descriptor_set(FILE_DESCRIPTOR_SET)
         .build()?;
 
-    info!("OBS Remote server (v5) starting up at {} ...", addr);
+    info!("OBS Remote server starting up at {} ...", addr);
 
     let result = Server::builder()
         .accept_http1(true)
@@ -208,7 +149,7 @@ async fn run_server_v5(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()
     if let Err(e) = &result {
         error!("{}", e);
     } else {
-        info!("server (v5) shut down");
+        info!("server shut down");
     }
 
     result.map_err(Into::into)

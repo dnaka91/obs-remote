@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package obs_remote.legacy.outputs;
+
+import "google/protobuf/empty.proto";
+
+// API functions related to outputs.
+service Outputs {
+  // List existing outputs.
+  rpc List(google.protobuf.Empty) returns (ListReply);
+  // Get information about a single output.
+  rpc Info(InfoRequest) returns (InfoReply);
+  // Start an output.
+  //
+  // Note: Controlling outputs is an experimental feature of obs-websocket. Some
+  // plugins which add outputs to OBS may not function properly when they are
+  // controlled in this way.
+  rpc Start(StartRequest) returns (google.protobuf.Empty);
+  // Stop an output.
+  //
+  // Note: Controlling outputs is an experimental feature of obs-websocket. Some
+  // plugins which add outputs to OBS may not function properly when they are
+  // controlled in this way.
+  rpc Stop(StopRequest) returns (google.protobuf.Empty);
+}
+
+message ListReply {
+  // Outputs list.
+  repeated Output outputs = 1;
+}
+
+message InfoRequest {
+  // Output name.
+  string name = 1;
+}
+
+message InfoReply {
+  // Output info.
+  Output output = 1;
+}
+
+message StartRequest {
+  // Output name.
+  string name = 1;
+}
+
+message StopRequest {
+  // Output name.
+  string name = 1;
+  // Force stop (default: false).
+  bool force = 2;
+}
+
+message Output {
+  // Output name.
+  string name = 1;
+  // Output type/kind.
+  string ty = 2;
+  // Video output width.
+  uint32 width = 3;
+  // Video output height.
+  uint32 height = 4;
+  // Output flags.
+  OutputFlags flags = 5;
+  // Output settings.
+  string settings = 6;
+  // Output status (active or not).
+  bool active = 7;
+  // Output reconnection status (reconnecting or not).
+  bool reconnecting = 8;
+  // Output congestion.
+  float congestion = 9;
+  // Number of frames sent.
+  uint32 total_frames = 10;
+  // Number of frames dropped.
+  uint32 dropped_frames = 11;
+  // Total bytes sent.
+  uint64 total_bytes = 12;
+
+  message OutputFlags {
+    // Raw flags value.
+    uint32 raw_value = 1;
+    // Output uses audio.
+    bool audio = 2;
+    // Output uses video.
+    bool video = 3;
+    // Output is encoded.
+    bool encoded = 4;
+    // Output uses several audio tracks.
+    bool multi_track = 5;
+    // Output uses a service.
+    bool service = 6;
+  }
+}

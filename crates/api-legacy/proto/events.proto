@@ -1,0 +1,745 @@
+syntax = "proto3";
+
+package obs_remote.legacy.events;
+
+import "common.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+service Events {
+  rpc Listen(google.protobuf.Empty) returns (stream EventReply);
+}
+
+message EventReply {
+  common.Timecode stream_timecode = 1;
+  common.Timecode rec_timecode = 2;
+
+  oneof event {
+    string test1 = 3;
+    bool test2 = 4;
+
+    // Indicates a scene change.
+    SwitchScenes switch_scenes = 100;
+    // Note: This event is not fired when the scenes are reordered.
+    ScenesChanged scenes_changed = 101;
+    // Triggered when switching to another scene collection or when renaming the
+    // current scene collection.
+    SceneCollectionChanged scene_collection_changed = 102;
+    // Triggered when a scene collection is created, added, renamed, or removed.
+    SceneCollectionListChanged scene_collection_list_changed = 103;
+
+    // The active transition has been changed.
+    SwitchTransition switch_transition = 200;
+    // The list of available transitions has been modified. Transitions have
+    // been added, removed, or renamed.
+    TransitionListChanged transition_list_changed = 201;
+    // The active transition duration has been changed.
+    TransitionDurationChanged transition_duration_changed = 202;
+    // A transition (other than "cut") has begun.
+    TransitionBegin transition_begin = 203;
+    // A transition (other than "cut") has ended.
+    TransitionEnd transition_end = 204;
+    // A stinger transition has finished playing its video.
+    TransitionVideoEnd transition_video_end = 205;
+
+    // Triggered when switching to another profile or when renaming the current
+    // profile.
+    ProfileChanged profile_changed = 300;
+    // Triggered when a profile is created, added, renamed, or removed.
+    ProfileListChanged profile_list_changed = 301;
+
+    // A request to start streaming has been issued.
+    StreamStarting stream_starting = 400;
+    // Streaming started successfully.
+    StreamStarted stream_started = 401;
+    // A request to stop streaming has been issued.
+    StreamStopping stream_stopping = 402;
+    // Streaming stopped successfully.
+    StreamStopped stream_stopped = 403;
+    // Emitted every 2 seconds when stream is active.
+    StreamStatus stream_status = 404;
+
+    // A request to start recording has been issued.
+    RecordingStarting recording_starting = 500;
+    // Recording started successfully.
+    RecordingStarted recording_started = 501;
+    // A request to stop recording has been issued.
+    RecordingStopping recording_stopping = 502;
+    // Recording stopped successfully.
+    RecordingStopped recording_stopped = 503;
+    // Current recording paused.
+    RecordingPaused recording_paused = 504;
+    // Current recording resumed.
+    RecordingResumed recording_resumed = 505;
+
+    // Virtual cam started successfully.
+    VirtualCamStarted virtual_cam_started = 600;
+    // Virtual cam stopped successfully.
+    VirtualCamStopped virtual_cam_stopped = 601;
+
+    // A request to start the replay buffer has been issued.
+    ReplayStarting replay_starting = 700;
+    // Replay Buffer started successfully.
+    ReplayStarted replay_started = 701;
+    // A request to stop the replay buffer has been issued.
+    ReplayStopping replay_stopping = 702;
+    // Replay Buffer stopped successfully.
+    ReplayStopped replay_stopped = 703;
+
+    // OBS is exiting.
+    Exiting exiting = 800;
+
+    // A custom broadcast message, sent by the server, requested by one of the
+    // websocket clients.
+    BroadcastCustomMessage broadcast_custom_message = 900;
+
+    // A source has been created. A source can be an input, a scene or a
+    // transition.
+    SourceCreated source_created = 1000;
+    // A source has been destroyed/removed. A source can be an input, a scene or
+    // a transition.
+    SourceDestroyed source_destroyed = 1001;
+    // The volume of a source has changed.
+    SourceVolumeChanged source_volume_changed = 1002;
+    // A source has been muted or unmuted.
+    SourceMuteStateChanged source_mute_state_changed = 1003;
+    // A source has removed audio.
+    SourceAudioDeactivated source_audio_deactivated = 1004;
+    // A source has added audio.
+    SourceAudioActivated source_audio_activated = 1005;
+    // The audio sync offset of a source has changed.
+    SourceAudioSyncOffsetChanged source_audio_sync_offset_changed = 1006;
+    // Audio mixer routing changed on a source.
+    SourceAudioMixersChanged source_audio_mixers_changed = 1007;
+    // A source has been renamed.
+    SourceRenamed source_renamed = 1008;
+    // A filter was added to a source.
+    SourceFilterAdded source_filter_added = 1009;
+    // A filter was removed from a source.
+    SourceFilterRemoved source_filter_removed = 1010;
+    // The visibility/enabled state of a filter changed.
+    SourceFilterVisibilityChanged source_filter_visibility_changed = 1011;
+    // Filters in a source have been reordered.
+    SourceFiltersReordered source_filters_reordered = 1012;
+
+    // Note: This event is only emitted when something actively controls the
+    // media/VLC source. In other words, the source will never emit this on its
+    // own naturally.
+    MediaPlaying media_playing = 1100;
+    // Note: This event is only emitted when something actively controls the
+    // media/VLC source. In other words, the source will never emit this on its
+    // own naturally.
+    MediaPaused media_paused = 1101;
+    // Note: This event is only emitted when something actively controls the
+    // media/VLC source. In other words, the source will never emit this on its
+    // own naturally.
+    MediaRestarted media_restarted = 1102;
+    // Note: This event is only emitted when something actively controls the
+    // media/VLC source. In other words, the source will never emit this on its
+    // own naturally.
+    MediaStopped media_stopped = 1103;
+    // Note: This event is only emitted when something actively controls the
+    // media/VLC source. In other words, the source will never emit this on its
+    // own naturally.
+    MediaNext media_next = 1104;
+    // Note: This event is only emitted when something actively controls the
+    // media/VLC source. In other words, the source will never emit this on its
+    // own naturally.
+    MediaPrevious media_previous = 1105;
+    // Note: This event is only emitted when something actively controls the
+    // media/VLC source. In other words, the source will never emit this on its
+    // own naturally.
+    MediaStarted media_started = 1106;
+    // Note: This event is only emitted when something actively controls the
+    // media/VLC source. In other words, the source will never emit this on its
+    // own naturally.
+    MediaEnded media_ended = 1107;
+
+    // Scene items within a scene have been reordered.
+    SourceOrderChanged source_order_changed = 1200;
+    // A scene item has been added to a scene.
+    SceneItemAdded scene_item_added = 1201;
+    // A scene item has been removed from a scene.
+    SceneItemRemoved scene_item_removed = 1202;
+    // A scene item's visibility has been toggled.
+    SceneItemVisibilityChanged scene_item_visibility_changed = 1203;
+    // A scene item's locked status has been toggled.
+    SceneItemLockChanged scene_item_lock_changed = 1204;
+    // A scene item's transform has been changed.
+    SceneItemTransformChanged scene_item_transform_changed = 1205;
+    // A scene item is selected.
+    SceneItemSelected scene_item_selected = 1206;
+    // A scene item is deselected.
+    SceneItemDeselected scene_item_deselected = 1207;
+
+    // The selected preview scene has changed (only available in Studio Mode).
+    PreviewSceneChanged preview_scene_changed = 1300;
+    // Studio Mode has been enabled or disabled.
+    StudioModeSwitched studio_mode_switched = 1301;
+  }
+}
+
+// --- Scenes ---
+
+// Indicates a scene change.
+message SwitchScenes {
+  // The new scene.
+  string name = 1;
+  // List of scene items in the new scene.
+  repeated common.SceneItem sources = 2;
+}
+
+// Note: This event is not fired when the scenes are reordered.
+message ScenesChanged {
+  // Scenes list.
+  repeated Scene scenes = 1;
+
+  message Scene {
+    // Name of the scene.
+    string name = 1;
+    // Ordered list of the current scene's source items.
+    repeated common.SceneItem sources = 2;
+  }
+}
+
+// Triggered when switching to another scene collection or when renaming the
+// current scene collection.
+message SceneCollectionChanged {
+  // Name of the new current scene collection.
+  string name = 1;
+}
+
+// Triggered when a scene collection is created, added, renamed, or removed.
+message SceneCollectionListChanged {
+  // Scene collections list.
+  repeated string collections = 1;
+}
+
+// --- Transitions ---
+
+// The active transition has been changed.
+message SwitchTransition {
+  // The name of the new active transition.
+  string name = 1;
+}
+
+// The list of available transitions has been modified. Transitions have been
+// added, removed, or renamed.
+message TransitionListChanged {
+  // Transitions list.
+  repeated string transitions = 1;
+}
+
+// The active transition duration has been changed.
+message TransitionDurationChanged {
+  // New transition duration.
+  google.protobuf.Duration new_duration = 1;
+}
+
+// A transition (other than "cut") has begun.
+message TransitionBegin {
+  // Transition name.
+  string name = 1;
+  // Transition type.
+  string ty = 2;
+  // Transition duration.
+  google.protobuf.Duration duration = 3;
+  // Source scene of the transition.
+  string from_scene = 4;
+  // Destination scene of the transition.
+  google.protobuf.StringValue to_scene = 5;
+}
+
+// A transition (other than "cut") has ended. Note: The `from_scene` field is
+// not available in TransitionEnd.
+message TransitionEnd {
+  // Transition name.
+  string name = 1;
+  // Transition type.
+  string ty = 2;
+  // Transition duration.
+  google.protobuf.Duration duration = 3;
+  // Destination scene of the transition.
+  string to_scene = 4;
+}
+
+// A stinger transition has finished playing its video.
+message TransitionVideoEnd {
+  // Transition name.
+  string name = 1;
+  // Transition type.
+  string ty = 2;
+  // Transition duration.
+  google.protobuf.Duration duration = 3;
+  // Source scene of the transition.
+  google.protobuf.StringValue from_scene = 4;
+  // Destination scene of the transition.
+  string to_scene = 5;
+}
+
+// --- Profiles ---
+
+// Triggered when switching to another profile or when renaming the current
+// profile.
+message ProfileChanged {
+  // Name of the new current profile.
+  string name = 1;
+}
+
+// Triggered when a profile is created, added, renamed, or removed.
+message ProfileListChanged {
+  // Profiles list.
+  repeated string profiles = 2;
+}
+
+// --- Streaming ---
+
+// A request to start streaming has been issued.
+message StreamStarting {}
+
+// Streaming started successfully.
+message StreamStarted {}
+
+// A request to stop streaming has been issued.
+message StreamStopping {}
+
+// Streaming stopped successfully.
+message StreamStopped {}
+
+// Emitted every 2 seconds when stream is active.
+message StreamStatus {
+  // Current streaming state.
+  bool streaming = 1;
+  // Current recording state.
+  bool recording = 2;
+  // Replay Buffer status.
+  bool replay_buffer_active = 3;
+  // Amount of data per second (in bytes) transmitted by the stream encoder.
+  uint32 bytes_per_sec = 4;
+  // Amount of data per second (in kilobits) transmitted by the stream encoder.
+  uint32 kbits_per_sec = 5;
+  // Percentage of dropped frames.
+  double straing = 6;
+  // Total time since the stream started.
+  google.protobuf.Duration total_stream_time = 7;
+  // Total number of frames transmitted since the stream started.
+  uint64 num_total_frames = 8;
+  // Number of frames dropped by the encoder since the stream started.
+  uint64 num_dropped_frames = 9;
+  // Current framerate.
+  double fps = 10;
+  // Number of frames rendered.
+  uint64 render_total_frames = 11;
+  // Number of frames missed due to rendering lag.
+  uint64 render_missed_frames = 12;
+  // Number of frames outputted.
+  uint64 output_total_frames = 13;
+  // Number of frames skipped due to encoding lag.
+  uint64 output_skipped_frames = 14;
+  // Average frame time.
+  google.protobuf.Duration average_frame_time = 15;
+  // Current CPU usage (percentage).
+  double cpu_usage = 16;
+  // Current RAM usage (in megabytes).
+  double memory_usage = 17;
+  // Free recording disk space (in megabytes).
+  double free_disk_space = 18;
+}
+
+// --- Recording ---
+
+// Note: `filename` is not provided in this event because this information is
+// not available at the time this event is emitted.
+message RecordingStarting {}
+
+// Recording started successfully.
+message RecordingStarted {
+  // Absolute path to the file of the current recording.
+  string filename = 1;
+}
+
+// A request to stop recording has been issued.
+message RecordingStopping {
+  // Absolute path to the file of the current recording.
+  string filename = 1;
+}
+
+// Recording stopped successfully.
+message RecordingStopped {
+  // Absolute path to the file of the current recording.
+  string filename = 1;
+}
+
+// Current recording paused.
+message RecordingPaused {}
+
+// Current recording resumed.
+message RecordingResumed {}
+
+// --- Virtual Cam ---
+
+//  Virtual cam started successfully.
+message VirtualCamStarted {}
+
+// Virtual cam stopped successfully.
+message VirtualCamStopped {}
+
+// --- Replay Buffer ---
+
+// A request to start the replay buffer has been issued.
+message ReplayStarting {}
+
+// Replay Buffer started successfully.
+message ReplayStarted {}
+
+// A request to stop the replay buffer has been issued.
+message ReplayStopping {}
+
+// Replay Buffer stopped successfully.
+message ReplayStopped {}
+
+// --- Other ---
+
+// OBS is exiting.
+message Exiting {}
+
+// --- General ---
+
+// A custom broadcast message, sent by the server, requested by one of the
+// websocket clients.
+message BroadcastCustomMessage {
+  // Identifier provided by the sender.
+  string realm = 1;
+  // User-defined data.
+  google.protobuf.Any data = 2;
+}
+
+// --- Sources ---
+
+// A source has been created. A source can be an input, a scene or a transition.
+message SourceCreated {
+  // Source name.
+  string name = 1;
+  // Source type. Can be "input", "scene", "transition" or "filter".
+  string ty = 2;
+  // Source kind.
+  string kind = 3;
+  // Source settings.
+  string settings = 4;
+}
+
+// A source has been destroyed/removed. A source can be an input, a scene or a
+// transition.
+message SourceDestroyed {
+  // Source name.
+  string name = 1;
+  // Source type. Can be "input", "scene", "transition" or "filter".
+  string ty = 2;
+  // Source kind.
+  string kind = 3;
+}
+
+// The volume of a source has changed.
+message SourceVolumeChanged {
+  // Source name.
+  string name = 1;
+  // Source volume.
+  float volume = 2;
+  // Source volume in decibel.
+  float volume_db = 3;
+}
+
+// A source has been muted or unmuted.
+message SourceMuteStateChanged {
+  // Source name.
+  string name = 1;
+  // Mute status of the source.
+  bool muted = 2;
+}
+
+// A source has removed audio.
+message SourceAudioDeactivated {
+  // Source name.
+  string name = 1;
+}
+
+// A source has added audio.
+message SourceAudioActivated {
+  // Source name.
+  string name = 1;
+}
+
+// The audio sync offset of a source has changed.
+message SourceAudioSyncOffsetChanged {
+  // Source name.
+  string name = 1;
+  // Audio sync offset of the source.
+  google.protobuf.Duration sync_offset = 2;
+}
+
+// Audio mixer routing changed on a source.
+message SourceAudioMixersChanged {
+  // Source name.
+  string name = 1;
+  // Routing status of the source for each audio mixer (array of 6 values).
+  repeated Mixer mixers = 2;
+  // Raw mixer flags (little-endian, one bit per mixer) as an hexadecimal value.
+  string hex = 3;
+
+  message Mixer {
+    // Mixer number.
+    int32 id = 1;
+    // Routing status.
+    bool enabled = 2;
+  }
+}
+
+// A source has been renamed.
+message SourceRenamed {
+  // Previous source name.
+  string previous_name = 1;
+  // New source name.
+  string new_name = 2;
+  // Type of source (input, scene, filter, transition).
+  common.SourceType source_type = 3;
+}
+
+// A filter was added to a source.
+message SourceFilterAdded {
+  // Source name.
+  string name = 1;
+  // Filter name.
+  string filter_name = 2;
+  // Filter type.
+  string filter_type = 3;
+  // Filter settings.
+  string filter_settings = 4;
+}
+
+// A filter was removed from a source.
+message SourceFilterRemoved {
+  // Source name.
+  string name = 1;
+  // Filter name.
+  string filter_name = 2;
+  // Filter type.
+  string filter_type = 3;
+}
+
+// The visibility/enabled state of a filter changed.
+message SourceFilterVisibilityChanged {
+  // Source name.
+  string name = 1;
+  // Filter name.
+  string filter_name = 2;
+  // New filter state.
+  bool enabled = 3;
+}
+
+// Filters in a source have been reordered.
+message SourceFiltersReordered {
+  // Source name.
+  string name = 1;
+  // Ordered filters list.
+  repeated Filter filters = 2;
+
+  message Filter {
+    // Filter name.
+    string name = 1;
+    // Filter type.
+    string ty = 2;
+    // Filter visibility status.
+    bool enabled = 3;
+  }
+}
+
+// --- Media ---
+
+// Note: This event is only emitted when something actively controls the
+// media/VLC source. In other words, the source will never emit this on its own
+// naturally.
+message MediaPlaying {
+  // Source name.
+  string name = 1;
+  // The ID type of the source (Eg. `vlc_source` or `ffmpeg_source`).
+  string kind = 2;
+}
+
+// Note: This event is only emitted when something actively controls the
+// media/VLC source. In other words, the source will never emit this on its own
+// naturally.
+message MediaPaused {
+  // Source name.
+  string name = 1;
+  // The ID type of the source (Eg. `vlc_source` or `ffmpeg_source`).
+  string kind = 2;
+}
+
+// Note: This event is only emitted when something actively controls the
+// media/VLC source. In other words, the source will never emit this on its own
+// naturally.
+message MediaRestarted {
+  // Source name.
+  string name = 1;
+  // The ID type of the source (Eg. `vlc_source` or `ffmpeg_source`).
+  string kind = 2;
+}
+
+// Note: This event is only emitted when something actively controls the
+// media/VLC source. In other words, the source will never emit this on its own
+// naturally.
+message MediaStopped {
+  // Source name.
+  string name = 1;
+  // The ID type of the source (Eg. `vlc_source` or `ffmpeg_source`).
+  string kind = 2;
+}
+
+// Note: This event is only emitted when something actively controls the
+// media/VLC source. In other words, the source will never emit this on its own
+// naturally.
+message MediaNext {
+  // Source name.
+  string name = 1;
+  // The ID type of the source (Eg. `vlc_source` or `ffmpeg_source`).
+  string kind = 2;
+}
+
+// Note: This event is only emitted when something actively controls the
+// media/VLC source. In other words, the source will never emit this on its own
+// naturally.
+message MediaPrevious {
+  // Source name.
+  string name = 1;
+  // The ID type of the source (Eg. `vlc_source` or `ffmpeg_source`).
+  string kind = 2;
+}
+
+// Note: This event is only emitted when something actively controls the
+// media/VLC source. In other words, the source will never emit this on its own
+// naturally.
+message MediaStarted {
+  // Source name.
+  string name = 1;
+  // The ID type of the source (Eg. `vlc_source` or `ffmpeg_source`).
+  string kind = 2;
+}
+
+// Note: This event is only emitted when something actively controls the
+// media/VLC source. In other words, the source will never emit this on its own
+// naturally.
+message MediaEnded {
+  // Source name.
+  string name = 1;
+  // The ID type of the source (Eg. `vlc_source` or `ffmpeg_source`).
+  string kind = 2;
+}
+
+// --- Scene Items ---
+
+// Scene items within a scene have been reordered.
+message SourceOrderChanged {
+  // Name of the scene where items have been reordered.
+  string scene = 1;
+  // Ordered list of scene items.
+  repeated SceneItem items = 2;
+
+  message SceneItem {
+    // Item source name.
+    string source = 1;
+    // Scene item unique ID.
+    int32 id = 2;
+  }
+}
+
+// A scene item has been added to a scene.
+message SceneItemAdded {
+  // Name of the scene.
+  string scene = 1;
+  // Name of the item added to the scene.
+  string name = 2;
+  // Scene item ID.
+  int32 id = 3;
+}
+
+// A scene item has been removed from a scene.
+message SceneItemRemoved {
+  // Name of the scene.
+  string scene = 1;
+  // Name of the item added to the scene.
+  string name = 2;
+  // Scene item ID.
+  int32 id = 3;
+}
+
+// A scene item's visibility has been toggled.
+message SceneItemVisibilityChanged {
+  // Name of the scene.
+  string scene = 1;
+  // Name of the item added to the scene.
+  string name = 2;
+  // Scene item ID.
+  int32 id = 3;
+  // New visibility state of the item.
+  bool visible = 4;
+}
+
+// A scene item's locked status has been toggled.
+message SceneItemLockChanged {
+  // Name of the scene.
+  string scene = 1;
+  // Name of the item added to the scene.
+  string name = 2;
+  // Scene item ID.
+  int32 id = 3;
+  // New locked state of the item.
+  bool locked = 4;
+}
+
+// A scene item's transform has been changed.
+message SceneItemTransformChanged {
+  // Name of the scene.
+  string scene = 1;
+  // Name of the item added to the scene.
+  string name = 2;
+  // Scene item ID.
+  int32 id = 3;
+  // Scene item transform properties.
+  common.SceneItemTransform transform = 4;
+}
+
+// A scene item is selected.
+message SceneItemSelected {
+  // Name of the scene.
+  string scene = 1;
+  // Name of the item added to the scene.
+  string name = 2;
+  // Scene item ID.
+  int32 id = 3;
+}
+
+// A scene item is deselected.
+message SceneItemDeselected {
+  // Name of the scene.
+  string scene = 1;
+  // Name of the item added to the scene.
+  string name = 2;
+  // Scene item ID.
+  int32 id = 3;
+}
+
+// --- Studio Mode ---
+
+// The selected preview scene has changed (only available in Studio Mode).
+message PreviewSceneChanged {
+  string scene = 1;
+  repeated common.SceneItem sources = 2;
+}
+
+// Studio Mode has been enabled or disabled.
+message StudioModeSwitched {
+  // The new enabled state of Studio Mode.
+  bool enabled = 1;
+}

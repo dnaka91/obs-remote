@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package obs_remote.legacy.virtual_cam;
+
+import "common.proto";
+import "google/protobuf/empty.proto";
+
+// API functions related to the virtual cam.
+service VirtualCam {
+  // Get current virtual cam status.
+  rpc Status(google.protobuf.Empty) returns (StatusReply);
+  // Toggle virtual cam on or off (depending on the current virtual cam state).
+  rpc Toggle(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Start virtual cam. Will return an `error` if virtual cam is already active.
+  rpc Start(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Stop virtual cam. Will return an `error` if virtual cam is not active.
+  rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty);
+}
+
+message StatusReply {
+  // Current virtual camera status.
+  bool active = 1;
+  // Time elapsed since virtual cam started (only present if virtual cam
+  // currently active).
+  common.Timecode timecode = 2;
+}

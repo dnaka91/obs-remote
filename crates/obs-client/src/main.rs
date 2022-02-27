@@ -2,7 +2,7 @@ use anyhow::Result;
 
 use crate::{
     general::general_client::GeneralClient,
-    v5::profiles::profiles_client::ProfilesClient as ProfilesClientV5,
+    profiles::profiles_client::ProfilesClient,
 };
 
 #[tokio::main(flavor = "current_thread")]
@@ -11,11 +11,11 @@ async fn main() -> Result<()> {
         .await?
         .send_gzip()
         .accept_gzip();
-    let version = client.get_version(()).await?.into_inner();
+    let version = client.version(()).await?.into_inner();
 
     println!("{:#?}", version);
 
-    let mut client = ProfilesClientV5::connect("http://[::1]:50052")
+    let mut client = ProfilesClient::connect("http://[::1]:50052")
         .await?
         .send_gzip()
         .accept_gzip();
@@ -30,8 +30,6 @@ pub mod general {
     tonic::include_proto!("obs_remote.general");
 }
 
-pub mod v5 {
-    pub mod profiles {
-        tonic::include_proto!("obs_remote.v5.profiles");
-    }
+pub mod profiles {
+    tonic::include_proto!("obs_remote.profiles");
 }

@@ -1,0 +1,150 @@
+syntax = "proto3";
+
+package obs_remote.legacy.scene_items;
+
+import "common.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+// API functions related to scene items.
+service SceneItems {
+  // Get a list of all scene items in a scene.
+  rpc List(ListRequest) returns (ListReply);
+  // Gets the scene specific properties of the specified source item.
+  // Coordinates are relative to the item's parent (the scene or group it
+  // belongs to).
+  rpc GetProperties(GetPropertiesRequest) returns (GetPropertiesReply);
+  // Sets the scene specific properties of a source. Unspecified properties will
+  // remain unchanged. Coordinates are relative to the item's parent (the scene
+  // or group it belongs to).
+  rpc SetProperties(SetPropertiesRequest) returns (google.protobuf.Empty);
+  // Reset a scene item.
+  rpc Reset(ResetRequest) returns (google.protobuf.Empty);
+  // Deletes a scene item.
+  rpc Delete(DeleteRequest) returns (google.protobuf.Empty);
+  // Creates a scene item in a scene. In other words, this is how you add a
+  // source into a scene.
+  rpc Add(AddRequest) returns (AddReply);
+  // Duplicates a scene item.
+  rpc Duplicate(DuplicateRequest)
+      returns (DuplicateReply);
+}
+
+message ListRequest {
+  // Name of the scene to get the list of scene items from. Defaults to the
+  // current scene if not specified.
+  string scene_name = 1;
+}
+
+message ListReply {
+  // Name of the requested (or current) scene.
+  string scene_name = 1;
+  // Array of scene items.
+  repeated SceneItem items = 2;
+
+  message SceneItem {
+    // Unique item id of the source item.
+    int64 id = 1;
+    // ID if the scene item's source. For example `vlc_source` or
+    // `image_source`.
+    string kind = 2;
+    // Name of the scene item's source.
+    string name = 3;
+    // Type of the scene item's source.
+    common.SourceType ty = 4;
+  }
+}
+
+message GetPropertiesRequest {
+  // Name of the scene the scene item belongs to. Defaults to the current scene.
+  string scene_name = 1;
+  // Scene item name (if this field is a string) or specification (if it is an
+  // object).
+  Identifier item = 2;
+}
+
+message GetPropertiesReply {
+  // Scene item name.
+  string name = 1;
+  // Scene item ID.
+  int64 id = 2;
+  /// Transform properties of the scene item.
+  common.SceneItemTransform properties = 3;
+}
+
+message SetPropertiesRequest {
+  // Name of the scene the source item belongs to. Defaults to the current
+  // scene.
+  string scene_name = 1;
+  // Scene item name (if this field is a string) or specification (if it is an
+  // object).
+  Identifier item = 2;
+  common.Position position = 3;
+  google.protobuf.FloatValue rotation = 4;
+  common.Scale scale = 5;
+  common.Crop crop = 6;
+  google.protobuf.BoolValue visible = 7;
+  google.protobuf.BoolValue locked = 8;
+  common.Bounds bounds = 9;
+}
+
+message ResetRequest {
+  // Name of the scene the scene item belongs to. Defaults to the current scene.
+  string scene_name = 1;
+  // Scene item name (if this field is a string) or specification (if it is an
+  // object).
+  Identifier item = 2;
+}
+
+message DeleteRequest {
+  // Name of the scene the scene item belongs to. Defaults to the current scene.
+  string scene_name = 1;
+  // Scene item to delete.
+  Identifier item = 2;
+}
+
+message AddRequest {
+  // Name of the scene to create the scene item in.
+  string scene_name = 1;
+  // Name of the source to be added.
+  string source_name = 2;
+  // Whether to make the sceneitem visible on creation or not. Default `true`.
+  google.protobuf.BoolValue set_visible = 3;
+}
+
+message AddReply {
+  // Numerical ID of the created scene item.
+  int64 id = 1;
+}
+
+message DuplicateRequest {
+  // Name of the scene to copy the item from. Defaults to the current scene.
+  string from_scene = 1;
+  // Name of the scene to create the item in. Defaults to the current scene.
+  string to_scene = 2;
+  // Scene item to duplicate from the source scene.
+  Identifier item = 3;
+}
+
+message DuplicateReply {
+  // Name of the scene where the new item was created.
+  string scene = 1;
+  // New item info.
+  SceneItemSpecification specification = 2;
+}
+
+message Identifier {
+  oneof value {
+    // Scene item name.
+    string name = 1;
+    // Scene item specification.
+    SceneItemSpecification specification = 2;
+  }
+}
+
+message SceneItemSpecification {
+  // Scene item name.
+  string name = 1;
+  // Scene item ID.
+  int64 id = 2;
+}

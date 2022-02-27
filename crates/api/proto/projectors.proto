@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package obs_remote.projectors;
+
+import "google/protobuf/empty.proto";
+
+service Projectors {
+  // Original: GetProjectorList
+  rpc List(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: OpenProjector
+  rpc Open(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: CloseProjector
+  rpc Close(google.protobuf.Empty) returns (google.protobuf.Empty);
+}

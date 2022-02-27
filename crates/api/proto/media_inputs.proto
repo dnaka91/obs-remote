@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package obs_remote.media_inputs;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+service MediaInputs {
+  // Original: GetMediaInputStatus
+  rpc Status(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: OffsetMediaInputTimecode
+  rpc OffsetTimecode(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: SetMediaInputTimecode
+  rpc SetTimecode(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: SetMediaInputPauseState
+  rpc IsPaused(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  // Original: StopMediaInput
+  rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: RestartMediaInput
+  rpc Restart(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: NextMediaInputPlaylistItem
+  rpc PlayNext(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: PreviousMediaInputPlaylistItem
+  rpc PlayPrevious(google.protobuf.Empty) returns (google.protobuf.Empty);
+}

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package obs_remote.streaming;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+// Original: Stream
+service Streaming {
+  // Original: GetStreamStatus
+  rpc Status(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: ToggleStream
+  rpc Toggle(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: StartStream
+  rpc Start(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: StopStream
+  rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Original: SendStreamCaptions
+  rpc SendCaptions(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  // Original: GetStreamBitrateSetting
+  rpc Bitrate(google.protobuf.Empty) returns (google.protobuf.UInt32Value);
+  // Original: SetStreamBitrateSetting
+  rpc SetBitrate(google.protobuf.UInt32Value) returns (google.protobuf.Empty);
+  // Gets the current stream service settings (stream destination).
+  //
+  // Original: GetStreamServiceSettings
+  rpc Settings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // Sets the current stream service settings (stream destination).
+  //
+  // Note: Simple RTMP settings can be set with type `rtmp_custom` and the
+  // settings fields `server` and `key`.
+  //
+  // Original: SetStreamServiceSettings
+  rpc SetSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
+}
+
+message Settings {
+  // Stream service type, like `rtmp_custom` or `rtmp_common`.
+  string type = 1;
+  // Stream service settings.
+  string settings = 2;
+}

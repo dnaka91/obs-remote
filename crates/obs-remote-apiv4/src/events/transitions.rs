@@ -1,5 +1,5 @@
 use obs::{
-    signal::{Handle, SourceSignal},
+    callback::signal::{Handle, SourceSignal},
     source::Source,
 };
 use tokio::sync::broadcast;

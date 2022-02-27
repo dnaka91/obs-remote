@@ -7,6 +7,7 @@ pub use time::Duration;
 use crate::util::StringConversion;
 
 pub mod audio;
+pub mod callback;
 pub mod config;
 pub mod data;
 pub mod encoder;
@@ -22,7 +23,6 @@ pub mod output;
 pub mod properties;
 pub mod scene;
 pub mod service;
-pub mod signal;
 pub mod source;
 #[cfg(feature = "tracing")]
 pub mod tracing;

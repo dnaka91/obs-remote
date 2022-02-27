@@ -1,6 +1,6 @@
 use obs::{
+    callback::signal::Handle as SignalHandle,
     frontend::events::{self, Event as ObsEvent, Handle},
-    signal::Handle as SignalHandle,
 };
 use parking_lot::Mutex;
 use tokio::sync::broadcast;

@@ -16,7 +16,7 @@ pub fn save() {
     unsafe { libobs_sys::obs_frontend_replay_buffer_save() };
 }
 
-pub fn output() -> Output<'static> {
+pub fn output() -> Option<Output<'static>> {
     let raw = unsafe { libobs_sys::obs_frontend_get_replay_buffer_output() };
-    Output::from_raw(raw)
+    (!raw.is_null()).then(|| Output::from_raw(raw))
 }

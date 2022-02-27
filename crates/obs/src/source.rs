@@ -8,10 +8,10 @@ use bitflags::bitflags;
 use time::Duration;
 
 use crate::{
+    callback::signal::{SignalHandler, SourceSignal},
     cstr_ptr,
     data::Data,
     filter::Filter,
-    signal::{SignalHandler, SourceSignal},
     util::{self, StringConversion},
 };
 

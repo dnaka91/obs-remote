@@ -17,7 +17,7 @@ RUN export DEBIAN_FRONTEND=noninteractive &&  \
     add-apt-repository ppa:obsproject/obs-studio && \
     apt-get -y install obs-studio
 
-ENV PROTOLINT_VERSION=0.32.0
+ENV PROTOLINT_VERSION=0.37.1
 RUN curl -L -o /tmp/protolint.tar.gz https://github.com/yoheimuta/protolint/releases/download/v${PROTOLINT_VERSION}/protolint_${PROTOLINT_VERSION}_Linux_x86_64.tar.gz && \
     tar -C /usr/local/bin -xvf /tmp/protolint.tar.gz protolint && \
     rm /tmp/protolint.tar.gz

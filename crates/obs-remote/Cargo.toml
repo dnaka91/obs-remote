@@ -10,7 +10,7 @@ license = "AGPL-3.0-only"
 crate-type = ["cdylib"]
 
 [dependencies]
-anyhow = "1.0.54"
+anyhow = "1.0.55"
 log = { version = "0.4.14", features = ["std", "max_level_debug"] }
 log-panics = { version = "2.0.0", features = ["with-backtrace"] }
 obs = { path = "../obs" }

@@ -4,6 +4,7 @@ use bitflags::bitflags;
 
 use crate::{
     audio::Audio,
+    callback::proc::ProcHandler,
     cstr_ptr,
     data::Data,
     encoder::Encoder,
@@ -206,6 +207,11 @@ impl<'a> Output<'a> {
                 display_duration,
             )
         };
+    }
+
+    pub fn proc_handler(&self) -> ProcHandler<'_> {
+        let raw = unsafe { libobs_sys::obs_output_get_proc_handler(self.raw.as_ptr()) };
+        ProcHandler::from_raw(raw, false)
     }
 }
 

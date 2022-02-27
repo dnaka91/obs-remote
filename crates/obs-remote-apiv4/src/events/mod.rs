@@ -3,7 +3,7 @@
 use std::{collections::HashMap, sync::Arc};
 
 use log::{debug, info};
-use obs::signal::{GlobalSignal, SignalHandler};
+use obs::callback::signal::{GlobalSignal, SignalHandler};
 use parking_lot::Mutex as StdMutex;
 use tokio::sync::{broadcast, mpsc, watch, Mutex};
 use tokio_stream::wrappers::ReceiverStream;

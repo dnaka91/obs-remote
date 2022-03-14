@@ -1,9 +1,6 @@
 use anyhow::Result;
 
-use crate::{
-    general::general_client::GeneralClient,
-    profiles::profiles_client::ProfilesClient,
-};
+use crate::{general::general_client::GeneralClient, profiles::profiles_client::ProfilesClient};
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {

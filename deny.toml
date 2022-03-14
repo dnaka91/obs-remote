@@ -6,18 +6,20 @@ allow = [
     "MIT",
 ]
 exceptions = [
+    { allow = ["AGPL-3.0"], name = "api" },
+    { allow = ["AGPL-3.0"], name = "api-legacy" },
     { allow = ["AGPL-3.0"], name = "libobs-sys" },
     { allow = ["AGPL-3.0"], name = "obs" },
     { allow = ["AGPL-3.0"], name = "obs-client" },
     { allow = ["AGPL-3.0"], name = "obs-remote" },
-    { allow = ["AGPL-3.0"], name = "obs-remote-apiv4" },
-    { allow = ["AGPL-3.0"], name = "obs-remote-apiv5" },
     { allow = ["AGPL-3.0"], name = "obs-rust" },
     { allow = ["Zlib"], name = "adler32" },
 ]
 
 [bans]
 skip = [
+    { name = "heck", version = "=0.3.3" },
     { name = "miniz_oxide", version = "=0.4.4" },
     { name = "tokio-util", version = "=0.6.9" },
+    { name = "wasi", version = "=0.10.2" },
 ]

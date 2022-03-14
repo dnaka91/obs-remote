@@ -30,7 +30,7 @@ jobs:
       - name: Setup Rust
         uses: taiki-e/github-actions/install-rust@main
         with:
-          toolchain: nightly-2022-02-20
+          toolchain: nightly-2022-03-01
       - name: Configure cache
         uses: Swatinem/rust-cache@v1
       - name: Build
@@ -48,7 +48,7 @@ jobs:
       - name: Setup Rust
         uses: taiki-e/github-actions/install-rust@main
         with:
-          toolchain: nightly-2022-02-20
+          toolchain: nightly-2022-03-01
           component: miri
       - name: Configure cache
         uses: Swatinem/rust-cache@v1

@@ -10,5 +10,5 @@ crate-type = ["cdylib"]
 
 [dependencies]
 libobs-sys = { path = "../libobs-sys" }
-log = "0.4.16"
+log = "0.4.17"
 obs = { path = "../obs" }

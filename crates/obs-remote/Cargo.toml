@@ -12,12 +12,12 @@ crate-type = ["cdylib"]
 [dependencies]
 anyhow = "1.0.57"
 api = { path = "../api" }
-log = { version = "0.4.16", features = ["std", "max_level_debug"] }
+log = { version = "0.4.17", features = ["std", "max_level_debug"] }
 log-panics = { version = "2.0.0", features = ["with-backtrace"] }
 obs = { path = "../obs" }
-prost = "0.10.1"
+prost = "0.10.4"
 prost-types = "0.10.1"
-tokio = { version = "1.18.0", features = ["macros", "parking_lot", "rt", "sync"] }
-tonic = { version = "0.7.1", features = ["compression"] }
+tokio = { version = "1.18.2", features = ["macros", "parking_lot", "rt", "sync"] }
+tonic = { version = "0.7.2", features = ["compression"] }
 tonic-reflection = "0.4.0"
 tonic-web = "0.3.0"

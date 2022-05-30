@@ -7,10 +7,10 @@ license = "AGPL-3.0-only"
 
 [dependencies]
 anyhow = "1.0.57"
-prost = "0.10.1"
+prost = "0.10.4"
 prost-types = "0.10.1"
-tokio = { version = "1.18.0", features = ["macros", "rt"] }
-tonic = { version = "0.7.1", features = ["compression"] }
+tokio = { version = "1.18.2", features = ["macros", "rt"] }
+tonic = { version = "0.7.2", features = ["compression"] }
 
 [build-dependencies]
-tonic-build = { version = "0.7.0", features = ["compression"] }
+tonic-build = { version = "0.7.2", features = ["compression"] }

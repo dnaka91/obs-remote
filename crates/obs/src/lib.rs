@@ -241,3 +241,13 @@ pub fn master_volume() -> f32 {
 pub fn render_main_texture() {
     unsafe { libobs_sys::obs_render_main_texture() };
 }
+
+pub fn obs_version() -> u32 {
+    unsafe { libobs_sys::obs_get_version() }
+}
+
+pub fn obs_version_string() -> String {
+    unsafe { CStr::from_ptr(libobs_sys::obs_get_version_string()) }
+        .to_string_lossy()
+        .into_owned()
+}

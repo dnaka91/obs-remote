@@ -14,11 +14,13 @@ impl general_server::General for GeneralService {
 
         info!("General.Version request from {:?}", request.remote_addr());
 
+        let version = obs::obs_version();
+
         Ok(Response::new(VersionReply {
             obs_version: Some(SemVer {
-                major: obs::libobs_sys::LIBOBS_API_MAJOR_VER,
-                minor: obs::libobs_sys::LIBOBS_API_PATCH_VER,
-                patch: obs::libobs_sys::LIBOBS_API_MINOR_VER,
+                major: version >> 24 & 0xff,
+                minor: version >> 16 & 0xff,
+                patch: version & 0xffff,
             }),
             obs_remote_version: Some(SemVer {
                 major: env!("CARGO_PKG_VERSION_MAJOR").parse().unwrap(),

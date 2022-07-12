@@ -6,10 +6,10 @@ edition = "2021"
 license = "AGPL-3.0-only"
 
 [dependencies]
-anyhow = "1.0.57"
+anyhow = "1.0.58"
 prost = "0.10.4"
 prost-types = "0.10.1"
-tokio = { version = "1.18.2", features = ["macros", "rt"] }
+tokio = { version = "1.19.2", features = ["macros", "rt"] }
 tonic = { version = "0.7.2", features = ["compression"] }
 
 [build-dependencies]

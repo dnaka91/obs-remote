@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package obs_remote.config;
 
-import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
 import "google/protobuf/wrappers.proto";
 
 service Config {
@@ -11,7 +11,7 @@ service Config {
   //
   // Original: GetPersistentData
   rpc GlobalPersistentData(google.protobuf.StringValue)
-      returns (google.protobuf.Any);
+      returns (google.protobuf.Struct);
   // Sets the value of a "slot" from the selected persistent data realm.
   //
   // Original: SetPersistentData
@@ -34,7 +34,7 @@ message SetGlobalPersistentDataRequest {
   // The name of the slot to save data to.
   string name = 1;
   // The value to apply to the slot.
-  google.protobuf.Any value = 2;
+  google.protobuf.Struct value = 2;
 }
 
 message Settings {

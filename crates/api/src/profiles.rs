@@ -1,5 +1,5 @@
 use obs::frontend::profiles;
-use prost_types::Any;
+use prost_types::Struct;
 use tonic::{Request, Response, Status};
 
 pub use self::profiles_server::ProfilesServer;
@@ -77,7 +77,7 @@ impl profiles_server::Profiles for ProfilesService {
         Ok(Response::new(()))
     }
 
-    async fn persistent_data(&self, request: Request<String>) -> Result<Response<Any>, Status> {
+    async fn persistent_data(&self, request: Request<String>) -> Result<Response<Struct>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 

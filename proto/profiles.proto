@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package obs_remote.profiles;
 
-import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
 import "google/protobuf/wrappers.proto";
 
 service Profiles {
@@ -28,7 +28,8 @@ service Profiles {
   // Original: SetProfileParameter
   rpc SetParameter(SetParameterRequest) returns (google.protobuf.Empty);
   // Original: GetPersistentData
-  rpc PersistentData(google.protobuf.StringValue) returns (google.protobuf.Any);
+  rpc PersistentData(google.protobuf.StringValue)
+      returns (google.protobuf.Struct);
   // Original: SetPersistentData
   rpc SetPersistentData(SetPersistentDataRequest)
       returns (google.protobuf.Empty);
@@ -77,5 +78,5 @@ message SetPersistentDataRequest {
   // The name of the slot to save data to.
   string name = 1;
   // The value to apply to the slot.
-  google.protobuf.Any value = 2;
+  google.protobuf.Struct value = 2;
 }

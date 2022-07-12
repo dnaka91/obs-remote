@@ -1,4 +1,4 @@
-use prost_types::Any;
+use prost_types::Struct;
 use tonic::{Request, Response, Status};
 
 pub use self::config_server::ConfigServer;
@@ -12,7 +12,7 @@ impl config_server::Config for ConfigService {
     async fn global_persistent_data(
         &self,
         request: Request<String>,
-    ) -> Result<Response<Any>, Status> {
+    ) -> Result<Response<Struct>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 

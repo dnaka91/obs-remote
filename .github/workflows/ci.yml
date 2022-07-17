@@ -28,7 +28,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Setup Rust
-        uses: taiki-e/github-actions/install-rust@main
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: nightly-2022-03-01
       - name: Configure cache
@@ -46,10 +46,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Setup Rust
-        uses: taiki-e/github-actions/install-rust@main
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: nightly-2022-03-01
-          component: miri
+          components: miri
       - name: Configure cache
         uses: Swatinem/rust-cache@v1
       - name: Miri test
@@ -65,17 +65,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Setup Rust (nightly)
-        uses: taiki-e/github-actions/install-rust@main
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: nightly-2022-03-01
-          component: rustfmt
+          components: rustfmt
       - name: Run rustfmt
         run: cargo fmt -- --check
       - name: Setup Rust (stable)
-        uses: taiki-e/github-actions/install-rust@main
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: nightly-2022-03-01
-          component: clippy
+          components: clippy
       - name: Configure cache
         uses: Swatinem/rust-cache@v1
       - name: Run clippy

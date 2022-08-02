@@ -6,11 +6,11 @@ edition = "2021"
 license = "AGPL-3.0-only"
 
 [dependencies]
-anyhow = "1.0.58"
-prost = "0.10.4"
-prost-types = "0.10.1"
-tokio = { version = "1.19.2", features = ["macros", "rt"] }
-tonic = { version = "0.7.2", features = ["compression"] }
+anyhow = "1.0.59"
+prost = "0.11.0"
+prost-types = "0.11.0"
+tokio = { version = "1.20.1", features = ["macros", "rt"] }
+tonic = { version = "0.8.0", features = ["gzip"] }
 
 [build-dependencies]
-tonic-build = { version = "0.7.2", features = ["compression"] }
+tonic-build = "0.8.0"

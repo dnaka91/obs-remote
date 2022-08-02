@@ -18,11 +18,15 @@ use obs::{
     module_use_default_locale, Plugin,
 };
 use tokio::sync::watch;
-use tonic::transport::Server;
+use tonic::{codegen::CompressionEncoding, transport::Server};
 
 macro_rules! new_service {
     ($server:ident, $service:expr) => {
-        tonic_web::enable($server::new($service).accept_gzip().send_gzip())
+        tonic_web::enable(
+            $server::new($service)
+                .accept_compressed(CompressionEncoding::Gzip)
+                .send_compressed(CompressionEncoding::Gzip),
+        )
     };
 }
 

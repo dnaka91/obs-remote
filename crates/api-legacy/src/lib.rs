@@ -16,6 +16,7 @@
     clippy::similar_names,
     clippy::struct_excessive_bools,
     clippy::too_many_lines,
+    clippy::trivially_copy_pass_by_ref,
     clippy::use_self,
     clippy::wildcard_imports
 )]

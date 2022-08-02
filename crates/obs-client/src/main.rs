@@ -1,4 +1,5 @@
 use anyhow::Result;
+use tonic::codegen::CompressionEncoding;
 
 use crate::{general::general_client::GeneralClient, profiles::profiles_client::ProfilesClient};
 
@@ -6,16 +7,16 @@ use crate::{general::general_client::GeneralClient, profiles::profiles_client::P
 async fn main() -> Result<()> {
     let mut client = GeneralClient::connect("http://[::1]:50051")
         .await?
-        .send_gzip()
-        .accept_gzip();
+        .send_compressed(CompressionEncoding::Gzip)
+        .accept_compressed(CompressionEncoding::Gzip);
     let version = client.version(()).await?.into_inner();
 
     println!("{:#?}", version);
 
     let mut client = ProfilesClient::connect("http://[::1]:50052")
         .await?
-        .send_gzip()
-        .accept_gzip();
+        .send_compressed(CompressionEncoding::Gzip)
+        .accept_compressed(CompressionEncoding::Gzip);
     let version = client.list(()).await?.into_inner();
 
     println!("{:#?}", version);

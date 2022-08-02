@@ -14,12 +14,5 @@ exceptions = [
     { allow = ["AGPL-3.0"], name = "obs-remote" },
     { allow = ["AGPL-3.0"], name = "obs-rust" },
     { allow = ["Zlib"], name = "adler32" },
-]
-
-[bans]
-skip = [
-    { name = "heck", version = "=0.3.3" },
-    { name = "miniz_oxide", version = "=0.4.4" },
-    { name = "tokio-util", version = "=0.6.9" },
-    { name = "wasi", version = "=0.10.2" },
+    { allow = ["Unicode-DFS-2016"], name = "unicode-ident" },
 ]

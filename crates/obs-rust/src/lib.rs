@@ -286,6 +286,10 @@ fn list_services() {
         info!("  Max Bitrate: video {} kbps / audio {} kbps", video, audio);
         info!("  Max FPS: {}", service.max_fps());
         info!("  URL: {}", service.url());
+        info!(
+            "  Supported video codecs: {:?}",
+            service.supported_video_codecs()
+        );
     }
 }
 

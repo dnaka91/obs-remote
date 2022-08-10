@@ -139,6 +139,8 @@ pub fn add_callback(tx: broadcast::Sender<Event>) -> Handle {
         ObsEvent::SceneCollectionChanging => {}
         ObsEvent::ProfileChanging => {}
         ObsEvent::ScriptingShutdown => {}
+        ObsEvent::ProfileRenamed => {}
+        ObsEvent::SceneCollectionRenamed => {}
         ObsEvent::Unknown(_) => {}
     })
 }

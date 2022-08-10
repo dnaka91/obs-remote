@@ -79,6 +79,8 @@ pub enum Event {
     SceneCollectionChanging,
     ProfileChanging,
     ScriptingShutdown,
+    ProfileRenamed,
+    SceneCollectionRenamed,
     Unknown(u32),
 }
 
@@ -124,6 +126,8 @@ impl Event {
             OBS_FRONTEND_EVENT_SCENE_COLLECTION_CHANGING => Self::SceneCollectionChanging,
             OBS_FRONTEND_EVENT_PROFILE_CHANGING => Self::ProfileChanging,
             OBS_FRONTEND_EVENT_SCRIPTING_SHUTDOWN => Self::ScriptingShutdown,
+            OBS_FRONTEND_EVENT_PROFILE_RENAMED => Self::ProfileRenamed,
+            OBS_FRONTEND_EVENT_SCENE_COLLECTION_RENAMED => Self::SceneCollectionRenamed,
             _ => Self::Unknown(value as _),
         }
     }

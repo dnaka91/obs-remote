@@ -810,10 +810,12 @@ impl General for Service {
                 Colorspace::Default | Colorspace::Cs709 => video_info_reply::ColorSpace::S709,
                 Colorspace::Cs601 => video_info_reply::ColorSpace::S601,
                 Colorspace::Srgb => video_info_reply::ColorSpace::Srgb,
+                _ => video_info_reply::ColorSpace::Unspecified,
             } as i32,
             color_range: match video.range {
                 RangeType::Default | RangeType::Partial => video_info_reply::ColorRange::Partial,
                 RangeType::Full => video_info_reply::ColorRange::Full,
+                RangeType::Unknown(_) => video_info_reply::ColorRange::Unspecified,
             } as i32,
             scale_type: match video.scale_type {
                 ScaleType::Bilinear => video_info_reply::ScaleType::Bilinear,

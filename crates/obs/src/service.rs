@@ -87,6 +87,20 @@ impl<'a> Service<'a> {
         unsafe { libobs_sys::obs_service_get_url(self.raw.as_ptr()) }.into_string()
     }
 
+    pub fn supported_video_codecs(&self) -> Vec<String> {
+        let mut raw =
+            unsafe { libobs_sys::obs_service_get_supported_video_codecs(self.raw.as_ptr()) };
+
+        std::iter::from_fn(|| {
+            let codec = unsafe { raw.read() }.into_opt_string();
+            if codec.is_some() {
+                raw = unsafe { raw.offset(1) };
+            }
+            codec
+        })
+        .collect()
+    }
+
     /// Updates the settings of the service context.
     pub fn update(&self, settings: &Data<'_>) {
         unsafe { libobs_sys::obs_service_update(self.raw.as_ptr(), settings.as_ptr()) };

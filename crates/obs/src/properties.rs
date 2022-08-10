@@ -143,12 +143,24 @@ impl<'a> Property<'a> {
         (self.ty() == PropertyType::Path).then(|| PathProperty(self))
     }
 
-    pub fn as_list(&self) {
-        todo!()
+    pub fn as_list(&self) -> Option<ListProperty<'_>> {
+        (self.ty() == PropertyType::List).then(|| ListProperty(self))
     }
 
     pub fn as_button(&self) -> Option<ButtonProperty<'_>> {
         (self.ty() == PropertyType::Button).then(|| ButtonProperty(self))
+    }
+
+    pub fn as_editable_list(&self) -> Option<EditableListProperty<'_>> {
+        (self.ty() == PropertyType::EditableList).then(|| EditableListProperty(self))
+    }
+
+    pub fn as_frame_rate(&self) -> Option<FrameRateProperty<'_>> {
+        (self.ty() == PropertyType::FrameRate).then(|| FrameRateProperty(self))
+    }
+
+    pub fn as_group(&self) -> Option<GroupProperty<'_>> {
+        (self.ty() == PropertyType::Group).then(|| GroupProperty(self))
     }
 
     pub fn as_typed(&self) -> Option<TypedProperty<'_>> {
@@ -225,6 +237,10 @@ pub enum TypedProperty<'a> {
 pub struct IntProperty<'a>(&'a Property<'a>);
 
 impl<'a> IntProperty<'a> {
+    pub fn ty(&self) -> NumberType {
+        NumberType::from_native(unsafe { libobs_sys::obs_property_int_type(self.0.raw.as_ptr()) })
+    }
+
     pub fn min(&self) -> i32 {
         unsafe { libobs_sys::obs_property_int_min(self.0.raw.as_ptr()) }
     }
@@ -240,15 +256,15 @@ impl<'a> IntProperty<'a> {
     pub fn suffix(&self) -> Option<String> {
         unsafe { libobs_sys::obs_property_int_suffix(self.0.raw.as_ptr()) }.into_opt_string()
     }
-
-    pub fn ty(&self) -> NumberType {
-        NumberType::from_native(unsafe { libobs_sys::obs_property_int_type(self.0.raw.as_ptr()) })
-    }
 }
 
 pub struct FloatProperty<'a>(&'a Property<'a>);
 
 impl<'a> FloatProperty<'a> {
+    pub fn ty(&self) -> NumberType {
+        NumberType::from_native(unsafe { libobs_sys::obs_property_int_type(self.0.raw.as_ptr()) })
+    }
+
     pub fn min(&self) -> f64 {
         unsafe { libobs_sys::obs_property_float_min(self.0.raw.as_ptr()) }
     }
@@ -263,10 +279,6 @@ impl<'a> FloatProperty<'a> {
 
     pub fn suffix(&self) -> Option<String> {
         unsafe { libobs_sys::obs_property_float_suffix(self.0.raw.as_ptr()) }.into_opt_string()
-    }
-
-    pub fn ty(&self) -> NumberType {
-        NumberType::from_native(unsafe { libobs_sys::obs_property_int_type(self.0.raw.as_ptr()) })
     }
 }
 
@@ -292,12 +304,22 @@ impl NumberType {
 pub struct TextProperty<'a>(&'a Property<'a>);
 
 impl<'a> TextProperty<'a> {
+    pub fn ty(&self) -> TextType {
+        TextType::from_native(unsafe { libobs_sys::obs_property_text_type(self.0.raw.as_ptr()) })
+    }
+
     pub fn monospace(&self) -> bool {
         unsafe { libobs_sys::obs_property_text_monospace(self.0.raw.as_ptr()) }
     }
 
-    pub fn ty(&self) -> TextType {
-        TextType::from_native(unsafe { libobs_sys::obs_property_text_type(self.0.raw.as_ptr()) })
+    pub fn info_type(&self) -> TextInfoType {
+        TextInfoType::from_native(unsafe {
+            libobs_sys::obs_property_text_info_type(self.0.raw.as_ptr())
+        })
+    }
+
+    pub fn info_word_wrap(&self) -> bool {
+        unsafe { libobs_sys::obs_property_text_info_word_wrap(self.0.raw.as_ptr()) }
     }
 }
 
@@ -322,19 +344,40 @@ impl TextType {
     }
 }
 
+#[derive(Clone, Copy, Debug)]
+pub enum TextInfoType {
+    Normal,
+    Warning,
+    Error,
+    Unknown(u32),
+}
+
+impl TextInfoType {
+    fn from_native(ty: libobs_sys::obs_text_info_type::Type) -> Self {
+        use libobs_sys::obs_text_info_type::*;
+
+        match ty {
+            OBS_TEXT_INFO_NORMAL => Self::Normal,
+            OBS_TEXT_INFO_WARNING => Self::Warning,
+            OBS_TEXT_INFO_ERROR => Self::Error,
+            _ => Self::Unknown(ty as _),
+        }
+    }
+}
+
 pub struct PathProperty<'a>(&'a Property<'a>);
 
 impl<'a> PathProperty<'a> {
+    pub fn ty(&self) -> PathType {
+        PathType::from_native(unsafe { libobs_sys::obs_property_path_type(self.0.raw.as_ptr()) })
+    }
+
     pub fn default_path(&self) -> Option<String> {
         unsafe { libobs_sys::obs_property_path_default_path(self.0.raw.as_ptr()) }.into_opt_string()
     }
 
     pub fn filter(&self) -> String {
         unsafe { libobs_sys::obs_property_path_filter(self.0.raw.as_ptr()) }.into_string()
-    }
-
-    pub fn ty(&self) -> PathType {
-        PathType::from_native(unsafe { libobs_sys::obs_property_path_type(self.0.raw.as_ptr()) })
     }
 }
 
@@ -362,14 +405,14 @@ impl PathType {
 pub struct ButtonProperty<'a>(&'a Property<'a>);
 
 impl<'a> ButtonProperty<'a> {
-    pub fn url(&self) -> Option<String> {
-        unsafe { libobs_sys::obs_property_button_url(self.0.raw.as_ptr()) }.into_opt_string()
-    }
-
     pub fn ty(&self) -> ButtonType {
         ButtonType::from_native(unsafe {
             libobs_sys::obs_property_button_type(self.0.raw.as_ptr())
         })
+    }
+
+    pub fn url(&self) -> Option<String> {
+        unsafe { libobs_sys::obs_property_button_url(self.0.raw.as_ptr()) }.into_opt_string()
     }
 }
 
@@ -395,14 +438,18 @@ impl ButtonType {
 pub struct ListProperty<'a>(&'a Property<'a>);
 
 impl<'a> ListProperty<'a> {
-    pub fn count(&self) -> u64 {
-        unsafe { libobs_sys::obs_property_list_item_count(self.0.raw.as_ptr()) }
+    pub fn ty(&self) -> ComboType {
+        ComboType::from_native(unsafe { libobs_sys::obs_property_list_type(self.0.raw.as_ptr()) })
     }
 
     pub fn format(&self) -> ComboFormat {
         ComboFormat::from_native(unsafe {
             libobs_sys::obs_property_list_format(self.0.raw.as_ptr())
         })
+    }
+
+    pub fn count(&self) -> u64 {
+        unsafe { libobs_sys::obs_property_list_item_count(self.0.raw.as_ptr()) }
     }
 
     pub fn item_name(&self, index: u64) -> String {
@@ -424,10 +471,6 @@ impl<'a> ListProperty<'a> {
     pub fn item_string(&self, index: u64) -> String {
         unsafe { libobs_sys::obs_property_list_item_string(self.0.raw.as_ptr(), index) }
             .into_string()
-    }
-
-    pub fn ty(&self) -> ComboType {
-        ComboType::from_native(unsafe { libobs_sys::obs_property_list_type(self.0.raw.as_ptr()) })
     }
 }
 
@@ -478,6 +521,12 @@ impl ComboType {
 pub struct EditableListProperty<'a>(&'a Property<'a>);
 
 impl<'a> EditableListProperty<'a> {
+    pub fn ty(&self) -> EditableListType {
+        EditableListType::from_native(unsafe {
+            libobs_sys::obs_property_editable_list_type(self.0.raw.as_ptr())
+        })
+    }
+
     pub fn default_path(&self) -> Option<String> {
         unsafe { libobs_sys::obs_property_editable_list_default_path(self.0.raw.as_ptr()) }
             .into_opt_string()
@@ -485,12 +534,6 @@ impl<'a> EditableListProperty<'a> {
 
     pub fn filter(&self) -> String {
         unsafe { libobs_sys::obs_property_editable_list_filter(self.0.raw.as_ptr()) }.into_string()
-    }
-
-    pub fn ty(&self) -> EditableListType {
-        EditableListType::from_native(unsafe {
-            libobs_sys::obs_property_editable_list_type(self.0.raw.as_ptr())
-        })
     }
 }
 
@@ -635,14 +678,14 @@ impl<'a> ExactSizeIterator for OptionIter<'a> {
 pub struct GroupProperty<'a>(&'a Property<'a>);
 
 impl<'a> GroupProperty<'a> {
+    pub fn ty(&self) -> GroupType {
+        GroupType::from_native(unsafe { libobs_sys::obs_property_group_type(self.0.raw.as_ptr()) })
+    }
+
     pub fn content(&self) -> Properties<'a> {
         Properties::from_raw_no_release(unsafe {
             libobs_sys::obs_property_group_content(self.0.raw.as_ptr())
         })
-    }
-
-    pub fn ty(&self) -> GroupType {
-        GroupType::from_native(unsafe { libobs_sys::obs_property_group_type(self.0.raw.as_ptr()) })
     }
 }
 

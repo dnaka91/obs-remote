@@ -73,18 +73,23 @@ pub enum Colorspace {
     Cs601,
     Cs709,
     Srgb,
+    Cs2100Pq,
+    Cs2100Hlg,
+    Unknown(u32),
 }
 
 impl Colorspace {
-    fn from_native(value: libobs_sys::video_colorspace::Type) -> Self {
+    fn from_native(ty: libobs_sys::video_colorspace::Type) -> Self {
         use libobs_sys::video_colorspace::*;
 
-        match value {
+        match ty {
             VIDEO_CS_DEFAULT => Self::Default,
             VIDEO_CS_601 => Self::Cs601,
             VIDEO_CS_709 => Self::Cs709,
             VIDEO_CS_SRGB => Self::Srgb,
-            _ => unreachable!(),
+            VIDEO_CS_2100_PQ => Self::Cs2100Pq,
+            VIDEO_CS_2100_HLG => Self::Cs2100Hlg,
+            _ => Self::Unknown(ty as _),
         }
     }
 }
@@ -108,13 +113,19 @@ pub enum Format {
     I42a,
     Yuva,
     Ayuv,
+    I010,
+    P010,
+    I210,
+    I412,
+    Ya2L,
+    Unknown(u32),
 }
 
 impl Format {
-    fn from_native(value: libobs_sys::video_format::Type) -> Self {
+    fn from_native(ty: libobs_sys::video_format::Type) -> Self {
         use libobs_sys::video_format::*;
 
-        match value {
+        match ty {
             VIDEO_FORMAT_NONE => Self::None,
             VIDEO_FORMAT_I420 => Self::I420,
             VIDEO_FORMAT_NV12 => Self::Nv12,
@@ -132,7 +143,12 @@ impl Format {
             VIDEO_FORMAT_I42A => Self::I42a,
             VIDEO_FORMAT_YUVA => Self::Yuva,
             VIDEO_FORMAT_AYUV => Self::Ayuv,
-            _ => unreachable!(),
+            VIDEO_FORMAT_I010 => Self::I010,
+            VIDEO_FORMAT_P010 => Self::P010,
+            VIDEO_FORMAT_I210 => Self::I210,
+            VIDEO_FORMAT_I412 => Self::I412,
+            VIDEO_FORMAT_YA2L => Self::Ya2L,
+            _ => Self::Unknown(ty as _),
         }
     }
 }
@@ -142,17 +158,18 @@ pub enum RangeType {
     Default,
     Partial,
     Full,
+    Unknown(u32),
 }
 
 impl RangeType {
-    fn from_native(value: libobs_sys::video_range_type::Type) -> Self {
+    fn from_native(ty: libobs_sys::video_range_type::Type) -> Self {
         use libobs_sys::video_range_type::*;
 
-        match value {
+        match ty {
             VIDEO_RANGE_DEFAULT => Self::Default,
             VIDEO_RANGE_PARTIAL => Self::Partial,
             VIDEO_RANGE_FULL => Self::Full,
-            _ => unreachable!(),
+            _ => Self::Unknown(ty as _),
         }
     }
 }
@@ -179,7 +196,7 @@ impl ScaleType {
             OBS_SCALE_BILINEAR => Self::Bilinear,
             OBS_SCALE_LANCZOS => Self::Lanczos,
             OBS_SCALE_AREA => Self::Area,
-            _ => Self::Unknown(value as u32),
+            _ => Self::Unknown(value as _),
         }
     }
 
@@ -193,50 +210,6 @@ impl ScaleType {
             Self::Bilinear => OBS_SCALE_BILINEAR,
             Self::Lanczos => OBS_SCALE_LANCZOS,
             Self::Area => OBS_SCALE_AREA,
-            Self::Unknown(value) => value as _,
-        }
-    }
-}
-
-#[derive(Clone, Copy, Debug)]
-pub enum BlendingType {
-    Normal,
-    Additive,
-    Subtract,
-    Screen,
-    Multiply,
-    Lighten,
-    Darken,
-    Unknown(u32),
-}
-
-impl BlendingType {
-    pub(crate) fn from_native(value: libobs_sys::obs_blending_type::Type) -> Self {
-        use libobs_sys::obs_blending_type::*;
-
-        match value {
-            OBS_BLEND_NORMAL => Self::Normal,
-            OBS_BLEND_ADDITIVE => Self::Additive,
-            OBS_BLEND_SUBTRACT => Self::Subtract,
-            OBS_BLEND_SCREEN => Self::Screen,
-            OBS_BLEND_MULTIPLY => Self::Multiply,
-            OBS_BLEND_LIGHTEN => Self::Lighten,
-            OBS_BLEND_DARKEN => Self::Darken,
-            _ => Self::Unknown(value as _),
-        }
-    }
-
-    pub(crate) fn to_native(self) -> libobs_sys::obs_blending_type::Type {
-        use libobs_sys::obs_blending_type::*;
-
-        match self {
-            Self::Normal => OBS_BLEND_NORMAL,
-            Self::Additive => OBS_BLEND_ADDITIVE,
-            Self::Subtract => OBS_BLEND_SUBTRACT,
-            Self::Screen => OBS_BLEND_SCREEN,
-            Self::Multiply => OBS_BLEND_MULTIPLY,
-            Self::Lighten => OBS_BLEND_LIGHTEN,
-            Self::Darken => OBS_BLEND_LIGHTEN,
             Self::Unknown(value) => value as _,
         }
     }

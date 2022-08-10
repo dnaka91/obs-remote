@@ -379,13 +379,15 @@ pub enum IconType {
     Media,
     Browser,
     Custom,
+    ProcessAudioOutput,
+    UnknownValue(u32),
 }
 
 impl IconType {
-    fn from_native(value: libobs_sys::obs_icon_type::Type) -> Self {
+    fn from_native(ty: libobs_sys::obs_icon_type::Type) -> Self {
         use libobs_sys::obs_icon_type::*;
 
-        match value {
+        match ty {
             OBS_ICON_TYPE_UNKNOWN => Self::Unknown,
             OBS_ICON_TYPE_IMAGE => Self::Image,
             OBS_ICON_TYPE_COLOR => Self::Color,
@@ -400,7 +402,8 @@ impl IconType {
             OBS_ICON_TYPE_MEDIA => Self::Media,
             OBS_ICON_TYPE_BROWSER => Self::Browser,
             OBS_ICON_TYPE_CUSTOM => Self::Custom,
-            _ => unreachable!(),
+            OBS_ICON_TYPE_PROCESS_AUDIO_OUTPUT => Self::ProcessAudioOutput,
+            _ => Self::UnknownValue(ty as _),
         }
     }
 }

@@ -2,12 +2,7 @@ use std::{ffi::c_void, marker::PhantomData, ops::Deref, ptr::NonNull};
 
 use bitflags::bitflags;
 
-use crate::{
-    cstr_ptr,
-    graphics::Vec2,
-    source::Source,
-    video::{BlendingType, ScaleType},
-};
+use crate::{cstr_ptr, graphics::Vec2, source::Source, video::ScaleType};
 
 pub struct Scene<'a> {
     raw: NonNull<libobs_sys::obs_scene_t>,
@@ -182,6 +177,12 @@ impl<'a> SceneItem<'a> {
         })
     }
 
+    pub fn blending_method(&self) -> BlendingMethod {
+        BlendingMethod::from_native(unsafe {
+            libobs_sys::obs_sceneitem_get_blending_method(self.raw.as_ptr())
+        })
+    }
+
     pub fn blending_mode(&self) -> BlendingType {
         BlendingType::from_native(unsafe {
             libobs_sys::obs_sceneitem_get_blending_mode(self.raw.as_ptr())
@@ -321,6 +322,12 @@ impl<'a, 'b> EditableSceneItem<'a, 'b> {
         };
     }
 
+    pub fn set_blending_method(&mut self, method: BlendingMethod) {
+        unsafe {
+            libobs_sys::obs_sceneitem_set_blending_method(self.0.raw.as_ptr(), method.to_native())
+        };
+    }
+
     pub fn set_blending_mode(&mut self, mode: BlendingType) {
         unsafe {
             libobs_sys::obs_sceneitem_set_blending_mode(self.0.raw.as_ptr(), mode.to_native())
@@ -419,6 +426,78 @@ impl BoundsType {
             Self::ScaleToWidth => OBS_BOUNDS_SCALE_TO_WIDTH,
             Self::ScaleToHeight => OBS_BOUNDS_SCALE_TO_HEIGHT,
             Self::MaxOnly => OBS_BOUNDS_MAX_ONLY,
+            Self::Unknown(value) => value as _,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum BlendingMethod {
+    Default,
+    SrgbOff,
+    Unknown(u32),
+}
+
+impl BlendingMethod {
+    pub(crate) fn from_native(ty: libobs_sys::obs_blending_method::Type) -> Self {
+        use libobs_sys::obs_blending_method::*;
+
+        match ty {
+            OBS_BLEND_METHOD_DEFAULT => Self::Default,
+            OBS_BLEND_METHOD_SRGB_OFF => Self::SrgbOff,
+            _ => Self::Unknown(ty as _),
+        }
+    }
+
+    pub(crate) fn to_native(self) -> libobs_sys::obs_blending_method::Type {
+        use libobs_sys::obs_blending_method::*;
+
+        match self {
+            Self::Default => OBS_BLEND_METHOD_DEFAULT,
+            Self::SrgbOff => OBS_BLEND_METHOD_SRGB_OFF,
+            Self::Unknown(value) => value as _,
+        }
+    }
+}
+#[derive(Clone, Copy, Debug)]
+pub enum BlendingType {
+    Normal,
+    Additive,
+    Subtract,
+    Screen,
+    Multiply,
+    Lighten,
+    Darken,
+    Unknown(u32),
+}
+
+impl BlendingType {
+    pub(crate) fn from_native(value: libobs_sys::obs_blending_type::Type) -> Self {
+        use libobs_sys::obs_blending_type::*;
+
+        match value {
+            OBS_BLEND_NORMAL => Self::Normal,
+            OBS_BLEND_ADDITIVE => Self::Additive,
+            OBS_BLEND_SUBTRACT => Self::Subtract,
+            OBS_BLEND_SCREEN => Self::Screen,
+            OBS_BLEND_MULTIPLY => Self::Multiply,
+            OBS_BLEND_LIGHTEN => Self::Lighten,
+            OBS_BLEND_DARKEN => Self::Darken,
+            _ => Self::Unknown(value as _),
+        }
+    }
+
+    pub(crate) fn to_native(self) -> libobs_sys::obs_blending_type::Type {
+        use libobs_sys::obs_blending_type::*;
+
+        match self {
+            Self::Normal => OBS_BLEND_NORMAL,
+            Self::Additive => OBS_BLEND_ADDITIVE,
+            Self::Subtract => OBS_BLEND_SUBTRACT,
+            Self::Screen => OBS_BLEND_SCREEN,
+            Self::Multiply => OBS_BLEND_MULTIPLY,
+            Self::Lighten => OBS_BLEND_LIGHTEN,
+            Self::Darken => OBS_BLEND_LIGHTEN,
             Self::Unknown(value) => value as _,
         }
     }

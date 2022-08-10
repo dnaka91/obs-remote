@@ -15,11 +15,11 @@ jobs:
       - name: Install OBS and Protobuf (ubuntu)
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          sudo add-apt-repository ppa:obsproject/obs-studio
+          sudo add-apt-repository ppa:obsproject/obs-studio-unstable
           sudo apt-get -y install libx11-dev obs-studio protobuf-compiler
       - name: Install OBS and Protobuf (macos)
         if: startsWith(matrix.os, 'macos')
-        run: brew install obs protobuf
+        run: brew install obs-beta protobuf
       - name: Install OBS and Protobuf (windows)
         if: startsWith(matrix.os, 'windows')
         run: |

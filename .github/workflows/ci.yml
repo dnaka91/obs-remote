@@ -19,7 +19,9 @@ jobs:
           sudo apt-get -y install libx11-dev obs-studio protobuf-compiler
       - name: Install OBS and Protobuf (macos)
         if: startsWith(matrix.os, 'macos')
-        run: brew install obs-beta protobuf
+        run: |
+          brew tap homebrew/cask-versions
+          brew install obs-beta protobuf
       - name: Install OBS and Protobuf (windows)
         if: startsWith(matrix.os, 'windows')
         run: |

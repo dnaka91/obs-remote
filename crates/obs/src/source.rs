@@ -12,6 +12,7 @@ use crate::{
     cstr_ptr,
     data::Data,
     filter::Filter,
+    properties::Properties,
     util::{self, StringConversion},
 };
 
@@ -565,6 +566,11 @@ pub fn defaults(id: &str) -> Option<Data<'static>> {
         unsafe { libobs_sys::obs_data_addref(raw) };
         Data::from_raw(raw)
     })
+}
+
+pub fn properties(id: &str) -> Option<Properties<'static>> {
+    let raw = unsafe { libobs_sys::obs_get_source_properties(cstr_ptr!(id)) };
+    (!raw.is_null()).then(|| Properties::from_raw(raw))
 }
 
 #[derive(Clone, Copy, Debug)]

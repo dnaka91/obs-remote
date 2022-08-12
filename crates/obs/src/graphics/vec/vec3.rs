@@ -408,7 +408,7 @@ impl Max<f32> for Vec3 {
 
 impl VecX<f32> for Vec3 {
     fn zero(&mut self) {
-        self.set_m(unsafe {_mm_setzero_ps() });
+        self.set_m(unsafe { _mm_setzero_ps() });
     }
 
     fn dot(self, rhs: Self) -> f32 {

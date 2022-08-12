@@ -149,7 +149,7 @@ pub enum Format {
     SixteenBitPlanar,
     ThirtyTwoBitPlanar,
     FloatPlanar,
-    UnknownValue(u32)
+    UnknownValue(u32),
 }
 
 impl Format {

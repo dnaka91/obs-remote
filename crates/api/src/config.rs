@@ -1,9 +1,9 @@
-use crate::util;
 use obs::video::VideoInfo;
 use serde_json::{Map, Value};
 use tonic::{Request, Response, Status};
 
 pub use self::config_server::ConfigServer;
+use crate::util;
 
 tonic::include_proto!("obs_remote.config");
 

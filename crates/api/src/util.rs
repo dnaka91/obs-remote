@@ -1,7 +1,7 @@
-use prost_types::value::Kind as ProtoKind;
-use prost_types::{ListValue as ProtoList, Struct as ProtoStruct, Value as ProtoValue};
-use serde_json::Number as JsonNumber;
-use serde_json::Value as JsonValue;
+use prost_types::{
+    value::Kind as ProtoKind, ListValue as ProtoList, Struct as ProtoStruct, Value as ProtoValue,
+};
+use serde_json::{Number as JsonNumber, Value as JsonValue};
 
 #[doc(hidden)]
 #[macro_export]

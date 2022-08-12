@@ -4,7 +4,7 @@ use tonic::{Request, Response, Status};
 pub use self::profiles_service_server::ProfilesServiceServer;
 use crate::precondition;
 
-tonic::include_proto!("obs_remote.profiles");
+tonic::include_proto!("obs_remote.profiles.v1");
 
 pub struct ProfilesService;
 

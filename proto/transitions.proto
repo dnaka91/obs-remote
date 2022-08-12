@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.transitions;
+package obs_remote.transitions.v1;
 
 import "google/protobuf/duration.proto";
 

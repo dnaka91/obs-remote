@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.events;
+package obs_remote.events.v1;
 
 service EventsService {
   rpc All(AllRequest) returns (stream AllResponse);

@@ -2,7 +2,7 @@ use tonic::{Request, Response, Status};
 
 pub use self::transitions_service_server::TransitionsServiceServer;
 
-tonic::include_proto!("obs_remote.transitions");
+tonic::include_proto!("obs_remote.transitions.v1");
 
 pub struct TransitionsService;
 

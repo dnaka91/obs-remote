@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.virtual_cam;
+package obs_remote.virtual_cam.v1;
 
 service VirtualCamService {
   // Gets the status of the virtualcam output.

@@ -8,7 +8,7 @@ use self::screenshot_request::{resize::Filter, ImageFormat};
 pub use self::sources_service_server::SourcesServiceServer;
 use crate::precondition;
 
-tonic::include_proto!("obs_remote.sources");
+tonic::include_proto!("obs_remote.sources.v1");
 
 pub struct SourcesService;
 

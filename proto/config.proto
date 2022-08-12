@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.config;
+package obs_remote.config.v1;
 
 import "google/protobuf/struct.proto";
 

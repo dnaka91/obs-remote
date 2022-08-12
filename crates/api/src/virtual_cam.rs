@@ -2,7 +2,7 @@ use tonic::{Request, Response, Status};
 
 pub use self::virtual_cam_service_server::VirtualCamServiceServer;
 
-tonic::include_proto!("obs_remote.virtual_cam");
+tonic::include_proto!("obs_remote.virtual_cam.v1");
 
 pub struct VirtualCamService;
 

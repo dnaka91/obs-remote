@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.recording;
+package obs_remote.recording.v1;
 
 service RecordingService {
   // Original: GetRecordStatus

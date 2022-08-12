@@ -2,7 +2,7 @@ use tonic::{Request, Response, Status};
 
 pub use self::general_service_server::GeneralServiceServer;
 
-tonic::include_proto!("obs_remote.general");
+tonic::include_proto!("obs_remote.general.v1");
 
 pub struct GeneralService;
 

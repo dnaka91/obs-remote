@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.streaming;
+package obs_remote.streaming.v1;
 
 service StreamingService {
   // Original: GetStreamStatus

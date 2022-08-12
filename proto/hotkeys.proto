@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.hotkeys;
+package obs_remote.hotkeys.v1;
 
 service HotkeysService {
   // Gets an array of all hotkey names in OBS.

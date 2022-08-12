@@ -4,7 +4,7 @@ use tonic::{Request, Response, Status};
 pub use self::inputs_service_server::InputsServiceServer;
 use crate::precondition;
 
-tonic::include_proto!("obs_remote.inputs");
+tonic::include_proto!("obs_remote.inputs.v1");
 
 pub struct InputsService;
 

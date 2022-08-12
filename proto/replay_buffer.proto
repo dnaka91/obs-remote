@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.replay_buffer;
+package obs_remote.replay_buffer.v1;
 
 service ReplayBufferService {
   // Gets the status of the replay buffer output.

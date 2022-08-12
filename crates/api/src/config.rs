@@ -5,7 +5,7 @@ use tonic::{Request, Response, Status};
 pub use self::config_service_server::ConfigServiceServer;
 use crate::util;
 
-tonic::include_proto!("obs_remote.config");
+tonic::include_proto!("obs_remote.config.v1");
 
 pub struct ConfigService;
 

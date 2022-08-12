@@ -2,7 +2,7 @@ use tonic::{Request, Response, Status};
 
 pub use self::projectors_service_server::ProjectorsServiceServer;
 
-tonic::include_proto!("obs_remote.projectors");
+tonic::include_proto!("obs_remote.projectors.v1");
 
 pub struct ProjectorsService;
 

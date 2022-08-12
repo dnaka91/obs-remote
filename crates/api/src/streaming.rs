@@ -2,7 +2,7 @@ use tonic::{Request, Response, Status};
 
 pub use self::streaming_service_server::StreamingServiceServer;
 
-tonic::include_proto!("obs_remote.streaming");
+tonic::include_proto!("obs_remote.streaming.v1");
 
 pub struct StreamingService;
 

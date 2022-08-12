@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.scene_collections;
+package obs_remote.scene_collections.v1;
 
 service SceneCollectionsService {
   // Gets an array of all scene collections.

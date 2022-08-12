@@ -793,7 +793,7 @@ impl General for Service {
             base_height: video.base_size.1,
             output_width: video.output_size.0,
             output_height: video.output_size.1,
-            fps: video.fps,
+            fps: f64::from(*video.fps.numer()) / f64::from(*video.fps.denom()),
             video_format: match video.output_format {
                 Format::Nv12 => video_info_reply::VideoFormat::Nv12,
                 Format::I420 => video_info_reply::VideoFormat::I420,

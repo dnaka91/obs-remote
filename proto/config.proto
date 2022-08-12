@@ -2,40 +2,54 @@ syntax = "proto3";
 
 package obs_remote.config;
 
-import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
-import "google/protobuf/wrappers.proto";
 
 service Config {
   // Gets the value of a "slot" from the selected persistent data realm.
-  //
-  // Original: GetPersistentData
-  rpc GlobalPersistentData(google.protobuf.StringValue)
-      returns (google.protobuf.Struct);
+  rpc GlobalPersistentData(GlobalPersistentDataRequest)
+      returns (GlobalPersistentDataResponse);
   // Sets the value of a "slot" from the selected persistent data realm.
-  //
-  // Original: SetPersistentData
   rpc SetGlobalPersistentData(SetGlobalPersistentDataRequest)
-      returns (google.protobuf.Empty);
+      returns (SetGlobalPersistentDataResponse);
   // Gets the current video settings.
-  //
-  // Note: To get the true FPS value, divide the FPS numerator by the FPS
-  // denominator.
-  //
-  // Original: GetVideoSettings
-  rpc VideoSettings(google.protobuf.Empty) returns (Settings);
+  rpc VideoSettings(VideoSettingsRequest) returns (VideoSettingsResponse);
   // Sets the current video settings.
-  //
-  // Original: -
-  rpc SetVideoSettings(Settings) returns (google.protobuf.Empty);
+  rpc SetVideoSettings(SetVideoSettingsRequest)
+      returns (SetVideoSettingsResponse);
+}
+
+message GlobalPersistentDataRequest {
+  // The name of the slot to read data from.
+  string name = 1;
+}
+
+message GlobalPersistentDataResponse {
+  // The value contained in the slot.
+  google.protobuf.Value value = 1;
 }
 
 message SetGlobalPersistentDataRequest {
   // The name of the slot to save data to.
   string name = 1;
   // The value to apply to the slot.
-  google.protobuf.Struct value = 2;
+  google.protobuf.Value value = 2;
 }
+
+message SetGlobalPersistentDataResponse {}
+
+message VideoSettingsRequest {}
+
+message VideoSettingsResponse {
+  // The current video settings.
+  Settings settings = 1;
+}
+
+message SetVideoSettingsRequest {
+  // The video settings to apply.
+  Settings settings = 1;
+}
+
+message SetVideoSettingsResponse {}
 
 message Settings {
   // Fractional FPS value.
@@ -47,9 +61,9 @@ message Settings {
 
   message Fps {
     // Numerator of the fractional FPS value.
-    double numerator = 1;
+    uint32 numerator = 1;
     // Denominator of the fractional FPS value.
-    double denominator = 2;
+    uint32 denominator = 2;
   }
 
   message Size {

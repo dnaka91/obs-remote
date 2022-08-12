@@ -2,6 +2,7 @@
 
 use std::{ffi::CStr, os::raw::c_char};
 
+pub use num_rational::Ratio;
 pub use time::Duration;
 
 use crate::util::StringConversion;

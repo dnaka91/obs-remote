@@ -1,12 +1,15 @@
 use std::{
     ffi::{c_void, CStr},
     os::raw::c_char,
+    path::PathBuf,
     ptr,
 };
 
 pub trait StringConversion {
     fn into_string(self) -> String;
     fn into_opt_string(self) -> Option<String>;
+    fn into_path_buf(self) -> PathBuf;
+    fn into_opt_path_buf(self) -> Option<PathBuf>;
 }
 
 impl StringConversion for *const c_char {
@@ -22,6 +25,16 @@ impl StringConversion for *const c_char {
         } else {
             Some(self.into_string())
         }
+    }
+
+    fn into_path_buf(self) -> PathBuf {
+        // TODO: Probably there is a better way of transforming as `CStr -> OsStr -> Path`,
+        // allowing to have non-UTF8 content.
+        self.into_string().into()
+    }
+
+    fn into_opt_path_buf(self) -> Option<PathBuf> {
+        self.into_opt_string().map(Into::into)
     }
 }
 

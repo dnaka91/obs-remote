@@ -62,24 +62,7 @@ mod scenes;
 mod sources;
 mod streaming;
 mod transitions;
+mod util;
 mod virtual_cam;
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! precondition {
-    ($cond:expr, $($arg:tt)*) => {
-        if !($cond) {
-            return Err(Status::failed_precondition(format!($($arg)*)));
-        }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! precondition_fn {
-    ($($arg:tt)*) => {
-        || Status::failed_precondition(format!($($arg)*))
-    };
-}
 
 pub const FILE_DESCRIPTOR_SET: &[u8] = tonic::include_file_descriptor_set!("obs_remote_descriptor");

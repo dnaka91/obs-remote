@@ -1,4 +1,4 @@
-use std::os::raw::c_char;
+use std::{os::raw::c_char, path::PathBuf};
 
 use super::{
     convert_string_list,
@@ -17,9 +17,9 @@ pub fn current() -> String {
 }
 
 /// Get the file path for the current active profile.
-pub fn current_path() -> String {
+pub fn current_path() -> PathBuf {
     let raw = unsafe { libobs_sys::obs_frontend_get_current_profile_path() as *const c_char };
-    let value = raw.into_string();
+    let value = raw.into_path_buf();
 
     unsafe { libobs_sys::bfree(raw as *mut _) };
 

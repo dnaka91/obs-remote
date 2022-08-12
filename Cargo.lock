@@ -48,6 +48,7 @@ dependencies = [
  "obs",
  "prost",
  "prost-types",
+ "serde_json",
  "tokio",
  "tokio-stream",
  "tonic",
@@ -682,6 +683,7 @@ dependencies = [
  "autocfg",
  "num-integer",
  "num-traits",
+ "serde",
 ]
 
 [[package]]
@@ -719,6 +721,7 @@ dependencies = [
  "bitflags",
  "libobs-sys",
  "log",
+ "num-rational",
  "serde",
  "strum",
  "time",

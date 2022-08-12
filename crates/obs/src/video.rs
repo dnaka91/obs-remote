@@ -1,5 +1,7 @@
 use std::{marker::PhantomData, ptr::NonNull};
 
+use num_rational::Ratio;
+
 use crate::util::StringConversion;
 
 pub struct Video<'a> {
@@ -32,9 +34,10 @@ impl<'a> Video<'a> {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct VideoInfo {
     pub graphics_module: String,
-    pub fps: f64,
+    pub fps: Ratio<u32>,
     pub base_size: (u32, u32),
     pub output_size: (u32, u32),
     pub output_format: Format,
@@ -54,7 +57,7 @@ impl VideoInfo {
 
         Some(Self {
             graphics_module: raw.graphics_module.into_string(),
-            fps: raw.fps_num as f64 / raw.fps_den as f64,
+            fps: Ratio::new(raw.fps_num, raw.fps_den),
             base_size: (raw.base_width, raw.base_height),
             output_size: (raw.output_width, raw.output_height),
             output_format: Format::from_native(raw.output_format),

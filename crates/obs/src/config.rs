@@ -217,6 +217,25 @@ impl Config {
         Ok(())
     }
 
+    pub fn save_safe(&self, temp_ext: &str, backup_ext: Option<&str>) -> Result<()> {
+        let res = unsafe {
+            libobs_sys::config_save_safe(
+                self.raw.as_ptr(),
+                cstr_ptr!(temp_ext),
+                match backup_ext {
+                    Some(v) => cstr_ptr!(v),
+                    None => std::ptr::null(),
+                },
+            )
+        };
+
+        ensure!(
+            res == libobs_sys::CONFIG_SUCCESS as i32,
+            "failed saving config"
+        );
+        Ok(())
+    }
+
     /// Closes the configuration object.
     pub fn close(self) {
         unsafe { libobs_sys::config_close(self.raw.as_ptr()) };

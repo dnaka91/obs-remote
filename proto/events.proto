@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package obs_remote.events;
 
-import "google/protobuf/empty.proto";
-
 service EventsService {
   rpc All(AllRequest) returns (stream AllResponse);
   rpc General(GeneralRequest) returns (stream GeneralResponse);

@@ -44,7 +44,7 @@ impl sources_service_server::SourcesService for SourcesService {
         let details = request.into_inner();
         let image = screenshot(&details).unwrap();
 
-        Ok(Response::new(ScreenshotResponse {  image }))
+        Ok(Response::new(ScreenshotResponse { image }))
     }
 
     async fn save_screenshot(

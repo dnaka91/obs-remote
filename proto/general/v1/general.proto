@@ -29,12 +29,12 @@ service GeneralService {
 message VersionRequest {}
 
 message VersionResponse {
+  // OBS Studio version that OBS Remote was compiled against.
+  SemVer obs_compile_version = 1;
   // Current OBS Studio version.
-  SemVer obs_version = 1;
+  SemVer obs_runtime_version = 2;
   // Current OBS Remote version.
-  SemVer obs_remote_version = 2;
-  /// Latest OBS Remote RPC version.
-  uint32 rpc_version = 3;
+  SemVer obs_remote_version = 3;
 
   message SemVer {
     uint32 major = 1;

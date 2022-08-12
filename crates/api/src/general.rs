@@ -1,3 +1,4 @@
+use obs::libobs_sys::{LIBOBS_API_MAJOR_VER, LIBOBS_API_MINOR_VER, LIBOBS_API_PATCH_VER};
 use tonic::{Request, Response, Status};
 
 pub use self::general_service_server::GeneralServiceServer;
@@ -19,7 +20,12 @@ impl general_service_server::GeneralService for GeneralService {
         let version = obs::obs_version();
 
         Ok(Response::new(VersionResponse {
-            obs_version: Some(SemVer {
+            obs_compile_version: Some(SemVer {
+                major: LIBOBS_API_MAJOR_VER,
+                minor: LIBOBS_API_MINOR_VER,
+                patch: LIBOBS_API_PATCH_VER,
+            }),
+            obs_runtime_version: Some(SemVer {
                 major: version >> 24 & 0xff,
                 minor: version >> 16 & 0xff,
                 patch: version & 0xffff,
@@ -29,7 +35,6 @@ impl general_service_server::GeneralService for GeneralService {
                 minor: env!("CARGO_PKG_VERSION_MINOR").parse().unwrap(),
                 patch: env!("CARGO_PKG_VERSION_PATCH").parse().unwrap(),
             }),
-            rpc_version: 1,
         }))
     }
 

@@ -8,6 +8,7 @@
 )]
 #![allow(
     clippy::default_trait_access,
+    clippy::derive_partial_eq_without_eq,
     clippy::doc_markdown,
     clippy::enum_variant_names,
     clippy::module_name_repetitions,

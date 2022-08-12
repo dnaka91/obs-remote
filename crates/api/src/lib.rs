@@ -65,4 +65,4 @@ mod transitions;
 mod util;
 mod virtual_cam;
 
-pub const FILE_DESCRIPTOR_SET: &[u8] = tonic::include_file_descriptor_set!("obs_remote_descriptor");
+pub const FILE_DESCRIPTOR_SET: &[u8] = tonic::include_file_descriptor_set!("descriptor");

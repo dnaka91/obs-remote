@@ -2,7 +2,7 @@ use tonic::{Request, Response, Status};
 
 pub use self::outputs_service_server::OutputsServiceServer;
 
-tonic::include_proto!("obs_remote.outputs.v1");
+tonic::include_proto!("outputs.v1");
 
 pub struct OutputsService;
 

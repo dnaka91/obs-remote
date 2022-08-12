@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.projectors.v1;
+package projectors.v1;
 
 service ProjectorsService {
   // Original: GetProjectorList

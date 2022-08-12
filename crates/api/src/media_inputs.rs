@@ -2,7 +2,7 @@ use tonic::{Request, Response, Status};
 
 pub use self::media_inputs_service_server::MediaInputsServiceServer;
 
-tonic::include_proto!("obs_remote.media_inputs.v1");
+tonic::include_proto!("media_inputs.v1");
 
 pub struct MediaInputsService;
 

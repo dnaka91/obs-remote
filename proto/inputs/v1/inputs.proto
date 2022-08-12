@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.inputs.v1;
+package inputs.v1;
 
 service InputsService {
   // Original: GetInputList

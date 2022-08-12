@@ -5,7 +5,7 @@ pub use self::hotkeys_service_server::HotkeysServiceServer;
 use self::trigger_by_sequence_request::KeyCode;
 use crate::precondition;
 
-tonic::include_proto!("obs_remote.hotkeys.v1");
+tonic::include_proto!("hotkeys.v1");
 
 impl From<KeyCode> for Option<obs::hotkeys::Key> {
     fn from(value: KeyCode) -> Self {

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.scenes.v1;
+package scenes.v1;
 
 import "google/protobuf/wrappers.proto";
 

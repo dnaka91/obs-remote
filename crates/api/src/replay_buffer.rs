@@ -4,7 +4,7 @@ use tonic::{Request, Response, Status};
 pub use self::replay_buffer_service_server::ReplayBufferServiceServer;
 use crate::{precondition, precondition_fn};
 
-tonic::include_proto!("obs_remote.replay_buffer.v1");
+tonic::include_proto!("replay_buffer.v1");
 
 pub struct ReplayBufferService;
 

@@ -6,7 +6,7 @@ fn main() {
     tonic_build::configure()
         .build_client(false)
         .server_mod_attribute(".", "#[allow(clippy::return_self_not_must_use)]")
-        .file_descriptor_set_path(out_dir.join("obs_remote_descriptor.bin"))
+        .file_descriptor_set_path(out_dir.join("descriptor.bin"))
         .compile(
             &[
                 "../../proto/config/v1/config.proto",

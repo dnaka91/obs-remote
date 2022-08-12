@@ -8,7 +8,7 @@ use tonic::{Request, Response, Status};
 pub use self::scenes_service_server::ScenesServiceServer;
 use crate::precondition;
 
-tonic::include_proto!("obs_remote.scenes.v1");
+tonic::include_proto!("scenes.v1");
 
 pub struct ScenesService;
 

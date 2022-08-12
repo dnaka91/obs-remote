@@ -4,7 +4,7 @@ use tonic::{Request, Response, Status};
 pub use self::filters_service_server::FiltersServiceServer;
 use crate::{precondition, precondition_fn};
 
-tonic::include_proto!("obs_remote.filters.v1");
+tonic::include_proto!("filters.v1");
 
 pub struct FiltersService;
 

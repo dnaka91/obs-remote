@@ -2,7 +2,7 @@ use tonic::{Request, Response, Status};
 
 pub use self::scene_items_service_server::SceneItemsServiceServer;
 
-tonic::include_proto!("obs_remote.scene_items.v1");
+tonic::include_proto!("scene_items.v1");
 
 pub struct SceneItemsService;
 

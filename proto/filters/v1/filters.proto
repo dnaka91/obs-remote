@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.filters.v1;
+package filters.v1;
 
 import "google/protobuf/wrappers.proto";
 

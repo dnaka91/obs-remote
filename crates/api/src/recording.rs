@@ -2,7 +2,7 @@ use tonic::{Request, Response, Status};
 
 pub use self::recording_service_server::RecordingServiceServer;
 
-tonic::include_proto!("obs_remote.recording.v1");
+tonic::include_proto!("recording.v1");
 
 pub struct RecordingService;
 

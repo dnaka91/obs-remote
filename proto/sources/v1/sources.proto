@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.sources.v1;
+package sources.v1;
 
 service SourcesService {
   // Gets the active and show state of a source.

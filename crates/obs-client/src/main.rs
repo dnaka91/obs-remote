@@ -32,10 +32,10 @@ async fn main() -> Result<()> {
 
 pub mod general {
     #![allow(clippy::derive_partial_eq_without_eq)]
-    tonic::include_proto!("obs_remote.general.v1");
+    tonic::include_proto!("general.v1");
 }
 
 pub mod profiles {
     #![allow(clippy::derive_partial_eq_without_eq)]
-    tonic::include_proto!("obs_remote.profiles.v1");
+    tonic::include_proto!("profiles.v1");
 }

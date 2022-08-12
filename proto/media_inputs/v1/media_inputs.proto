@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.media_inputs.v1;
+package media_inputs.v1;
 
 service MediaInputsService {
   // Original: GetMediaInputStatus

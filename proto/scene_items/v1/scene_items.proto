@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package obs_remote.scene_items.v1;
+package scene_items.v1;
 
 service SceneItemsService {
   // Original: GetSceneItemList

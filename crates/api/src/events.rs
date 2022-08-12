@@ -3,7 +3,7 @@ use tonic::{Request, Response, Status};
 
 pub use self::events_service_server::EventsServiceServer;
 
-tonic::include_proto!("obs_remote.events.v1");
+tonic::include_proto!("events.v1");
 
 pub struct EventsService;
 

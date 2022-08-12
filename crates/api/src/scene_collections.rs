@@ -4,7 +4,7 @@ use tonic::{Request, Response, Status};
 pub use self::scene_collections_service_server::SceneCollectionsServiceServer;
 use crate::precondition;
 
-tonic::include_proto!("obs_remote.scene_collections.v1");
+tonic::include_proto!("scene_collections.v1");
 
 pub struct SceneCollectionsService;
 

@@ -195,6 +195,8 @@ impl DataItem {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Clone, Copy, Debug)]
 pub enum DataType {
     Null,
     String,
@@ -202,39 +204,43 @@ pub enum DataType {
     Boolean,
     Object,
     Array,
+    Unknown(u32),
 }
 
 impl DataType {
-    fn from_native(value: libobs_sys::obs_data_type::Type) -> Self {
+    fn from_native(ty: libobs_sys::obs_data_type::Type) -> Self {
         use libobs_sys::obs_data_type::*;
 
-        match value {
+        match ty {
             OBS_DATA_NULL => Self::Null,
             OBS_DATA_STRING => Self::String,
             OBS_DATA_NUMBER => Self::Number,
             OBS_DATA_BOOLEAN => Self::Boolean,
             OBS_DATA_OBJECT => Self::Object,
             OBS_DATA_ARRAY => Self::Array,
-            _ => unreachable!(),
+            _ => Self::Unknown(ty as _),
         }
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Clone, Copy, Debug)]
 pub enum DataNumberType {
     Invalid,
     Int,
     Double,
+    Unknown(u32),
 }
 
 impl DataNumberType {
-    fn from_native(value: libobs_sys::obs_data_number_type::Type) -> Self {
+    fn from_native(ty: libobs_sys::obs_data_number_type::Type) -> Self {
         use libobs_sys::obs_data_number_type::*;
 
-        match value {
+        match ty {
             OBS_DATA_NUM_INVALID => Self::Invalid,
             OBS_DATA_NUM_INT => Self::Int,
             OBS_DATA_NUM_DOUBLE => Self::Double,
-            _ => unreachable!(),
+            _ => Self::Unknown(ty as _),
         }
     }
 }

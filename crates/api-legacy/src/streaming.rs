@@ -25,6 +25,7 @@ impl From<service::StreamType> for StreamType {
         match value {
             service::StreamType::RtmpCommon => Self::RtmpCommon,
             service::StreamType::RtmpCustom => Self::RtmpCustom,
+            service::StreamType::Unknown => Self::Unspecified,
         }
     }
 }

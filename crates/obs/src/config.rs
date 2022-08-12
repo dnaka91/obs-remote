@@ -233,6 +233,7 @@ impl Config {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum OpenType {
     /// Try to open the file. If it doesn't exist, create it.

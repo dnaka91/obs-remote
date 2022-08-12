@@ -79,17 +79,37 @@ macro_rules! declare_module {
 
         #[no_mangle]
         pub extern "C" fn obs_module_author() -> *const std::os::raw::c_char {
-            <$t>::author().as_ptr()
+            <$t>::author()
+                .unwrap_or_else(|| unsafe {
+                    std::ffi::CStr::from_bytes_with_nul_unchecked(
+                        concat!(env!("CARGO_PKG_AUTHORS"), '\0').as_bytes(),
+                    )
+                })
+                .as_ptr()
         }
 
         #[no_mangle]
         pub extern "C" fn obs_module_name() -> *const std::os::raw::c_char {
-            <$t>::name().as_ptr()
+            <$t>::name()
+                .unwrap_or_else(|| unsafe {
+                    std::ffi::CStr::from_bytes_with_nul_unchecked(
+                        concat!(env!("CARGO_PKG_NAME"), '\0').as_bytes(),
+                    )
+                })
+                .as_ptr()
         }
 
         #[no_mangle]
         pub extern "C" fn obs_module_description() -> *const std::os::raw::c_char {
-            <$t>::description().as_ptr()
+            <$t>::description()
+                .unwrap_or_else(|| unsafe {
+                    unsafe {
+                        std::ffi::CStr::from_bytes_with_nul_unchecked(
+                            concat!(env!("CARGO_PKG_DESCRIPTION"), '\0').as_bytes(),
+                        )
+                    }
+                })
+                .as_ptr()
         }
     };
 }
@@ -178,24 +198,16 @@ pub trait Plugin {
 
     fn post_load(&mut self) {}
 
-    fn author() -> &'static CStr {
-        unsafe {
-            CStr::from_bytes_with_nul_unchecked(concat!(env!("CARGO_PKG_AUTHORS"), '\0').as_bytes())
-        }
+    fn author() -> Option<&'static CStr> {
+        None
     }
 
-    fn name() -> &'static CStr {
-        unsafe {
-            CStr::from_bytes_with_nul_unchecked(concat!(env!("CARGO_PKG_NAME"), '\0').as_bytes())
-        }
+    fn name() -> Option<&'static CStr> {
+        None
     }
 
-    fn description() -> &'static CStr {
-        unsafe {
-            CStr::from_bytes_with_nul_unchecked(
-                concat!(env!("CARGO_PKG_DESCRIPTION"), '\0').as_bytes(),
-            )
-        }
+    fn description() -> Option<&'static CStr> {
+        None
     }
 }
 

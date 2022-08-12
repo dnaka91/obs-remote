@@ -40,6 +40,7 @@ unsafe extern "C" fn event_callback(
     (handler)(Event::from_native(event));
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum Event {
     StreamingStarting,

@@ -67,6 +67,7 @@ impl AudioOutputInfo {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug)]
 pub struct AudioInfo {
     pub samples_per_sec: u32,
@@ -97,6 +98,7 @@ impl AudioInfo {
 /// Standard channel layouts where retrieved from [ffmpeg documentation].
 ///
 /// [ffmpeg documentation]: https://trac.ffmpeg.org/wiki/AudioChannelManipulation
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum SpeakerLayout {
     /// Unknown setting, fallback is [`Self::Stereo`].
@@ -135,6 +137,8 @@ impl SpeakerLayout {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Clone, Copy, Debug)]
 pub enum Format {
     Unknown,
     U8Bit,
@@ -145,13 +149,14 @@ pub enum Format {
     SixteenBitPlanar,
     ThirtyTwoBitPlanar,
     FloatPlanar,
+    UnknownValue(u32)
 }
 
 impl Format {
-    fn from_native(value: libobs_sys::audio_format::Type) -> Self {
+    fn from_native(ty: libobs_sys::audio_format::Type) -> Self {
         use libobs_sys::audio_format::*;
 
-        match value {
+        match ty {
             AUDIO_FORMAT_UNKNOWN => Self::Unknown,
             AUDIO_FORMAT_U8BIT => Self::U8Bit,
             AUDIO_FORMAT_16BIT => Self::SixteenBit,
@@ -161,7 +166,7 @@ impl Format {
             AUDIO_FORMAT_16BIT_PLANAR => Self::SixteenBitPlanar,
             AUDIO_FORMAT_32BIT_PLANAR => Self::ThirtyTwoBitPlanar,
             AUDIO_FORMAT_FLOAT_PLANAR => Self::FloatPlanar,
-            _ => unreachable!(),
+            _ => Self::UnknownValue(ty as _),
         }
     }
 }

@@ -119,10 +119,12 @@ pub fn list_services() -> Vec<Service<'static>> {
     )
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum StreamType {
     RtmpCommon,
     RtmpCustom,
+    Unknown,
 }
 
 impl StreamType {
@@ -130,7 +132,7 @@ impl StreamType {
         match unsafe { CStr::from_ptr(value) }.to_string_lossy().as_ref() {
             "rtmp_common" => Self::RtmpCommon,
             "rtmp_custom" => Self::RtmpCustom,
-            _ => unreachable!(),
+            _ => Self::Unknown,
         }
     }
 
@@ -138,6 +140,7 @@ impl StreamType {
         match self {
             Self::RtmpCommon => "rtmp_common",
             Self::RtmpCustom => "rtmp_custom",
+            Self::Unknown => "",
         }
     }
 }

@@ -67,6 +67,7 @@ impl VideoInfo {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum Colorspace {
     Default,
@@ -94,6 +95,7 @@ impl Colorspace {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum Format {
     None,
@@ -153,6 +155,7 @@ impl Format {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum RangeType {
     Default,
@@ -174,6 +177,7 @@ impl RangeType {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum ScaleType {
     Disable,

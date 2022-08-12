@@ -216,6 +216,7 @@ impl<'a> Output<'a> {
 }
 
 bitflags! {
+    #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
     pub struct Flags: u32 {
         const VIDEO = libobs_sys::OBS_OUTPUT_VIDEO;
         const AUDIO = libobs_sys::OBS_OUTPUT_AUDIO;

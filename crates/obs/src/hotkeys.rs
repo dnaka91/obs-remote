@@ -99,6 +99,7 @@ impl HotkeyBinding {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug)]
 pub enum HotkeyRegisterer {
     Frontend,
@@ -142,6 +143,7 @@ bitflags! {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy)]
 #[repr(u32)]
 pub enum Key {

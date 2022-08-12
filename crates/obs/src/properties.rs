@@ -179,6 +179,7 @@ impl<'a> Property<'a> {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum PropertyType {
     Invalid,
@@ -282,6 +283,7 @@ impl<'a> FloatProperty<'a> {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum NumberType {
     Scroller,
@@ -323,6 +325,7 @@ impl<'a> TextProperty<'a> {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum TextType {
     Default,
@@ -344,6 +347,7 @@ impl TextType {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum TextInfoType {
     Normal,
@@ -381,6 +385,7 @@ impl<'a> PathProperty<'a> {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum PathType {
     File,
@@ -416,6 +421,7 @@ impl<'a> ButtonProperty<'a> {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum ButtonType {
     Default,
@@ -474,6 +480,7 @@ impl<'a> ListProperty<'a> {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum ComboFormat {
     Invalid,
@@ -497,6 +504,7 @@ impl ComboFormat {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum ComboType {
     Invalid,
@@ -537,6 +545,7 @@ impl<'a> EditableListProperty<'a> {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum EditableListType {
     Strings,
@@ -610,6 +619,7 @@ impl<'a> FrameRateProperty<'a> {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug)]
 pub struct MediaFps {
     pub numberator: u32,
@@ -689,6 +699,7 @@ impl<'a> GroupProperty<'a> {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum GroupType {
     Invalid,

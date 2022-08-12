@@ -380,6 +380,7 @@ bitflags! {
 
 /// Used with scene items to indicate the type of bounds to use for scene items. Mostly determines
 /// how the image will be scaled within those bounds, or whether to use bounds at all.
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum BoundsType {
     /// No bounds.
@@ -431,6 +432,7 @@ impl BoundsType {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum BlendingMethod {
     Default,
@@ -459,6 +461,8 @@ impl BlendingMethod {
         }
     }
 }
+
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum BlendingType {
     Normal,

@@ -4,6 +4,7 @@ use bitflags::bitflags;
 
 use crate::graphics::Vec4;
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum BaseEffect {
     /// RGB/YUV.
@@ -71,6 +72,7 @@ impl Effect {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum ColorFormat {
     Unknown,
@@ -130,6 +132,7 @@ impl ColorFormat {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum ZstencilFormat {
     None,
@@ -153,6 +156,7 @@ impl ZstencilFormat {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum BlendType {
     Zero,
@@ -188,6 +192,7 @@ impl BlendType {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum BlendOpType {
     Add,

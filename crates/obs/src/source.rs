@@ -340,6 +340,7 @@ impl<'a> Source<'a> {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum SourceType {
     Input,
@@ -363,6 +364,7 @@ impl SourceType {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum IconType {
     Unknown,
@@ -408,6 +410,7 @@ impl IconType {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum MonitoringType {
     None,
@@ -430,6 +433,7 @@ impl MonitoringType {
 
 bitflags! {
     /// These flags determine what type of data the source outputs and expects.
+    #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
     pub struct OutputFlags: u32 {
         /// Source has video.
         ///
@@ -576,6 +580,7 @@ pub fn properties(id: &str) -> Option<Properties<'static>> {
     (!raw.is_null()).then(|| Properties::from_raw(raw))
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum Volume {
     Mul(f32),
@@ -623,6 +628,7 @@ impl Display for Volume {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum MediaState {
     None,

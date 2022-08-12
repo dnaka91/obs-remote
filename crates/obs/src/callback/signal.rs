@@ -113,6 +113,7 @@ unsafe extern "C" fn signal_callback(param: *mut c_void, data: *mut libobs_sys::
 
 pub trait Signal: AsRef<str> {}
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, AsRefStr)]
 #[strum(serialize_all = "snake_case")]
 pub enum GlobalSignal {
@@ -185,6 +186,7 @@ pub enum GlobalCalldata<'a> {
     HotkeyBindingsChanged(Hotkey),
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, AsRefStr)]
 #[strum(serialize_all = "snake_case")]
 pub enum OutputSignal {
@@ -222,6 +224,7 @@ pub enum OutputCalldata<'a> {
 
 impl Signal for OutputSignal {}
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, AsRefStr)]
 #[strum(serialize_all = "snake_case")]
 pub enum SceneSignal {
@@ -329,6 +332,7 @@ impl<'a> TryFrom<(SceneSignal, &'a Calldata)> for SceneCalldata<'a> {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug, AsRefStr)]
 #[strum(serialize_all = "snake_case")]
 pub enum SourceSignal {

@@ -76,6 +76,7 @@ pub fn list() -> Vec<Encoder<'static>> {
     encoders
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub enum EncoderType {
     Audio,

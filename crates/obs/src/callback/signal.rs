@@ -67,6 +67,7 @@ impl SignalHandler<GlobalSignal> {
 pub struct Handle {
     handler: NonNull<libobs_sys::signal_handler_t>,
     signal: CString,
+    #[allow(clippy::type_complexity)]
     data: Box<Box<dyn Fn(&Calldata)>>,
 }
 

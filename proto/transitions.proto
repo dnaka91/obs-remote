@@ -3,33 +3,80 @@ syntax = "proto3";
 package obs_remote.transitions;
 
 import "google/protobuf/duration.proto";
-import "google/protobuf/empty.proto";
-import "google/protobuf/wrappers.proto";
 
-service Transitions {
+service TransitionsService {
   // Original: GetTransitionList
-  rpc List(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc List(ListRequest) returns (ListResponse);
   // Original: GetCurrentTransition
-  rpc Current(google.protobuf.Empty) returns (google.protobuf.StringValue);
+  rpc Current(CurrentRequest) returns (CurrentResponse);
   // Original: SetCurrentTransition
-  rpc SetCurrent(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc SetCurrent(SetCurrentRequest) returns (SetCurrentResponse);
   // Original: SetCurrentTransitionDuration
-  rpc SetCurrentDuration(google.protobuf.Duration)
-      returns (google.protobuf.Empty);
+  rpc SetCurrentDuration(SetCurrentDurationRequest) returns (SetCurrentDurationResponse);
   // Original: GetTransitionSettings
-  rpc Settings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Settings(SettingsRequest) returns (SettingsResponse);
   // Original: SetTransitionSettings
-  rpc SetSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SetSettings(SetSettingsRequest) returns (SetSettingsResponse);
   // Original: ReleaseTbar
-  rpc ReleaseTBar(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc ReleaseTBar(ReleaseTBarRequest) returns (ReleaseTBarResponse);
   // Original: SetTbarPosition
-  rpc SetTBarPosition(google.protobuf.FloatValue)
-      returns (google.protobuf.Empty);
+  rpc SetTBarPosition(SetTBarPositionRequest) returns (SetTBarPositionResponse);
   // Original: TriggerStudioModeTransition
-  rpc TriggerStudioModeTransition(google.protobuf.Empty)
-      returns (google.protobuf.Empty);
+  rpc TriggerStudioModeTransition(TriggerStudioModeTransitionRequest) returns (TriggerStudioModeTransitionResponse);
   // Original: CreateTransition
-  rpc Create(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Create(CreateRequest) returns (CreateResponse);
   // Original: DeleteTransition
-  rpc Delete(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
 }
+
+message ListRequest {}
+
+message ListResponse {}
+
+message CurrentRequest {}
+
+message CurrentResponse {
+  string name = 1;
+}
+
+message SetCurrentRequest {
+  string name = 1;
+}
+
+message SetCurrentResponse {}
+
+message SetCurrentDurationRequest {
+  google.protobuf.Duration duration = 1;
+}
+
+message SetCurrentDurationResponse {}
+
+message SettingsRequest {}
+
+message SettingsResponse {}
+
+message SetSettingsRequest {}
+
+message SetSettingsResponse {}
+
+message ReleaseTBarRequest {}
+
+message ReleaseTBarResponse {}
+
+message SetTBarPositionRequest {
+  float position = 1;
+}
+
+message SetTBarPositionResponse {}
+
+message TriggerStudioModeTransitionRequest {}
+
+message TriggerStudioModeTransitionResponse {}
+
+message CreateRequest {}
+
+message CreateResponse {}
+
+message DeleteRequest {}
+
+message DeleteResponse {}

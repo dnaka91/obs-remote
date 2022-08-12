@@ -2,7 +2,7 @@ use obs::video::VideoInfo;
 use serde_json::{Map, Value};
 use tonic::{Request, Response, Status};
 
-pub use self::config_server::ConfigServer;
+pub use self::config_service_server::ConfigServiceServer;
 use crate::util;
 
 tonic::include_proto!("obs_remote.config");
@@ -10,7 +10,7 @@ tonic::include_proto!("obs_remote.config");
 pub struct ConfigService;
 
 #[tonic::async_trait]
-impl config_server::Config for ConfigService {
+impl config_service_server::ConfigService for ConfigService {
     async fn global_persistent_data(
         &self,
         request: Request<GlobalPersistentDataRequest>,

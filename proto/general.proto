@@ -3,31 +3,32 @@ syntax = "proto3";
 package obs_remote.general;
 
 import "google/protobuf/duration.proto";
-import "google/protobuf/empty.proto";
 
-service General {
+service GeneralService {
   // Gets data about the current plugin and RPC version.
   //
   // Original: GetVersion
-  rpc Version(google.protobuf.Empty) returns (VersionReply);
+  rpc Version(VersionRequest) returns (VersionResponse);
   // Gets statistics about OBS Studio, OBS Remote, and the current session.
   //
   // Original: GetStats
-  rpc Stats(google.protobuf.Empty) returns (StatsReply);
+  rpc Stats(StatsRequest) returns (StatsResponse);
   // Broadcasts a custom event to all WebSocket clients. Receivers are clients
   // which are identified and subscribed.
   //
   // Original: BroadcastCustomEvent
-  rpc BroadcastEvent(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc BroadcastEvent(BroadcastEventRequest) returns (BroadcastEventResponse);
   // Original: CallVendorRequest
-  rpc CallVendor(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc CallVendor(CallVendorRequest) returns (CallVendorResponse);
   // Sleeps for a time duration or number of frames.
   //
   // Original: -
-  rpc Sleep(SleepRequest) returns (google.protobuf.Empty);
+  rpc Sleep(SleepRequest) returns (SleepResponse);
 }
 
-message VersionReply {
+message VersionRequest {}
+
+message VersionResponse {
   // Current OBS Studio version.
   SemVer obs_version = 1;
   // Current OBS Remote version.
@@ -42,7 +43,9 @@ message VersionReply {
   }
 }
 
-message StatsReply {
+message StatsRequest {}
+
+message StatsResponse {
   // Current CPU usage in percent.
   float cpu_usage = 1;
   // Amount of memory in MB currently being used by OBS.
@@ -79,6 +82,14 @@ message StatsReply {
   }
 }
 
+message BroadcastEventRequest {}
+
+message BroadcastEventResponse {}
+
+message CallVendorRequest {}
+
+message CallVendorResponse {}
+
 message SleepRequest {
   oneof sleep {
     // Duration to sleep for.
@@ -87,3 +98,5 @@ message SleepRequest {
     uint32 frames = 2;
   }
 }
+
+message SleepResponse {}

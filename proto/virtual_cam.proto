@@ -2,24 +2,37 @@ syntax = "proto3";
 
 package obs_remote.virtual_cam;
 
-import "google/protobuf/empty.proto";
-import "google/protobuf/wrappers.proto";
-
-service VirtualCam {
+service VirtualCamService {
   // Gets the status of the virtualcam output.
   //
   // Original: GetVirtualCamStatus
-  rpc Status(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  rpc Status(StatusRequest) returns (StatusResponse);
   // Toggles the state of the virtualcam output.
   //
   // Original: ToggleVirtualCam
-  rpc Toggle(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  rpc Toggle(ToggleRequest) returns (ToggleResponse);
   // Starts the virtualcam output.
   //
   // Original: StartVirtualCam
-  rpc Start(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Start(StartRequest) returns (StartResponse);
   // Stops the virtualcam output.
   //
   // Original: StopVirtualCam
-  rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Stop(StopRequest) returns (StopResponse);
 }
+
+message StatusRequest {}
+
+message StatusResponse {}
+
+message ToggleRequest {}
+
+message ToggleResponse {}
+
+message StartRequest {}
+
+message StartResponse {}
+
+message StopRequest {}
+
+message StopResponse {}

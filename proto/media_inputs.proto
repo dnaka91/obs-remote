@@ -2,24 +2,53 @@ syntax = "proto3";
 
 package obs_remote.media_inputs;
 
-import "google/protobuf/empty.proto";
-import "google/protobuf/wrappers.proto";
-
-service MediaInputs {
+service MediaInputsService {
   // Original: GetMediaInputStatus
-  rpc Status(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Status(StatusRequest) returns (StatusResponse);
   // Original: OffsetMediaInputTimecode
-  rpc OffsetTimecode(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc OffsetTimecode(OffsetTimecodeRequest) returns (OffsetTimecodeResponse);
   // Original: SetMediaInputTimecode
-  rpc SetTimecode(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SetTimecode(SetTimecodeRequest) returns (SetTimecodeResponse);
   // Original: SetMediaInputPauseState
-  rpc IsPaused(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  rpc IsPaused(IsPausedRequest) returns (IsPausedResponse);
   // Original: StopMediaInput
-  rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Stop(StopRequest) returns (StopResponse);
   // Original: RestartMediaInput
-  rpc Restart(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Restart(RestartRequest) returns (RestartResponse);
   // Original: NextMediaInputPlaylistItem
-  rpc PlayNext(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc PlayNext(PlayNextRequest) returns (PlayNextResponse);
   // Original: PreviousMediaInputPlaylistItem
-  rpc PlayPrevious(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc PlayPrevious(PlayPreviousRequest) returns (PlayPreviousResponse);
 }
+
+message StatusRequest {}
+
+message StatusResponse {}
+
+message OffsetTimecodeRequest {}
+
+message OffsetTimecodeResponse {}
+
+message SetTimecodeRequest {}
+
+message SetTimecodeResponse {}
+
+message IsPausedRequest {}
+
+message IsPausedResponse {}
+
+message StopRequest {}
+
+message StopResponse {}
+
+message RestartRequest {}
+
+message RestartResponse {}
+
+message PlayNextRequest {}
+
+message PlayNextResponse {}
+
+message PlayPreviousRequest {}
+
+message PlayPreviousResponse {}

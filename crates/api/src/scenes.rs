@@ -5,7 +5,7 @@ use obs::{
 };
 use tonic::{Request, Response, Status};
 
-pub use self::scenes_server::ScenesServer;
+pub use self::scenes_service_server::ScenesServiceServer;
 use crate::precondition;
 
 tonic::include_proto!("obs_remote.scenes");
@@ -13,15 +13,17 @@ tonic::include_proto!("obs_remote.scenes");
 pub struct ScenesService;
 
 #[tonic::async_trait]
-impl scenes_server::Scenes for ScenesService {
-    async fn list(&self, request: Request<()>) -> Result<Response<ListReply>, Status> {
-        Ok(Response::new(ListReply {
+impl scenes_service_server::ScenesService for ScenesService {
+    async fn list(&self, request: Request<ListRequest>) -> Result<Response<ListResponse>, Status> {
+        let ListRequest {} = request.into_inner();
+
+        Ok(Response::new(ListResponse {
             current: scenes::current().name(),
             current_preview: scenes::current_preview().map(|scene| scene.name()),
             scenes: scenes::list()
                 .into_iter()
                 .enumerate()
-                .map(|(i, scene)| list_reply::Scene {
+                .map(|(i, scene)| list_response::Scene {
                     name: scene.name(),
                     index: i as u64,
                     group: scene.is_group(),
@@ -30,12 +32,22 @@ impl scenes_server::Scenes for ScenesService {
         }))
     }
 
-    async fn current(&self, request: Request<()>) -> Result<Response<String>, Status> {
-        Ok(Response::new(scenes::current().name()))
+    async fn current(
+        &self,
+        request: Request<CurrentRequest>,
+    ) -> Result<Response<CurrentResponse>, Status> {
+        let CurrentRequest {} = request.into_inner();
+
+        Ok(Response::new(CurrentResponse {
+            name: scenes::current().name(),
+        }))
     }
 
-    async fn set_current(&self, request: Request<String>) -> Result<Response<()>, Status> {
-        let name = request.into_inner();
+    async fn set_current(
+        &self,
+        request: Request<SetCurrentRequest>,
+    ) -> Result<Response<SetCurrentResponse>, Status> {
+        let SetCurrentRequest { name } = request.into_inner();
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let scene = Source::by_name(&name)
@@ -44,19 +56,27 @@ impl scenes_server::Scenes for ScenesService {
 
         scenes::set_current(&scene);
 
-        Ok(Response::new(()))
+        Ok(Response::new(SetCurrentResponse {}))
     }
 
-    async fn current_preview(&self, request: Request<()>) -> Result<Response<String>, Status> {
+    async fn current_preview(
+        &self,
+        request: Request<CurrentPreviewRequest>,
+    ) -> Result<Response<CurrentPreviewResponse>, Status> {
+        let CurrentPreviewRequest {} = request.into_inner();
+
         let name = scenes::current_preview()
             .ok_or_else(|| Status::failed_precondition("studio mode isn't active"))?
             .name();
 
-        Ok(Response::new(name))
+        Ok(Response::new(CurrentPreviewResponse { name }))
     }
 
-    async fn set_current_preview(&self, request: Request<String>) -> Result<Response<()>, Status> {
-        let name = request.into_inner();
+    async fn set_current_preview(
+        &self,
+        request: Request<SetCurrentPreviewRequest>,
+    ) -> Result<Response<SetCurrentPreviewResponse>, Status> {
+        let SetCurrentPreviewRequest { name } = request.into_inner();
         precondition!(!name.is_empty(), "name mustn't be empty");
         precondition!(preview_mode::active(), "studio mode isn't active");
 
@@ -66,14 +86,20 @@ impl scenes_server::Scenes for ScenesService {
 
         scenes::set_current_preview(&scene);
 
-        Ok(Response::new(()))
+        Ok(Response::new(SetCurrentPreviewResponse {}))
     }
 
-    async fn set_index(&self, request: Request<u32>) -> Result<Response<()>, Status> {
+    async fn set_index(
+        &self,
+        request: Request<SetIndexRequest>,
+    ) -> Result<Response<SetIndexResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn set_name(&self, request: Request<SetNameRequest>) -> Result<Response<()>, Status> {
+    async fn set_name(
+        &self,
+        request: Request<SetNameRequest>,
+    ) -> Result<Response<SetNameResponse>, Status> {
         let SetNameRequest { name, new_name } = request.into_inner();
         precondition!(!name.is_empty(), "name mustn't be empty");
         precondition!(!new_name.is_empty(), "new name mustn't be empty");
@@ -90,11 +116,14 @@ impl scenes_server::Scenes for ScenesService {
 
         scene.set_name(&new_name);
 
-        Ok(Response::new(()))
+        Ok(Response::new(SetNameResponse {}))
     }
 
-    async fn create(&self, request: Request<String>) -> Result<Response<()>, Status> {
-        let name = request.into_inner();
+    async fn create(
+        &self,
+        request: Request<CreateRequest>,
+    ) -> Result<Response<CreateResponse>, Status> {
+        let CreateRequest { name } = request.into_inner();
         precondition!(!name.is_empty(), "name mustn't be empty");
         precondition!(
             Source::by_name(&name).is_none(),
@@ -104,11 +133,14 @@ impl scenes_server::Scenes for ScenesService {
 
         Scene::create(&name);
 
-        Ok(Response::new(()))
+        Ok(Response::new(CreateResponse {}))
     }
 
-    async fn delete(&self, request: Request<String>) -> Result<Response<()>, Status> {
-        let name = request.into_inner();
+    async fn remove(
+        &self,
+        request: Request<RemoveRequest>,
+    ) -> Result<Response<RemoveResponse>, Status> {
+        let RemoveRequest { name } = request.into_inner();
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let scene = Source::by_name(&name)
@@ -117,24 +149,27 @@ impl scenes_server::Scenes for ScenesService {
 
         scene.remove();
 
-        Ok(Response::new(()))
+        Ok(Response::new(RemoveResponse {}))
     }
 
-    async fn transition_override(&self, request: Request<()>) -> Result<Response<()>, Status> {
+    async fn transition_override(
+        &self,
+        request: Request<TransitionOverrideRequest>,
+    ) -> Result<Response<TransitionOverrideResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
     async fn create_transition_override(
         &self,
-        request: Request<()>,
-    ) -> Result<Response<()>, Status> {
+        request: Request<CreateTransitionOverrideRequest>,
+    ) -> Result<Response<CreateTransitionOverrideResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
     async fn delete_transition_override(
         &self,
-        request: Request<()>,
-    ) -> Result<Response<()>, Status> {
+        request: Request<DeleteTransitionOverrideRequest>,
+    ) -> Result<Response<DeleteTransitionOverrideResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 }

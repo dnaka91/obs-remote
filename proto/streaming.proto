@@ -2,37 +2,75 @@ syntax = "proto3";
 
 package obs_remote.streaming;
 
-import "google/protobuf/empty.proto";
-import "google/protobuf/wrappers.proto";
-
-// Original: Stream
-service Streaming {
+service StreamingService {
   // Original: GetStreamStatus
-  rpc Status(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Status(StatusRequest) returns (StatusResponse);
   // Original: ToggleStream
-  rpc Toggle(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Toggle(ToggleRequest) returns (ToggleResponse);
   // Original: StartStream
-  rpc Start(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Start(StartRequest) returns (StartResponse);
   // Original: StopStream
-  rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Stop(StopRequest) returns (StopResponse);
   // Original: SendStreamCaptions
-  rpc SendCaptions(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc SendCaptions(SendCaptionsRequest) returns (SendCaptionsResponse);
   // Original: GetStreamBitrateSetting
-  rpc Bitrate(google.protobuf.Empty) returns (google.protobuf.UInt32Value);
+  rpc Bitrate(BitrateRequest) returns (BitrateResponse);
   // Original: SetStreamBitrateSetting
-  rpc SetBitrate(google.protobuf.UInt32Value) returns (google.protobuf.Empty);
+  rpc SetBitrate(SetBitrateRequest) returns (SetBitrateResponse);
   // Gets the current stream service settings (stream destination).
   //
   // Original: GetStreamServiceSettings
-  rpc Settings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Settings(SettingsRequest) returns (SettingsResponse);
   // Sets the current stream service settings (stream destination).
   //
   // Note: Simple RTMP settings can be set with type `rtmp_custom` and the
   // settings fields `server` and `key`.
   //
   // Original: SetStreamServiceSettings
-  rpc SetSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SetSettings(SetSettingsRequest) returns (SetSettingsResponse);
 }
+
+message StatusRequest {}
+
+message StatusResponse {}
+
+message ToggleRequest {}
+
+message ToggleResponse {}
+
+message StartRequest {}
+
+message StartResponse {}
+
+message StopRequest {}
+
+message StopResponse {}
+
+message SendCaptionsRequest {
+  string captions = 1;
+}
+
+message SendCaptionsResponse {}
+
+message BitrateRequest {}
+
+message BitrateResponse {
+  uint32 bitrate = 1;
+}
+
+message SetBitrateRequest {
+  uint32 bitrate = 1;
+}
+
+message SetBitrateResponse {}
+
+message SettingsRequest {}
+
+message SettingsResponse {}
+
+message SetSettingsRequest {}
+
+message SetSettingsResponse {}
 
 message Settings {
   // Stream service type, like `rtmp_custom` or `rtmp_common`.

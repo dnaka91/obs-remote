@@ -2,25 +2,24 @@ syntax = "proto3";
 
 package obs_remote.hotkeys;
 
-import "google/protobuf/empty.proto";
-
-service Hotkeys {
+service HotkeysService {
   // Gets an array of all hotkey names in OBS.
   //
   // Original: GetHotkeyList
-  rpc List(google.protobuf.Empty) returns (ListReply);
+  rpc List(ListRequest) returns (ListResponse);
   // Triggers a hotkey using its name.
   //
   // Original: TriggerHotkeyByName
-  rpc TriggerByName(TriggerByNameRequest) returns (google.protobuf.Empty);
+  rpc TriggerByName(TriggerByNameRequest) returns (TriggerByNameResponse);
   // Triggers a hotkey using a sequence of keys.
   //
   // Original: TriggerHotkeyBySequence
-  rpc TriggerBySequence(TriggerBySequenceRequest)
-      returns (google.protobuf.Empty);
+  rpc TriggerBySequence(TriggerBySequenceRequest) returns (TriggerBySequenceResponse);
 }
 
-message ListReply {
+message ListRequest {}
+
+message ListResponse {
   // Array of hotkey names.
   repeated string hotkeys = 1;
 }
@@ -29,6 +28,8 @@ message TriggerByNameRequest {
   // Name of the hotkey to trigger.
   string name = 1;
 }
+
+message TriggerByNameResponse {}
 
 message TriggerBySequenceRequest {
   // The OBS key code to use.
@@ -688,3 +689,5 @@ message TriggerBySequenceRequest {
     bool command = 4;
   }
 }
+
+message TriggerBySequenceResponse {}

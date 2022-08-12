@@ -1,7 +1,7 @@
 use obs::{data::Data, filter::OrderMovement, source::Source};
 use tonic::{Request, Response, Status};
 
-pub use self::filters_server::FiltersServer;
+pub use self::filters_service_server::FiltersServiceServer;
 use crate::{precondition, precondition_fn};
 
 tonic::include_proto!("obs_remote.filters");
@@ -9,9 +9,9 @@ tonic::include_proto!("obs_remote.filters");
 pub struct FiltersService;
 
 #[tonic::async_trait]
-impl filters_server::Filters for FiltersService {
-    async fn list(&self, request: Request<String>) -> Result<Response<ListReply>, Status> {
-        let source_name = request.into_inner();
+impl filters_service_server::FiltersService for FiltersService {
+    async fn list(&self, request: Request<ListRequest>) -> Result<Response<ListResponse>, Status> {
+        let ListRequest { source_name } = request.into_inner();
         let source = Source::by_name(&source_name)
             .ok_or_else(precondition_fn!("`{source_name}` doesn't exist"))?;
 
@@ -28,25 +28,36 @@ impl filters_server::Filters for FiltersService {
             })
             .collect();
 
-        Ok(Response::new(ListReply { filters }))
+        Ok(Response::new(ListResponse { filters }))
     }
 
-    async fn default_settings(&self, request: Request<String>) -> Result<Response<String>, Status> {
-        let kind = request.into_inner();
+    async fn default_settings(
+        &self,
+        request: Request<DefaultSettingsRequest>,
+    ) -> Result<Response<DefaultSettingsResponse>, Status> {
+        let DefaultSettingsRequest { kind } = request.into_inner();
 
         let defaults = obs::source::defaults(&kind)
             .ok_or_else(precondition_fn!("`{kind}` doesn't exist"))?
             .to_json();
 
-        Ok(Response::new(defaults))
+        Ok(Response::new(DefaultSettingsResponse { defaults }))
     }
 
-    async fn create(&self, request: Request<CreateRequest>) -> Result<Response<()>, Status> {
+    async fn create(
+        &self,
+        request: Request<CreateRequest>,
+    ) -> Result<Response<CreateResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn remove(&self, request: Request<Identifier>) -> Result<Response<()>, Status> {
-        let Identifier { source, filter } = request.into_inner();
+    async fn remove(
+        &self,
+        request: Request<RemoveRequest>,
+    ) -> Result<Response<RemoveResponse>, Status> {
+        let RemoveRequest { identifier } = request.into_inner();
+        let Identifier { source, filter } =
+            identifier.ok_or_else(|| Status::invalid_argument("identifier must be specified"))?;
 
         let source =
             Source::by_name(&source).ok_or_else(precondition_fn!("`{source}` doesn't exist"))?;
@@ -56,11 +67,13 @@ impl filters_server::Filters for FiltersService {
 
         filter.into_source().remove();
 
-        Ok(Response::new(()))
+        Ok(Response::new(RemoveResponse {}))
     }
 
-    async fn get(&self, request: Request<Identifier>) -> Result<Response<Filter>, Status> {
-        let Identifier { source, filter } = request.into_inner();
+    async fn get(&self, request: Request<GetRequest>) -> Result<Response<GetResponse>, Status> {
+        let GetRequest { identifier } = request.into_inner();
+        let Identifier { source, filter } =
+            identifier.ok_or_else(|| Status::invalid_argument("identifier must be specified"))?;
 
         let source =
             Source::by_name(&source).ok_or_else(precondition_fn!("`{source}` doesn't exist"))?;
@@ -76,10 +89,15 @@ impl filters_server::Filters for FiltersService {
             settings: filter.source().settings().to_json(),
         };
 
-        Ok(Response::new(filter))
+        Ok(Response::new(GetResponse {
+            filter: Some(filter),
+        }))
     }
 
-    async fn set_name(&self, request: Request<SetNameRequest>) -> Result<Response<()>, Status> {
+    async fn set_name(
+        &self,
+        request: Request<SetNameRequest>,
+    ) -> Result<Response<SetNameResponse>, Status> {
         let SetNameRequest {
             identifier,
             new_name,
@@ -100,10 +118,13 @@ impl filters_server::Filters for FiltersService {
 
         filter.into_source().set_name(&new_name);
 
-        Ok(Response::new(()))
+        Ok(Response::new(SetNameResponse {}))
     }
 
-    async fn set_index(&self, request: Request<SetIndexRequest>) -> Result<Response<()>, Status> {
+    async fn set_index(
+        &self,
+        request: Request<SetIndexRequest>,
+    ) -> Result<Response<SetIndexResponse>, Status> {
         let SetIndexRequest { identifier, index } = request.into_inner();
         let Identifier { source, filter } =
             identifier.ok_or_else(precondition_fn!("identifier must be specified"))?;
@@ -131,13 +152,13 @@ impl filters_server::Filters for FiltersService {
             }
         }
 
-        Ok(Response::new(()))
+        Ok(Response::new(SetIndexResponse {}))
     }
 
     async fn set_enabled(
         &self,
         request: Request<SetEnabledRequest>,
-    ) -> Result<Response<()>, Status> {
+    ) -> Result<Response<SetEnabledResponse>, Status> {
         let SetEnabledRequest {
             identifier,
             enabled,
@@ -153,13 +174,13 @@ impl filters_server::Filters for FiltersService {
 
         filter.into_source().set_enabled(enabled);
 
-        Ok(Response::new(()))
+        Ok(Response::new(SetEnabledResponse {}))
     }
 
     async fn set_settings(
         &self,
         request: Request<SetSettingsRequest>,
-    ) -> Result<Response<()>, Status> {
+    ) -> Result<Response<SetSettingsResponse>, Status> {
         let SetSettingsRequest {
             identifier,
             settings,
@@ -186,6 +207,6 @@ impl filters_server::Filters for FiltersService {
 
         filter.update_properties();
 
-        Ok(Response::new(()))
+        Ok(Response::new(SetSettingsResponse {}))
     }
 }

@@ -4,18 +4,84 @@ package obs_remote.events;
 
 import "google/protobuf/empty.proto";
 
-service Events {
-  rpc All(google.protobuf.Empty) returns (stream Event);
-  rpc General(google.protobuf.Empty) returns (stream GeneralEvent);
-  rpc Config(google.protobuf.Empty) returns (stream ConfigEvent);
-  rpc Scenes(google.protobuf.Empty) returns (stream ScenesEvent);
-  rpc Inputs(google.protobuf.Empty) returns (stream InputsEvent);
-  rpc Transitions(google.protobuf.Empty) returns (stream TransitionsEvent);
-  rpc Filters(google.protobuf.Empty) returns (stream FiltersEvent);
-  rpc Outputs(google.protobuf.Empty) returns (stream OutputsEvent);
-  rpc SceneItems(google.protobuf.Empty) returns (stream SceneItemsEvent);
-  rpc MediaInputs(google.protobuf.Empty) returns (stream MediaInputsEvent);
-  rpc HighVolume(google.protobuf.Empty) returns (stream HighVolumeEvent);
+service EventsService {
+  rpc All(AllRequest) returns (stream AllResponse);
+  rpc General(GeneralRequest) returns (stream GeneralResponse);
+  rpc Config(ConfigRequest) returns (stream ConfigResponse);
+  rpc Scenes(ScenesRequest) returns (stream ScenesResponse);
+  rpc Inputs(InputsRequest) returns (stream InputsResponse);
+  rpc Transitions(TransitionsRequest) returns (stream TransitionsResponse);
+  rpc Filters(FiltersRequest) returns (stream FiltersResponse);
+  rpc Outputs(OutputsRequest) returns (stream OutputsResponse);
+  rpc SceneItems(SceneItemsRequest) returns (stream SceneItemsResponse);
+  rpc MediaInputs(MediaInputsRequest) returns (stream MediaInputsResponse);
+  rpc HighVolume(HighVolumeRequest) returns (stream HighVolumeResponse);
+}
+
+message AllRequest {}
+
+message AllResponse {
+  Event event = 1;
+}
+
+message GeneralRequest {}
+
+message GeneralResponse {
+  GeneralEvent event = 1;
+}
+
+message ConfigRequest {}
+
+message ConfigResponse {
+  ConfigEvent event = 1;
+}
+
+message ScenesRequest {}
+
+message ScenesResponse {
+  ScenesEvent event = 1;
+}
+
+message InputsRequest {}
+
+message InputsResponse {
+  InputsEvent event = 1;
+}
+
+message TransitionsRequest {}
+
+message TransitionsResponse {
+  TransitionsEvent event = 1;
+}
+
+message FiltersRequest {}
+
+message FiltersResponse {
+  FiltersEvent event = 1;
+}
+
+message OutputsRequest {}
+
+message OutputsResponse {
+  OutputsEvent event = 1;
+}
+
+message SceneItemsRequest {}
+
+message SceneItemsResponse {
+  SceneItemsEvent event = 1;
+}
+
+message MediaInputsRequest {}
+
+message MediaInputsResponse {
+  MediaInputsEvent event = 1;
+}
+
+message HighVolumeRequest {}
+
+message HighVolumeResponse {
+  HighVolumeEvent event = 1;
 }
 
 message Event {
@@ -40,15 +106,13 @@ message GeneralEvent {
     Custom custom = 3;
   }
 
-  message ExitStarted {
-  }
+  message ExitStarted {}
 
   message StudioModeStateChanged {
     bool enabled = 1;
   }
 
-  message Custom {
-  }
+  message Custom {}
 }
 
 message ConfigEvent {
@@ -231,20 +295,16 @@ message TransitionsEvent {
   }
 
   // Original: CurrentTransitionChanged
-  message CurrentChanged {
-  }
+  message CurrentChanged {}
 
   // Original: CurrentTransitionDurationChanged
-  message CurrentDurationChanged {
-  }
+  message CurrentDurationChanged {}
 
   // Original: TransitionStarted
-  message Started {
-  }
+  message Started {}
 
   // Original: TransitionEnded
-  message Ended {
-  }
+  message Ended {}
 }
 
 message FiltersEvent {
@@ -258,28 +318,22 @@ message FiltersEvent {
   }
 
   // Original: FilterCreated
-  message Created {
-  }
+  message Created {}
 
   // Original: FilterRemoved
-  message Removed {
-  }
+  message Removed {}
 
   // Original: FilterNameChanged
-  message NameChanged {
-  }
+  message NameChanged {}
 
   // Original: SourceFilterAdded
-  message AddedToSource {
-  }
+  message AddedToSource {}
 
   // Orignal: SourceFilterRemoved
-  message RemovedFromSource {
-  }
+  message RemovedFromSource {}
 
   // Original: SourceListReindexed
-  message SourceListReindexed {
-  }
+  message SourceListReindexed {}
 }
 
 message OutputsEvent {
@@ -378,8 +432,7 @@ message SceneItemsEvent {
   }
 
   // Original: SceneItemTransformChanged
-  message TransformChanged {
-  }
+  message TransformChanged {}
 }
 
 message MediaInputsEvent {
@@ -421,6 +474,5 @@ message HighVolumeEvent {
     InputVolumeMeters input_volume_meters = 1;
   }
 
-  message InputVolumeMeters {
-  }
+  message InputVolumeMeters {}
 }

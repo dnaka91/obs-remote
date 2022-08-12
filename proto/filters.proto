@@ -2,58 +2,70 @@ syntax = "proto3";
 
 package obs_remote.filters;
 
-import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
-service Filters {
+service FiltersService {
   // Gets an array of all of a source's filters.
   //
   // Original: GetSourceFilterList
-  rpc List(google.protobuf.StringValue) returns (ListReply);
+  rpc List(ListRequest) returns (ListResponse);
 
   // Gets the default settings for a filter kind.
   //
   // Original: GetSourceFilterDefaultSettings
-  rpc DefaultSettings(google.protobuf.StringValue)
-      returns (google.protobuf.StringValue);
+  rpc DefaultSettings(DefaultSettingsRequest) returns (DefaultSettingsResponse);
 
   // Creates a new filter, adding it to the specified source.
   //
   // Original: CreateSourceFilter
-  rpc Create(CreateRequest) returns (google.protobuf.Empty);
+  rpc Create(CreateRequest) returns (CreateResponse);
 
   // Removes a filter from a source.
   //
   // Original: RemoveSourceFilter
-  rpc Remove(Identifier) returns (google.protobuf.Empty);
+  rpc Remove(RemoveRequest) returns (RemoveResponse);
 
   // Gets the info for a specific source filter.
   //
   // Original: GetSourceFilter
-  rpc Get(Identifier) returns (Filter);
+  rpc Get(GetRequest) returns (GetResponse);
 
   // Sets the name of a source filter (rename).
   //
   // Original: SetSourceFilterName
-  rpc SetName(SetNameRequest) returns (google.protobuf.Empty);
+  rpc SetName(SetNameRequest) returns (SetNameResponse);
 
   // Sets the index position of a filter on a source.
   //
   // Original: SetSourceFilterIndex
-  rpc SetIndex(SetIndexRequest) returns (google.protobuf.Empty);
+  rpc SetIndex(SetIndexRequest) returns (SetIndexResponse);
 
   // Sets the enable state of a source filter.
   //
   // Original: SetSourceFilterEnabled
-  rpc SetEnabled(SetEnabledRequest) returns (google.protobuf.Empty);
+  rpc SetEnabled(SetEnabledRequest) returns (SetEnabledResponse);
 
   // Sets the settings of a source filter.
   //
   // Original: SetSourceFilterSettings
-  rpc SetSettings(SetSettingsRequest) returns (google.protobuf.Empty);
+  rpc SetSettings(SetSettingsRequest) returns (SetSettingsResponse);
 }
 
-message ListReply { repeated Filter filters = 1; }
+message ListRequest {
+  string source_name = 1;
+}
+
+message ListResponse {
+  repeated Filter filters = 1;
+}
+
+message DefaultSettingsRequest {
+  string kind = 1;
+}
+
+message DefaultSettingsResponse {
+  string defaults = 1;
+}
 
 message CreateRequest {
   // Identifier for the filter of a specific source.
@@ -64,12 +76,30 @@ message CreateRequest {
   google.protobuf.StringValue settings = 3;
 }
 
+message CreateResponse {}
+
+message RemoveRequest {
+  Identifier identifier = 1;
+}
+
+message RemoveResponse {}
+
+message GetRequest {
+  Identifier identifier = 1;
+}
+
+message GetResponse {
+  Filter filter = 1;
+}
+
 message SetNameRequest {
   // Identifier for the filter of a specific source.
   Identifier identifier = 1;
   // New name for the filter.
   string new_name = 2;
 }
+
+message SetNameResponse {}
 
 message SetIndexRequest {
   // Identifier for the filter of a specific source.
@@ -78,12 +108,16 @@ message SetIndexRequest {
   uint32 index = 2;
 }
 
+message SetIndexResponse {}
+
 message SetEnabledRequest {
   // Identifier for the filter of a specific source.
   Identifier identifier = 1;
   // New enable state of the filter.
   bool enabled = 2;
 }
+
+message SetEnabledResponse {}
 
 message SetSettingsRequest {
   // Identifier for the filter of a specific source.
@@ -94,6 +128,8 @@ message SetSettingsRequest {
   // to its defaults and then apply the settings.
   google.protobuf.BoolValue overlay = 3;
 }
+
+message SetSettingsResponse {}
 
 message Filter {
   // Whether the filter is enabled.

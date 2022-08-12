@@ -1,7 +1,7 @@
 use obs::hotkeys::{self, Hotkey, InteractionFlags, Key, KeyCombination};
 use tonic::{Request, Response, Status};
 
-pub use self::hotkeys_server::HotkeysServer;
+pub use self::hotkeys_service_server::HotkeysServiceServer;
 use self::trigger_by_sequence_request::KeyCode;
 use crate::precondition;
 
@@ -653,9 +653,11 @@ impl From<KeyCode> for Option<obs::hotkeys::Key> {
 pub struct HotkeysService;
 
 #[tonic::async_trait]
-impl hotkeys_server::Hotkeys for HotkeysService {
-    async fn list(&self, request: Request<()>) -> Result<Response<ListReply>, Status> {
-        Ok(Response::new(ListReply {
+impl hotkeys_service_server::HotkeysService for HotkeysService {
+    async fn list(&self, request: Request<ListRequest>) -> Result<Response<ListResponse>, Status> {
+        let ListRequest {} = request.into_inner();
+
+        Ok(Response::new(ListResponse {
             hotkeys: hotkeys::list()
                 .into_iter()
                 .map(|hotkey| hotkey.name())
@@ -666,7 +668,7 @@ impl hotkeys_server::Hotkeys for HotkeysService {
     async fn trigger_by_name(
         &self,
         request: Request<TriggerByNameRequest>,
-    ) -> Result<Response<()>, Status> {
+    ) -> Result<Response<TriggerByNameResponse>, Status> {
         let name = request.into_inner().name;
         precondition!(!name.is_empty(), "name mustn't be empty");
 
@@ -675,13 +677,13 @@ impl hotkeys_server::Hotkeys for HotkeysService {
 
         hotkey.trigger_routed_callback(true);
 
-        Ok(Response::new(()))
+        Ok(Response::new(TriggerByNameResponse {}))
     }
 
     async fn trigger_by_sequence(
         &self,
         request: Request<TriggerBySequenceRequest>,
-    ) -> Result<Response<()>, Status> {
+    ) -> Result<Response<TriggerBySequenceResponse>, Status> {
         let request = request.into_inner();
         let code: Option<Key> = request.code().into();
         let code = code.ok_or_else(|| Status::failed_precondition("key code must be specified"))?;
@@ -703,6 +705,6 @@ impl hotkeys_server::Hotkeys for HotkeysService {
         combo.inject_event(true);
         combo.inject_event(false);
 
-        Ok(Response::new(()))
+        Ok(Response::new(TriggerBySequenceResponse {}))
     }
 }

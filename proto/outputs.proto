@@ -2,21 +2,47 @@ syntax = "proto3";
 
 package obs_remote.outputs;
 
-import "google/protobuf/empty.proto";
-
-service Outputs {
+service OutputsService {
   // Original: GetOutputList
-  rpc List(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc List(ListRequest) returns (ListResponse);
   // Original: GetOutputStatus
-  rpc Status(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Status(StatusRequest) returns (StatusResponse);
   // Original: ToggleOutput
-  rpc Toggle(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Toggle(ToggleRequest) returns (ToggleResponse);
   // Original: StartOutput
-  rpc Start(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Start(StartRequest) returns (StartResponse);
   // Original: StopOutput
-  rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Stop(StopRequest) returns (StopResponse);
   // Original: GetOutputSettings
-  rpc Settings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Settings(SettingsRequest) returns (SettingsResponse);
   // Original: SetOutputSettings
-  rpc SetSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SetSettings(SetSettingsRequest) returns (SetSettingsResponse);
 }
+
+message ListRequest {}
+
+message ListResponse {}
+
+message StatusRequest {}
+
+message StatusResponse {}
+
+message ToggleRequest {}
+
+message ToggleResponse {}
+
+message StartRequest {}
+
+message StartResponse {}
+
+message StopRequest {}
+
+message StopResponse {}
+
+message SettingsRequest {}
+
+message SettingsResponse {}
+
+message SetSettingsRequest {}
+
+message SetSettingsResponse {}

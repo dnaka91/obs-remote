@@ -2,35 +2,58 @@ syntax = "proto3";
 
 package obs_remote.scene_collections;
 
-import "google/protobuf/empty.proto";
-import "google/protobuf/wrappers.proto";
-
-service SceneCollections {
+service SceneCollectionsService {
   // Gets an array of all scene collections.
   //
   // Original: GetSceneCollectionList
-  rpc List(google.protobuf.Empty) returns (ListReply);
+  rpc List(ListRequest) returns (ListResponse);
   // Original: **MISSING**
-  rpc Current(google.protobuf.Empty) returns (google.protobuf.StringValue);
+  rpc Current(CurrentRequest) returns (CurrentResponse);
   // Switches to a scene collection.
   //
   // Note: This will block until the collection has finished changing.
   //
   // Original: SetCurrentSceneCollection
-  rpc SetCurrent(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc SetCurrent(SetCurrentRequest) returns (SetCurrentResponse);
   // Creates a new scene collection, switching to it in the process.
   //
   // Note: This will block until the collection has finished changing.
   //
   // Original: CreateSceneCollection
-  rpc Create(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc Create(CreateRequest) returns (CreateResponse);
   // Original: -
-  rpc Delete(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc Remove(RemoveRequest) returns (RemoveResponse);
 }
 
-message ListReply {
+message ListRequest {}
+
+message ListResponse {
   // The name of the current scene collection.
   string current = 1;
   // Array of all available scene collections.
   repeated string collections = 2;
 }
+
+message CurrentRequest {}
+
+message CurrentResponse {
+  string name = 1;
+}
+
+message SetCurrentRequest {
+  string name = 1;
+}
+
+message SetCurrentResponse {}
+
+message CreateRequest {
+  string name = 1;
+}
+
+message CreateResponse {}
+
+message RemoveRequest {
+  string name = 1;
+}
+
+message RemoveResponse {}

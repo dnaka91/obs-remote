@@ -5,7 +5,7 @@ use obs::source::{Source, SourceType};
 use tonic::{Request, Response, Status};
 
 use self::screenshot_request::{resize::Filter, ImageFormat};
-pub use self::sources_server::SourcesServer;
+pub use self::sources_service_server::SourcesServiceServer;
 use crate::precondition;
 
 tonic::include_proto!("obs_remote.sources");
@@ -13,9 +13,12 @@ tonic::include_proto!("obs_remote.sources");
 pub struct SourcesService;
 
 #[tonic::async_trait]
-impl sources_server::Sources for SourcesService {
-    async fn is_active(&self, request: Request<String>) -> Result<Response<IsActiveReply>, Status> {
-        let name = request.into_inner();
+impl sources_service_server::SourcesService for SourcesService {
+    async fn is_active(
+        &self,
+        request: Request<IsActiveRequest>,
+    ) -> Result<Response<IsActiveResponse>, Status> {
+        let IsActiveRequest { name } = request.into_inner();
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let source = Source::by_name(&name)
@@ -28,7 +31,7 @@ impl sources_server::Sources for SourcesService {
             name
         );
 
-        Ok(Response::new(IsActiveReply {
+        Ok(Response::new(IsActiveResponse {
             active: source.active(),
             showing: source.showing(),
         }))
@@ -37,17 +40,17 @@ impl sources_server::Sources for SourcesService {
     async fn screenshot(
         &self,
         request: Request<ScreenshotRequest>,
-    ) -> Result<Response<Vec<u8>>, Status> {
+    ) -> Result<Response<ScreenshotResponse>, Status> {
         let details = request.into_inner();
         let image = screenshot(&details).unwrap();
 
-        Ok(Response::new(image))
+        Ok(Response::new(ScreenshotResponse {  image }))
     }
 
     async fn save_screenshot(
         &self,
         request: Request<SaveScreenshotRequest>,
-    ) -> Result<Response<()>, Status> {
+    ) -> Result<Response<SaveScreenshotResponse>, Status> {
         let SaveScreenshotRequest { file_path, details } = request.into_inner();
         let details =
             details.ok_or_else(|| Status::failed_precondition("details must be specified"))?;
@@ -55,7 +58,7 @@ impl sources_server::Sources for SourcesService {
 
         std::fs::write(file_path, image).unwrap();
 
-        Ok(Response::new(()))
+        Ok(Response::new(SaveScreenshotResponse {}))
     }
 }
 

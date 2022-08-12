@@ -1,60 +1,84 @@
 use tonic::{Request, Response, Status};
 
-pub use self::transitions_server::TransitionsServer;
+pub use self::transitions_service_server::TransitionsServiceServer;
 
 tonic::include_proto!("obs_remote.transitions");
 
 pub struct TransitionsService;
 
 #[tonic::async_trait]
-impl transitions_server::Transitions for TransitionsService {
-    async fn list(&self, request: Request<()>) -> Result<Response<()>, Status> {
+impl transitions_service_server::TransitionsService for TransitionsService {
+    async fn list(&self, request: Request<ListRequest>) -> Result<Response<ListResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn current(&self, request: Request<()>) -> Result<Response<String>, Status> {
+    async fn current(
+        &self,
+        request: Request<CurrentRequest>,
+    ) -> Result<Response<CurrentResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn set_current(&self, request: Request<String>) -> Result<Response<()>, Status> {
+    async fn set_current(
+        &self,
+        request: Request<SetCurrentRequest>,
+    ) -> Result<Response<SetCurrentResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
     async fn set_current_duration(
         &self,
-        request: Request<prost_types::Duration>,
-    ) -> Result<Response<()>, Status> {
+        request: Request<SetCurrentDurationRequest>,
+    ) -> Result<Response<SetCurrentDurationResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn settings(&self, request: Request<()>) -> Result<Response<()>, Status> {
+    async fn settings(
+        &self,
+        request: Request<SettingsRequest>,
+    ) -> Result<Response<SettingsResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn set_settings(&self, request: Request<()>) -> Result<Response<()>, Status> {
+    async fn set_settings(
+        &self,
+        request: Request<SetSettingsRequest>,
+    ) -> Result<Response<SetSettingsResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn release_t_bar(&self, request: Request<()>) -> Result<Response<()>, Status> {
+    async fn release_t_bar(
+        &self,
+        request: Request<ReleaseTBarRequest>,
+    ) -> Result<Response<ReleaseTBarResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn set_t_bar_position(&self, request: Request<f32>) -> Result<Response<()>, Status> {
+    async fn set_t_bar_position(
+        &self,
+        request: Request<SetTBarPositionRequest>,
+    ) -> Result<Response<SetTBarPositionResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
     async fn trigger_studio_mode_transition(
         &self,
-        request: Request<()>,
-    ) -> Result<Response<()>, Status> {
+        request: Request<TriggerStudioModeTransitionRequest>,
+    ) -> Result<Response<TriggerStudioModeTransitionResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn create(&self, request: Request<()>) -> Result<Response<()>, Status> {
+    async fn create(
+        &self,
+        request: Request<CreateRequest>,
+    ) -> Result<Response<CreateResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 
-    async fn delete(&self, request: Request<()>) -> Result<Response<()>, Status> {
+    async fn delete(
+        &self,
+        request: Request<DeleteRequest>,
+    ) -> Result<Response<DeleteResponse>, Status> {
         Err(Status::unimplemented("not implemented!"))
     }
 }

@@ -2,33 +2,71 @@ syntax = "proto3";
 
 package obs_remote.recording;
 
-import "google/protobuf/empty.proto";
-import "google/protobuf/wrappers.proto";
-
-// Original: Record
-service Recording {
+service RecordingService {
   // Original: GetRecordStatus
-  rpc Status(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Status(StatusRequest) returns (StatusResponse);
   // Original: ToggleRecord
-  rpc Toggle(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Toggle(ToggleRequest) returns (ToggleResponse);
   // Original: StartRecord
-  rpc Start(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Start(StartRequest) returns (StartResponse);
   // Original: StopRecord
-  rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Stop(StopRequest) returns (StopResponse);
   // Original: ToggleRecordPause
-  rpc TogglePause(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc TogglePause(TogglePauseRequest) returns (TogglePauseResponse);
   // Original: PauseRecord
-  rpc Pause(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Pause(PauseRequest) returns (PauseResponse);
   // Original: ResumeRecord
-  rpc Resume(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Resume(ResumeRequest) returns (ResumeResponse);
   // Original: GetRecordDirectory
-  rpc Directory(google.protobuf.Empty) returns (google.protobuf.StringValue);
+  rpc Directory(DirectoryRequest) returns (DirectoryResponse);
   // Original: SetRecordDirectory
-  rpc SetDirectory(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc SetDirectory(SetDirectoryRequest) returns (SetDirectoryResponse);
   // Original: GetRecordFilenameFormatting
-  rpc FilenameFormatting(google.protobuf.Empty)
-      returns (google.protobuf.StringValue);
+  rpc FilenameFormatting(FilenameFormattingRequest) returns (FilenameFormattingResponse);
   // Original: SetRecordFilenameFormatting
-  rpc SetFilenameFormatting(google.protobuf.Empty)
-      returns (google.protobuf.StringValue);
+  rpc SetFilenameFormatting(SetFilenameFormattingRequest) returns (SetFilenameFormattingResponse);
 }
+
+message StatusRequest {}
+
+message StatusResponse {}
+
+message ToggleRequest {}
+
+message ToggleResponse {}
+
+message StartRequest {}
+
+message StartResponse {}
+
+message StopRequest {}
+
+message StopResponse {}
+
+message TogglePauseRequest {}
+
+message TogglePauseResponse {}
+
+message PauseRequest {}
+
+message PauseResponse {}
+
+message ResumeRequest {}
+
+message ResumeResponse {}
+
+message DirectoryRequest {}
+
+message DirectoryResponse {}
+
+message SetDirectoryRequest {}
+
+message SetDirectoryResponse {}
+
+message FilenameFormattingRequest {}
+
+message FilenameFormattingResponse {}
+
+message SetFilenameFormattingRequest {}
+
+message SetFilenameFormattingResponse {}

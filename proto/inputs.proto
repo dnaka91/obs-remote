@@ -2,69 +2,62 @@ syntax = "proto3";
 
 package obs_remote.inputs;
 
-import "google/protobuf/empty.proto";
-import "google/protobuf/wrappers.proto";
-
-service Inputs {
+service InputsService {
   // Original: GetInputList
-  rpc List(ListRequest) returns (ListReply);
+  rpc List(ListRequest) returns (ListResponse);
   // Original: GetInputKindList
-  rpc ListKinds(ListKindsRequest) returns (ListKindsReply);
+  rpc ListKinds(ListKindsRequest) returns (ListKindsResponse);
   // Original: GetSpecialInputNames
-  rpc ListSpecial(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc ListSpecial(ListSpecialRequest) returns (ListSpecialResponse);
   // Original: GetInputDefaultSettings
-  rpc DefaultSettings(DefaultSettingsRequest)
-      returns (google.protobuf.StringValue);
+  rpc DefaultSettings(DefaultSettingsRequest) returns (DefaultSettingsResponse);
   // Original: GetInputSettings
-  rpc Settings(google.protobuf.StringValue) returns (SettingsReply);
+  rpc Settings(SettingsRequest) returns (SettingsResponse);
   // Original: SetInputSettings
-  rpc SetSettings(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SetSettings(SetSettingsRequest) returns (SetSettingsResponse);
   // Original: GetInputMute
-  rpc Mute(google.protobuf.StringValue) returns (google.protobuf.BoolValue);
+  rpc Mute(MuteRequest) returns (MuteResponse);
   // Original: SetInputMute
-  rpc SetMute(SetMuteRequest) returns (google.protobuf.Empty);
+  rpc SetMute(SetMuteRequest) returns (SetMuteResponse);
   // Original: ToggleInputMute
-  rpc ToggleMute(google.protobuf.StringValue)
-      returns (google.protobuf.BoolValue);
+  rpc ToggleMute(ToggleMuteRequest) returns (ToggleMuteResponse);
   // Original: GetInputVolume
-  rpc Volume(google.protobuf.StringValue) returns (VolumeReply);
+  rpc Volume(VolumeRequest) returns (VolumeResponse);
   // Original: SetInputVolume
-  rpc SetVolume(SetVolumeRequest) returns (google.protobuf.Empty);
+  rpc SetVolume(SetVolumeRequest) returns (SetVolumeResponse);
   // Original: GetInputAudioSyncOffset
-  rpc AudioSyncOffset(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc AudioSyncOffset(AudioSyncOffsetRequest) returns (AudioSyncOffsetResponse);
   // Original: SetInputAudioSyncOffset
-  rpc SetAudioSyncOffset(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SetAudioSyncOffset(SetAudioSyncOffsetRequest) returns (SetAudioSyncOffsetResponse);
   // Original: GetInputTracks
-  rpc Tracks(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Tracks(TracksRequest) returns (TracksResponse);
   // Original: SetInputTracks
-  rpc SetTracks(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SetTracks(SetTracksRequest) returns (SetTracksResponse);
   // Original: GetInputMonitorType
-  rpc MonitorMode(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc MonitorMode(MonitorModeRequest) returns (MonitorModeResponse);
   // Original: SetInputMonitorType
-  rpc SetMonitorMode(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SetMonitorMode(SetMonitorModeRequest) returns (SetMonitorModeResponse);
   // Original: GetInputActive
-  rpc IsActive(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  rpc IsActive(IsActiveRequest) returns (IsActiveResponse);
   // Original: GetInputPropertiesListPropertyItems
-  rpc PropertiesListPropertyItems(google.protobuf.Empty)
-      returns (google.protobuf.Empty);
+  rpc PropertiesListPropertyItems(PropertiesListPropertyItemsRequest) returns (PropertiesListPropertyItemsResponse);
   // Original: PressInputPropertiesButton
-  rpc PressPropertiesButton(google.protobuf.Empty)
-      returns (google.protobuf.Empty);
+  rpc PressPropertiesButton(PressPropertiesButtonRequest) returns (PressPropertiesButtonResponse);
   // Original: SetInputName
-  rpc SetName(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc SetName(SetNameRequest) returns (SetNameResponse);
   // Original: CreateInput
-  rpc Create(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Create(CreateRequest) returns (CreateResponse);
   // Original: DeleteInput
-  rpc Delete(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Remove(RemoveRequest) returns (RemoveResponse);
 }
 
 message ListRequest {
   string kind = 1;
 }
 
-message ListReply {
+message ListResponse {
   string kind = 1;
-  repeated Input inputs  = 2;
+  repeated Input inputs = 2;
 
   message Input {
     string name = 1;
@@ -77,17 +70,41 @@ message ListKindsRequest {
   bool unversioned = 1;
 }
 
-message ListKindsReply {
+message ListKindsResponse {
   repeated string kinds = 1;
 }
+
+message ListSpecialRequest {}
+
+message ListSpecialResponse {}
 
 message DefaultSettingsRequest {
   string kind = 1;
 }
 
-message SettingsReply {
+message DefaultSettingsResponse {
+  string defaults = 1;
+}
+
+message SettingsRequest {
+  string name = 1;
+}
+
+message SettingsResponse {
   string kind = 1;
   string settings = 2;
+}
+
+message SetSettingsRequest {}
+
+message SetSettingsResponse {}
+
+message MuteRequest {
+  string name = 1;
+}
+
+message MuteResponse {
+  bool muted = 1;
 }
 
 message SetMuteRequest {
@@ -95,7 +112,21 @@ message SetMuteRequest {
   bool muted = 2;
 }
 
-message VolumeReply {
+message SetMuteResponse {}
+
+message ToggleMuteRequest {
+  string name = 1;
+}
+
+message ToggleMuteResponse {
+  bool muted = 1;
+}
+
+message VolumeRequest {
+  string name = 1;
+}
+
+message VolumeResponse {
   float mul = 1;
   float db = 2;
 }
@@ -108,3 +139,53 @@ message SetVolumeRequest {
     float db = 3;
   }
 }
+
+message SetVolumeResponse {}
+
+message AudioSyncOffsetRequest {}
+
+message AudioSyncOffsetResponse {}
+
+message SetAudioSyncOffsetRequest {}
+
+message SetAudioSyncOffsetResponse {}
+
+message TracksRequest {}
+
+message TracksResponse {}
+
+message SetTracksRequest {}
+
+message SetTracksResponse {}
+
+message MonitorModeRequest {}
+
+message MonitorModeResponse {}
+
+message SetMonitorModeRequest {}
+
+message SetMonitorModeResponse {}
+
+message IsActiveRequest {}
+
+message IsActiveResponse {}
+
+message PropertiesListPropertyItemsRequest {}
+
+message PropertiesListPropertyItemsResponse {}
+
+message PressPropertiesButtonRequest {}
+
+message PressPropertiesButtonResponse {}
+
+message SetNameRequest {}
+
+message SetNameResponse {}
+
+message CreateRequest {}
+
+message CreateResponse {}
+
+message RemoveRequest {}
+
+message RemoveResponse {}

@@ -2,54 +2,65 @@ syntax = "proto3";
 
 package obs_remote.profiles;
 
-import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/wrappers.proto";
 
-service Profiles {
+service ProfilesService {
   // Gets an array of all profiles.
   //
   // Original: GetProfileList
-  rpc List(google.protobuf.Empty) returns (ListReply);
+  rpc List(ListRequest) returns (ListResponse);
   // Get the currently active profile.
   //
   // Original: **MISSING**
-  rpc Current(google.protobuf.Empty) returns (google.protobuf.StringValue);
+  rpc Current(CurrentRequest) returns (CurrentResponse);
   // Switches to a profile.
   //
   // Original: SetCurrentProfile
-  rpc SetCurrent(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc SetCurrent(SetCurrentRequest) returns (SetCurrentResponse);
   // Gets a parameter from the current profile's configuration.
   //
   // Original: GetProfileParameter
-  rpc Parameter(ParameterRequest) returns (ParameterReply);
+  rpc Parameter(ParameterRequest) returns (ParameterResponse);
   // Sets the value of a parameter in the current profile's configuration.
   //
   // Original: SetProfileParameter
-  rpc SetParameter(SetParameterRequest) returns (google.protobuf.Empty);
+  rpc SetParameter(SetParameterRequest) returns (SetParameterResponse);
   // Original: GetPersistentData
-  rpc PersistentData(google.protobuf.StringValue)
-      returns (google.protobuf.Struct);
+  rpc PersistentData(PersistentDataRequest) returns (PersistentDataResponse);
   // Original: SetPersistentData
-  rpc SetPersistentData(SetPersistentDataRequest)
-      returns (google.protobuf.Empty);
+  rpc SetPersistentData(SetPersistentDataRequest) returns (SetPersistentDataResponse);
   // Creates a new profile, switching to it in the process.
   //
   // Original: CreateProfile
-  rpc Create(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc Create(CreateRequest) returns (CreateResponse);
   // Removes a profile. If the current profile is chosen, it will change to a
   // different profile first.
   //
   // Original: DeleteProfile
-  rpc Delete(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc Remove(RemoveRequest) returns (RemoveResponse);
 }
 
-message ListReply {
+message ListRequest {}
+
+message ListResponse {
   // The name of the current profile.
   string current = 1;
   // Array of all available profiles.
   repeated string profiles = 2;
 }
+
+message CurrentRequest {}
+
+message CurrentResponse {
+  string name = 1;
+}
+
+message SetCurrentRequest {
+  string name = 1;
+}
+
+message SetCurrentResponse {}
 
 message ParameterRequest {
   // Category of the parameter to get.
@@ -58,7 +69,7 @@ message ParameterRequest {
   string name = 2;
 }
 
-message ParameterReply {
+message ParameterResponse {
   // Value associated with the parameter. Missing if not set or no default.
   google.protobuf.StringValue value = 1;
   // Default value associated with the parameter. Missing if on defualt.
@@ -74,9 +85,33 @@ message SetParameterRequest {
   google.protobuf.StringValue value = 3;
 }
 
+message SetParameterResponse {}
+
+message PersistentDataRequest {
+  string name = 1;
+}
+
+message PersistentDataResponse {
+  google.protobuf.Value value = 1;
+}
+
 message SetPersistentDataRequest {
   // The name of the slot to save data to.
   string name = 1;
   // The value to apply to the slot.
-  google.protobuf.Struct value = 2;
+  google.protobuf.Value value = 2;
 }
+
+message SetPersistentDataResponse {}
+
+message CreateRequest {
+  string name = 1;
+}
+
+message CreateResponse {}
+
+message RemoveRequest {
+  string name = 1;
+}
+
+message RemoveResponse {}

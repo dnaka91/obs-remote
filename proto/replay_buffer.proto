@@ -2,33 +2,59 @@ syntax = "proto3";
 
 package obs_remote.replay_buffer;
 
-import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
-import "google/protobuf/wrappers.proto";
-
-service ReplayBuffer {
+service ReplayBufferService {
   // Gets the status of the replay buffer output.
   //
   // Original: GetReplayBufferStatus
-  rpc Status(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  rpc Status(StatusRequest) returns (StatusResponse);
   // Toggles the state of the replay buffer output.
   //
   // Original: ToggleReplayBuffer
-  rpc Toggle(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  rpc Toggle(ToggleRequest) returns (ToggleResponse);
   // Starts the replay buffer output.
   //
   // Original: StartReplayBuffer
-  rpc Start(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Start(StartRequest) returns (StartResponse);
   // Stops the replay buffer output.
   //
   // Original: StopReplayBuffer
-  rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Stop(StopRequest) returns (StopResponse);
   // Saves the contents of the replay buffer output.
   //
   // Original: SaveReplayBuffer
-  rpc Save(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Save(SaveRequest) returns (SaveResponse);
   // Gets the filename of the last replay buffer save file.
   //
   // Original: GetLastReplayBufferReplay
-  rpc LastReplay(google.protobuf.Empty) returns (google.protobuf.StringValue);
+  rpc LastReplay(LastReplayRequest) returns (LastReplayResponse);
+}
+
+message StatusRequest {}
+
+message StatusResponse {
+  bool active = 1;
+}
+
+message ToggleRequest {}
+
+message ToggleResponse {
+  bool active = 1;
+}
+
+message StartRequest {}
+
+message StartResponse {}
+
+message StopRequest {}
+
+message StopResponse {}
+
+message SaveRequest {}
+
+message SaveResponse {}
+
+message LastReplayRequest {}
+
+message LastReplayResponse {
+  string file = 1;
 }

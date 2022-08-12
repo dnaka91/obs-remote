@@ -4,18 +4,15 @@ package obs_remote.config;
 
 import "google/protobuf/struct.proto";
 
-service Config {
+service ConfigService {
   // Gets the value of a "slot" from the selected persistent data realm.
-  rpc GlobalPersistentData(GlobalPersistentDataRequest)
-      returns (GlobalPersistentDataResponse);
+  rpc GlobalPersistentData(GlobalPersistentDataRequest) returns (GlobalPersistentDataResponse);
   // Sets the value of a "slot" from the selected persistent data realm.
-  rpc SetGlobalPersistentData(SetGlobalPersistentDataRequest)
-      returns (SetGlobalPersistentDataResponse);
+  rpc SetGlobalPersistentData(SetGlobalPersistentDataRequest) returns (SetGlobalPersistentDataResponse);
   // Gets the current video settings.
   rpc VideoSettings(VideoSettingsRequest) returns (VideoSettingsResponse);
   // Sets the current video settings.
-  rpc SetVideoSettings(SetVideoSettingsRequest)
-      returns (SetVideoSettingsResponse);
+  rpc SetVideoSettings(SetVideoSettingsRequest) returns (SetVideoSettingsResponse);
 }
 
 message GlobalPersistentDataRequest {

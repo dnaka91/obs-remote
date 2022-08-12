@@ -2,36 +2,89 @@ syntax = "proto3";
 
 package obs_remote.scene_items;
 
-import "google/protobuf/empty.proto";
-import "google/protobuf/wrappers.proto";
-
-service SceneItems {
+service SceneItemsService {
   // Original: GetSceneItemList
-  rpc List(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc List(ListRequest) returns (ListResponse);
   // Original: GetGroupSceneItemList
-  rpc ListGroup(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc ListGroup(ListGroupRequest) returns (ListGroupResponse);
   // Original: GetSceneItemTransform
-  rpc Transform(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Transform(TransformRequest) returns (TransformResponse);
   // Original: SetSceneItemTransform
-  rpc SetTransform(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SetTransform(SetTransformRequest) returns (SetTransformResponse);
   // Original: GetSceneItemEnabled
-  rpc IsEnabled(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  rpc IsEnabled(IsEnabledRequest) returns (IsEnabledResponse);
   // Original: SetSceneItemEnabled
-  rpc SetEnabled(google.protobuf.BoolValue) returns (google.protobuf.Empty);
+  rpc SetEnabled(SetEnabledRequest) returns (SetEnabledResponse);
   // Original: GetSceneItemLocked
-  rpc IsLocked(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  rpc IsLocked(IsLockedRequest) returns (IsLockedResponse);
   // Original: SetSceneItemLocked
-  rpc SetLocked(google.protobuf.BoolValue) returns (google.protobuf.Empty);
+  rpc SetLocked(SetLockedRequest) returns (SetLockedResponse);
   // Original: GetSceneItemColor
-  rpc Color(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Color(ColorRequest) returns (ColorResponse);
   // Original: SetSceneItemColor
-  rpc SetColor(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SetColor(SetColorRequest) returns (SetColorResponse);
   // Original: SetSceneItemIndex
-  rpc SetIndex(google.protobuf.UInt32Value) returns (google.protobuf.Empty);
+  rpc SetIndex(SetIndexRequest) returns (SetIndexResponse);
   // Original: CreateSceneItem
-  rpc Create(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Create(CreateRequest) returns (CreateResponse);
   // Original: DeleteSceneItem
-  rpc Delete(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Remove(RemoveRequest) returns (RemoveResponse);
   // Original: DuplicateSceneItem
-  rpc Duplicate(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Duplicate(DuplicateRequest) returns (DuplicateResponse);
 }
+
+message ListRequest {}
+
+message ListResponse {}
+
+message ListGroupRequest {}
+
+message ListGroupResponse {}
+
+message TransformRequest {}
+
+message TransformResponse {}
+
+message SetTransformRequest {}
+
+message SetTransformResponse {}
+
+message IsEnabledRequest {}
+
+message IsEnabledResponse {}
+
+message SetEnabledRequest {}
+
+message SetEnabledResponse {}
+
+message IsLockedRequest {}
+
+message IsLockedResponse {}
+
+message SetLockedRequest {}
+
+message SetLockedResponse {}
+
+message ColorRequest {}
+
+message ColorResponse {}
+
+message SetColorRequest {}
+
+message SetColorResponse {}
+
+message SetIndexRequest {}
+
+message SetIndexResponse {}
+
+message CreateRequest {}
+
+message CreateResponse {}
+
+message RemoveRequest {}
+
+message RemoveResponse {}
+
+message DuplicateRequest {}
+
+message DuplicateResponse {}

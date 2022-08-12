@@ -5,8 +5,6 @@ use std::{env, path::PathBuf};
 use bindgen::EnumVariation;
 
 fn main() {
-    println!("cargo:rerun-if-changed=headers");
-
     #[cfg(all(unix, not(target_os = "macos")))]
     {
         pkg_config::probe_library("libobs").unwrap();

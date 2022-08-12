@@ -8,5 +8,4 @@ lint:
   use:
     - DEFAULT
   except:
-    - DIRECTORY_SAME_PACKAGE
     - PACKAGE_DIRECTORY_MATCH

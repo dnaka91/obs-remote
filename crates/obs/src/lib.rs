@@ -1,6 +1,10 @@
 #![deny(rust_2018_idioms)]
 
-use std::{ffi::CStr, fmt::{Display, self}, os::raw::c_char};
+use std::{
+    ffi::CStr,
+    fmt::{self, Display},
+    os::raw::c_char,
+};
 
 pub use num_rational::Ratio;
 pub use time::Duration;

@@ -4,30 +4,26 @@ package virtual_cam.v1;
 
 service VirtualCamService {
   // Gets the status of the virtualcam output.
-  //
-  // Original: GetVirtualCamStatus
   rpc Status(StatusRequest) returns (StatusResponse);
   // Toggles the state of the virtualcam output.
-  //
-  // Original: ToggleVirtualCam
   rpc Toggle(ToggleRequest) returns (ToggleResponse);
   // Starts the virtualcam output.
-  //
-  // Original: StartVirtualCam
   rpc Start(StartRequest) returns (StartResponse);
   // Stops the virtualcam output.
-  //
-  // Original: StopVirtualCam
   rpc Stop(StopRequest) returns (StopResponse);
 }
 
 message StatusRequest {}
 
-message StatusResponse {}
+message StatusResponse {
+  bool active = 1;
+}
 
 message ToggleRequest {}
 
-message ToggleResponse {}
+message ToggleResponse {
+  bool active = 1;
+}
 
 message StartRequest {}
 

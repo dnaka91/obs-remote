@@ -1,4 +1,4 @@
-use std::{os::raw::c_char, ptr, marker::PhantomData};
+use std::{os::raw::c_char, ptr};
 
 use crate::{config::Config, cstr_ptr, util::StringConversion};
 

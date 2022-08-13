@@ -2,7 +2,7 @@ use std::{marker::PhantomData, ptr::NonNull};
 
 use num_rational::Ratio;
 
-use crate::util::StringConversion;
+use crate::util::FfiToString;
 
 pub struct Video<'a> {
     raw: NonNull<libobs_sys::video_t>,

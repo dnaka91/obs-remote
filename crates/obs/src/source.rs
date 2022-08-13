@@ -9,11 +9,10 @@ use time::Duration;
 
 use crate::{
     callback::signal::{SignalHandler, SourceSignal},
-    cstr_ptr,
     data::Data,
     filter::Filter,
     properties::Properties,
-    util::{self, StringConversion},
+    util::{self, FfiToString, StringToFfi},
 };
 
 #[derive(PartialEq, Eq)]
@@ -54,12 +53,15 @@ impl<'a> Source<'a> {
     }
 
     pub fn by_name(name: &str) -> Option<Self> {
-        let raw = unsafe { libobs_sys::obs_get_source_by_name(cstr_ptr!(name)) };
+        let name = name.cstr();
+        let raw = unsafe { libobs_sys::obs_get_source_by_name(name.as_ptr()) };
+
         (!raw.is_null()).then(|| Self::from_raw(raw))
     }
 
     pub fn transition_by_name(name: &str) -> Option<Self> {
-        let raw = unsafe { libobs_sys::obs_get_transition_by_name(cstr_ptr!(name)) };
+        let name = name.cstr();
+        let raw = unsafe { libobs_sys::obs_get_transition_by_name(name.as_ptr()) };
 
         (!raw.is_null()).then(|| Self::from_raw(raw))
     }
@@ -113,9 +115,9 @@ impl<'a> Source<'a> {
     }
 
     pub fn filter_by_name(&self, name: &str) -> Option<Filter<'_>> {
-        let raw = unsafe {
-            libobs_sys::obs_source_get_filter_by_name(self.raw.as_ptr(), cstr_ptr!(name))
-        };
+        let name = name.cstr();
+        let raw =
+            unsafe { libobs_sys::obs_source_get_filter_by_name(self.raw.as_ptr(), name.as_ptr()) };
 
         if raw.is_null() {
             None
@@ -135,7 +137,9 @@ impl<'a> Source<'a> {
     }
 
     pub fn icon_type(id: &str) -> IconType {
-        IconType::from_native(unsafe { libobs_sys::obs_source_get_icon_type(cstr_ptr!(id)) })
+        let id = id.cstr();
+
+        IconType::from_native(unsafe { libobs_sys::obs_source_get_icon_type(id.as_ptr()) })
     }
 
     pub fn id(&self) -> String {
@@ -153,7 +157,9 @@ impl<'a> Source<'a> {
     }
 
     pub fn set_name(&self, name: &str) {
-        unsafe { libobs_sys::obs_source_set_name(self.raw.as_ptr(), cstr_ptr!(name)) };
+        let name = name.cstr();
+
+        unsafe { libobs_sys::obs_source_set_name(self.raw.as_ptr(), name.as_ptr()) };
     }
 
     pub fn output_flags(&self) -> OutputFlags {
@@ -558,17 +564,20 @@ pub fn list() -> Vec<Source<'static>> {
 }
 
 pub fn display_name(id: &str) -> String {
-    unsafe { libobs_sys::obs_source_get_display_name(cstr_ptr!(id)) }.into_string()
+    let id = id.cstr();
+
+    unsafe { libobs_sys::obs_source_get_display_name(id.as_ptr()) }.into_string()
 }
 
 pub fn output_flags(id: &str) -> OutputFlags {
-    OutputFlags::from_bits_truncate(unsafe {
-        libobs_sys::obs_get_source_output_flags(cstr_ptr!(id))
-    })
+    let id = id.cstr();
+
+    OutputFlags::from_bits_truncate(unsafe { libobs_sys::obs_get_source_output_flags(id.as_ptr()) })
 }
 
 pub fn defaults(id: &str) -> Option<Data<'static>> {
-    let raw = unsafe { libobs_sys::obs_get_source_defaults(cstr_ptr!(id)) };
+    let id = id.cstr();
+    let raw = unsafe { libobs_sys::obs_get_source_defaults(id.as_ptr()) };
     (!raw.is_null()).then(|| {
         unsafe { libobs_sys::obs_data_addref(raw) };
         Data::from_raw(raw)
@@ -576,7 +585,8 @@ pub fn defaults(id: &str) -> Option<Data<'static>> {
 }
 
 pub fn properties(id: &str) -> Option<Properties<'static>> {
-    let raw = unsafe { libobs_sys::obs_get_source_properties(cstr_ptr!(id)) };
+    let id = id.cstr();
+    let raw = unsafe { libobs_sys::obs_get_source_properties(id.as_ptr()) };
     (!raw.is_null()).then(|| Properties::from_raw(raw))
 }
 

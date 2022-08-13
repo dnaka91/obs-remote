@@ -1,18 +1,18 @@
 use std::{
-    ffi::{c_void, CStr},
+    ffi::{c_void, CStr, CString},
     os::raw::c_char,
     path::PathBuf,
     ptr,
 };
 
-pub trait StringConversion {
+pub trait FfiToString {
     fn into_string(self) -> String;
     fn into_opt_string(self) -> Option<String>;
     fn into_path_buf(self) -> PathBuf;
     fn into_opt_path_buf(self) -> Option<PathBuf>;
 }
 
-impl StringConversion for *const c_char {
+impl FfiToString for *const c_char {
     fn into_string(self) -> String {
         unsafe { CStr::from_ptr(self) }
             .to_string_lossy()
@@ -35,6 +35,20 @@ impl StringConversion for *const c_char {
 
     fn into_opt_path_buf(self) -> Option<PathBuf> {
         self.into_opt_string().map(Into::into)
+    }
+}
+
+pub trait StringToFfi {
+    fn cstr(self) -> CString;
+}
+
+impl<T> StringToFfi for T
+where
+    T: Into<Vec<u8>>,
+{
+    #[inline]
+    fn cstr(self) -> CString {
+        CString::new(self.into()).expect("invalid string containing '0' bytes")
     }
 }
 
@@ -186,4 +200,30 @@ pub fn find_instance_of<P, C, T>(
     };
 
     param.found.map(|found| (param.index, found))
+}
+
+pub fn convert_string_list(raw: *mut *const c_char) -> Vec<String> {
+    if raw.is_null() {
+        return Vec::new();
+    }
+
+    let mut index = 0;
+    let mut values = Vec::new();
+
+    loop {
+        let value = unsafe { *raw.add(index) };
+        if value.is_null() {
+            break values;
+        }
+
+        values.push(value.into_string());
+        index += 1;
+    }
+}
+
+pub fn convert_string_list_mut(raw: *mut *mut c_char) -> Vec<String> {
+    let list = convert_string_list(raw as *mut *const _);
+    unsafe { libobs_sys::bfree(raw as *mut _) };
+
+    list
 }

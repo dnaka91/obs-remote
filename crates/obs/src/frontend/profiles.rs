@@ -1,10 +1,10 @@
 use std::{os::raw::c_char, path::PathBuf};
 
-use super::{
-    convert_string_list,
-    tasks::{self, TaskType},
+use super::tasks::{self, TaskType};
+use crate::{
+    config::Config,
+    util::{self, FfiToString, StringToFfi},
 };
-use crate::{config::Config, cstr_ptr, util::StringConversion};
 
 /// Get the currently active profile name.
 pub fn current() -> String {
@@ -31,7 +31,10 @@ pub fn set_current(name: &str) {
     tasks::queue(
         TaskType::Ui,
         name,
-        |name| unsafe { libobs_sys::obs_frontend_set_current_profile(cstr_ptr!(name)) },
+        |name| {
+            let name = name.cstr();
+            unsafe { libobs_sys::obs_frontend_set_current_profile(name.as_ptr()) }
+        },
         true,
     );
 }
@@ -41,7 +44,10 @@ pub fn create_profile(name: &str) {
     tasks::queue(
         TaskType::Ui,
         name,
-        |name| unsafe { libobs_sys::obs_frontend_create_profile(cstr_ptr!(name)) },
+        |name| {
+            let name = name.cstr();
+            unsafe { libobs_sys::obs_frontend_create_profile(name.as_ptr()) }
+        },
         true,
     );
 }
@@ -51,7 +57,10 @@ pub fn duplicate_profile(name: &str) {
     tasks::queue(
         TaskType::Ui,
         name,
-        |name| unsafe { libobs_sys::obs_frontend_duplicate_profile(cstr_ptr!(name)) },
+        |name| {
+            let name = name.cstr();
+            unsafe { libobs_sys::obs_frontend_duplicate_profile(name.as_ptr()) }
+        },
         true,
     );
 }
@@ -61,14 +70,17 @@ pub fn delete_profile(name: &str) {
     tasks::queue(
         TaskType::Ui,
         name,
-        |name| unsafe { libobs_sys::obs_frontend_delete_profile(cstr_ptr!(name)) },
+        |name| {
+            let name = name.cstr();
+            unsafe { libobs_sys::obs_frontend_delete_profile(name.as_ptr()) }
+        },
         true,
     );
 }
 
 /// List the available profile names.
 pub fn list() -> Vec<String> {
-    convert_string_list(unsafe { libobs_sys::obs_frontend_get_profiles() })
+    util::convert_string_list_mut(unsafe { libobs_sys::obs_frontend_get_profiles() })
 }
 
 pub fn config() -> Config {

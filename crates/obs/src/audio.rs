@@ -1,6 +1,6 @@
 use std::{marker::PhantomData, ptr::NonNull};
 
-use crate::util::StringConversion;
+use crate::util::FfiToString;
 
 pub struct Audio<'a> {
     raw: NonNull<libobs_sys::audio_t>,

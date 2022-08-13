@@ -1,6 +1,6 @@
-use std::{os::raw::c_char, ptr};
+use std::ptr;
 
-use crate::{config::Config, cstr_ptr, util::StringConversion};
+use crate::{config::Config, util::StringToFfi};
 
 pub mod events;
 pub mod preview_mode;
@@ -16,7 +16,9 @@ pub mod transitions;
 pub mod virtualcam;
 
 pub fn add_tools_menu_item(name: &str) {
-    unsafe { libobs_sys::obs_frontend_add_tools_menu_item(cstr_ptr!(name), None, ptr::null_mut()) };
+    let name = name.cstr();
+
+    unsafe { libobs_sys::obs_frontend_add_tools_menu_item(name.as_ptr(), None, ptr::null_mut()) };
 }
 
 pub fn global_config() -> Config {
@@ -30,36 +32,20 @@ pub fn profile_config() -> Config {
 }
 
 pub fn open_projector(ty: &str, monitor: i32, geometry: &str, name: &str) {
+    let ty = ty.cstr();
+    let geometry = geometry.cstr();
+    let name = name.cstr();
+
     unsafe {
         libobs_sys::obs_frontend_open_projector(
-            cstr_ptr!(ty),
+            ty.as_ptr(),
             monitor,
-            cstr_ptr!(geometry),
-            cstr_ptr!(name),
+            geometry.as_ptr(),
+            name.as_ptr(),
         )
     };
 }
 
 pub fn reset_video() {
     unsafe { libobs_sys::obs_frontend_reset_video() };
-}
-
-fn convert_string_list(raw: *mut *mut c_char) -> Vec<String> {
-    if raw.is_null() {
-        return Vec::new();
-    }
-
-    let mut index = 0;
-    let mut values = Vec::new();
-
-    loop {
-        let value = unsafe { *raw.add(index) };
-        if value.is_null() {
-            unsafe { libobs_sys::bfree(raw as *mut _) };
-            break values;
-        }
-
-        values.push((value as *const c_char).into_string());
-        index += 1;
-    }
 }

@@ -2,7 +2,7 @@ use std::{ffi::c_void, marker::PhantomData, ops::Deref, ptr::NonNull};
 
 use bitflags::bitflags;
 
-use crate::{cstr_ptr, graphics::Vec2, source::Source, video::ScaleType};
+use crate::{graphics::Vec2, source::Source, util::StringToFfi, video::ScaleType};
 
 pub struct Scene<'a> {
     raw: NonNull<libobs_sys::obs_scene_t>,
@@ -24,7 +24,9 @@ impl<'a> Scene<'a> {
     }
 
     pub fn create(name: &str) -> Self {
-        Self::from_raw(unsafe { libobs_sys::obs_scene_create(cstr_ptr!(name)) })
+        let name = name.cstr();
+
+        Self::from_raw(unsafe { libobs_sys::obs_scene_create(name.as_ptr()) })
     }
 
     pub fn from_source(source: Source<'a>) -> Option<Self> {

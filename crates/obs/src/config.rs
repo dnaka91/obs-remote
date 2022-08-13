@@ -2,7 +2,7 @@ use std::{os::raw::c_char, ptr::NonNull};
 
 use anyhow::{bail, ensure, Result};
 
-use crate::{cstr, cstr_ptr, util::StringConversion};
+use crate::util::{FfiToString, StringToFfi};
 
 pub struct Config {
     raw: NonNull<libobs_sys::config_t>,
@@ -21,8 +21,8 @@ impl Config {
         name: &str,
         f: unsafe extern "C" fn(*mut libobs_sys::config_t, *const c_char, *const c_char) -> T,
     ) -> Option<T> {
-        let section = cstr!(section);
-        let name = cstr!(name);
+        let section = section.cstr();
+        let name = name.cstr();
 
         unsafe {
             libobs_sys::config_has_user_value(self.raw.as_ptr(), section.as_ptr(), name.as_ptr())
@@ -36,8 +36,8 @@ impl Config {
         name: &str,
         f: unsafe extern "C" fn(*mut libobs_sys::config_t, *const c_char, *const c_char) -> T,
     ) -> Option<T> {
-        let section = cstr!(section);
-        let name = cstr!(name);
+        let section = section.cstr();
+        let name = name.cstr();
 
         unsafe {
             libobs_sys::config_has_default_value(self.raw.as_ptr(), section.as_ptr(), name.as_ptr())
@@ -52,14 +52,10 @@ impl Config {
         value: T,
         f: unsafe extern "C" fn(*mut libobs_sys::config_t, *const c_char, *const c_char, T),
     ) {
-        unsafe {
-            f(
-                self.raw.as_ptr(),
-                cstr_ptr!(section),
-                cstr_ptr!(name),
-                value,
-            )
-        };
+        let section = section.cstr();
+        let name = name.cstr();
+
+        unsafe { f(self.raw.as_ptr(), section.as_ptr(), name.as_ptr(), value) };
     }
 
     /// Gets a string value.
@@ -116,12 +112,9 @@ impl Config {
 
     /// Sets a string value.
     pub fn set_string(&self, section: &str, name: &str, value: &str) {
-        self.set(
-            section,
-            name,
-            cstr_ptr!(value),
-            libobs_sys::config_set_string,
-        )
+        let value = value.cstr();
+
+        self.set(section, name, value.as_ptr(), libobs_sys::config_set_string)
     }
 
     /// Sets an integer value.
@@ -146,10 +139,12 @@ impl Config {
 
     /// Sets a default string value.
     pub fn set_default_string(&self, section: &str, name: &str, value: &str) {
+        let value = value.cstr();
+
         self.set(
             section,
             name,
-            cstr_ptr!(value),
+            value.as_ptr(),
             libobs_sys::config_set_default_string,
         )
     }
@@ -175,14 +170,19 @@ impl Config {
     }
 
     pub fn remove_value(&self, section: &str, name: &str) -> bool {
+        let section = section.cstr();
+        let name = name.cstr();
+
         unsafe {
-            libobs_sys::config_remove_value(self.raw.as_ptr(), cstr_ptr!(section), cstr_ptr!(name))
+            libobs_sys::config_remove_value(self.raw.as_ptr(), section.as_ptr(), name.as_ptr())
         }
     }
 
     /// Creates a new configuration object and associates it with the specified file name.
     pub fn create(file: &str) -> Self {
-        Self::from_raw(unsafe { libobs_sys::config_create(cstr_ptr!(file)) })
+        let file = file.cstr();
+
+        Self::from_raw(unsafe { libobs_sys::config_create(file.as_ptr()) })
     }
 
     /// Opens a configuration file.
@@ -190,13 +190,10 @@ impl Config {
         const CONFIG_SUCCESS: i32 = libobs_sys::CONFIG_SUCCESS as i32;
 
         let mut config = std::ptr::null_mut::<libobs_sys::config_t>();
+        let cfile = file.cstr();
 
         let res = unsafe {
-            libobs_sys::config_open(
-                &mut config as *mut _,
-                cstr_ptr!(file),
-                open_type.to_native(),
-            )
+            libobs_sys::config_open(&mut config as *mut _, cfile.as_ptr(), open_type.to_native())
         };
 
         match res {
@@ -218,12 +215,15 @@ impl Config {
     }
 
     pub fn save_safe(&self, temp_ext: &str, backup_ext: Option<&str>) -> Result<()> {
+        let temp_ext = temp_ext.cstr();
+        let backup_ext = backup_ext.map(|b| b.cstr());
+
         let res = unsafe {
             libobs_sys::config_save_safe(
                 self.raw.as_ptr(),
-                cstr_ptr!(temp_ext),
-                match backup_ext {
-                    Some(v) => cstr_ptr!(v),
+                temp_ext.as_ptr(),
+                match &backup_ext {
+                    Some(v) => v.as_ptr(),
                     None => std::ptr::null(),
                 },
             )

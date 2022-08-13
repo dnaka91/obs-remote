@@ -1,7 +1,7 @@
 use std::{marker::PhantomData, ptr::NonNull};
 
 use super::calldata::Calldata;
-use crate::cstr_ptr;
+use crate::util::StringToFfi;
 
 pub struct ProcHandler<'a> {
     raw: NonNull<libobs_sys::proc_handler_t>,
@@ -33,8 +33,8 @@ impl<'a> ProcHandler<'a> {
     }
 
     pub fn call(&mut self, name: &str, params: &mut Calldata) -> bool {
-        unsafe {
-            libobs_sys::proc_handler_call(self.raw.as_ptr(), cstr_ptr!(name), params.as_ptr())
-        }
+        let name = name.cstr();
+
+        unsafe { libobs_sys::proc_handler_call(self.raw.as_ptr(), name.as_ptr(), params.as_ptr()) }
     }
 }

@@ -11,11 +11,11 @@ use strum::AsRefStr;
 
 use super::calldata::Calldata;
 use crate::{
-    cstr,
     hotkeys::Hotkey,
     output::Output,
     scene::{Scene, SceneItem},
     source::{Source, Volume},
+    util::StringToFfi,
 };
 
 #[derive(Clone)]
@@ -37,7 +37,7 @@ impl<T: Signal> SignalHandler<T> {
     }
 
     pub fn connect<C: Fn(&Calldata) + 'static>(&self, signal: T, handler: C) -> Handle {
-        let signal = cstr!(signal.as_ref());
+        let signal = signal.as_ref().cstr();
         let mut data = Box::new(Box::new(handler) as Box<dyn Fn(&Calldata)>);
 
         unsafe {

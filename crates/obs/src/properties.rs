@@ -3,7 +3,7 @@ use std::{marker::PhantomData, ptr::NonNull};
 use bitflags::bitflags;
 use libobs_sys::obs_group_type::OBS_COMBO_INVALID;
 
-use crate::{cstr_ptr, util::StringConversion};
+use crate::util::{FfiToString, StringToFfi};
 
 pub struct Properties<'a> {
     raw: NonNull<libobs_sys::obs_properties_t>,
@@ -38,7 +38,8 @@ impl<'a> Properties<'a> {
     }
 
     pub fn get(&self, property: &str) -> Option<Property<'_>> {
-        let raw = unsafe { libobs_sys::obs_properties_get(self.raw.as_ptr(), cstr_ptr!(property)) };
+        let property = property.cstr();
+        let raw = unsafe { libobs_sys::obs_properties_get(self.raw.as_ptr(), property.as_ptr()) };
         (!raw.is_null()).then(|| Property::from_raw(raw))
     }
 

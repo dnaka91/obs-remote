@@ -1,5 +1,4 @@
-use super::convert_string_list;
-use crate::source::Source;
+use crate::{source::Source, util};
 
 pub fn current() -> Source<'static> {
     let raw = unsafe { libobs_sys::obs_frontend_get_current_scene() };
@@ -31,5 +30,5 @@ pub fn list() -> Vec<Source<'static>> {
 }
 
 pub fn names() -> Vec<String> {
-    convert_string_list(unsafe { libobs_sys::obs_frontend_get_scene_names() })
+    util::convert_string_list_mut(unsafe { libobs_sys::obs_frontend_get_scene_names() })
 }

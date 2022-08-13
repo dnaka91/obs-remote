@@ -6,11 +6,10 @@ use std::{
 };
 
 use crate::{
-    cstr_ptr,
     output::Output,
     scene::{Scene, SceneItem},
     source::Source,
-    util::StringConversion,
+    util::{FfiToString, StringToFfi},
 };
 
 pub struct Calldata {
@@ -51,11 +50,13 @@ impl Calldata {
     }
 
     pub fn int(&self, name: &str) -> Option<i64> {
+        let name = name.cstr();
         let mut val: c_longlong = 0;
+
         let success = unsafe {
             libobs_sys::calldata_get_data(
                 self.raw.as_ptr(),
-                cstr_ptr!(name),
+                name.as_ptr(),
                 (&mut val as *mut c_longlong).cast(),
                 mem::size_of::<c_longlong>() as u64,
             )
@@ -65,11 +66,13 @@ impl Calldata {
     }
 
     pub fn float(&self, name: &str) -> Option<f64> {
+        let name = name.cstr();
         let mut val: c_double = 0.0;
+
         let success = unsafe {
             libobs_sys::calldata_get_data(
                 self.raw.as_ptr(),
-                cstr_ptr!(name),
+                name.as_ptr(),
                 (&mut val as *mut c_double).cast(),
                 mem::size_of::<c_double>() as u64,
             )
@@ -79,11 +82,13 @@ impl Calldata {
     }
 
     pub fn bool(&self, name: &str) -> Option<bool> {
+        let name = name.cstr();
         let mut val = false;
+
         let success = unsafe {
             libobs_sys::calldata_get_data(
                 self.raw.as_ptr(),
-                cstr_ptr!(name),
+                name.as_ptr(),
                 (&mut val as *mut bool).cast(),
                 mem::size_of::<bool>() as u64,
             )
@@ -93,11 +98,12 @@ impl Calldata {
     }
 
     fn ptr<T>(&self, name: &str) -> Option<NonNull<T>> {
+        let name = name.cstr();
         let mut val = ptr::null_mut::<c_void>();
         let success = unsafe {
             libobs_sys::calldata_get_data(
                 self.raw.as_ptr(),
-                cstr_ptr!(name),
+                name.as_ptr(),
                 (&mut val as *mut *mut c_void).cast(),
                 mem::size_of::<*mut c_void>() as u64,
             )
@@ -107,11 +113,13 @@ impl Calldata {
     }
 
     pub fn string(&self, name: &str) -> Option<String> {
+        let name = name.cstr();
         let mut val = ptr::null_mut::<c_char>();
+
         let success = unsafe {
             libobs_sys::calldata_get_data(
                 self.raw.as_ptr(),
-                cstr_ptr!(name),
+                name.as_ptr(),
                 (&mut val as *mut *mut c_char).cast(),
                 mem::size_of::<*mut c_char>() as u64,
             )

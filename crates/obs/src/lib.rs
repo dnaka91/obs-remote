@@ -9,7 +9,7 @@ use std::{
 pub use num_rational::Ratio;
 pub use time::Duration;
 
-use crate::util::StringConversion;
+use crate::util::FfiToString;
 
 pub mod audio;
 pub mod callback;
@@ -170,27 +170,6 @@ macro_rules! module_use_default_locale {
             let lookup = OBS_MODULE_LOOKUP.load(std::sync::atomic::Ordering::SeqCst);
             $crate::libobs_sys::text_lookup_getstr(lookup, lookup_string, translated_string)
         }
-    };
-}
-
-/// Internal macro to conveniently create a [`CString`](std::ffi::CString).
-#[doc(hidden)]
-#[macro_export]
-macro_rules! cstr {
-    ($v:expr) => {
-        std::ffi::CString::new($v).expect("Invalid string containing 0 bytes")
-    };
-}
-
-/// Internal macro that does the same as [`cstr`] but additionally turns the `CString` into a
-/// `*const c_char` pointer.
-#[doc(hidden)]
-#[macro_export]
-macro_rules! cstr_ptr {
-    ($v:expr) => {
-        std::ffi::CString::new($v)
-            .expect("Invalid string containing 0 bytes")
-            .as_ptr()
     };
 }
 

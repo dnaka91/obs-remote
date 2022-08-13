@@ -1,11 +1,9 @@
-use super::{
-    convert_string_list,
-    tasks::{self, TaskType},
-};
-use crate::{cstr_ptr, util::StringConversion};
+use super::tasks::{self, TaskType};
+use crate::util::{self, FfiToString, StringToFfi};
 
 pub fn add(name: &str) -> bool {
-    unsafe { libobs_sys::obs_frontend_add_scene_collection(cstr_ptr!(name)) }
+    let name = name.cstr();
+    unsafe { libobs_sys::obs_frontend_add_scene_collection(name.as_ptr()) }
 }
 
 pub fn current() -> String {
@@ -21,11 +19,14 @@ pub fn set_current(name: &str) {
     tasks::queue(
         TaskType::Ui,
         name,
-        |name| unsafe { libobs_sys::obs_frontend_set_current_scene_collection(cstr_ptr!(name)) },
+        |name| {
+            let name = name.cstr();
+            unsafe { libobs_sys::obs_frontend_set_current_scene_collection(name.as_ptr()) }
+        },
         true,
     );
 }
 
 pub fn list() -> Vec<String> {
-    convert_string_list(unsafe { libobs_sys::obs_frontend_get_scene_collections() })
+    util::convert_string_list_mut(unsafe { libobs_sys::obs_frontend_get_scene_collections() })
 }

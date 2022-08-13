@@ -5,12 +5,11 @@ use bitflags::bitflags;
 use crate::{
     audio::Audio,
     callback::proc::ProcHandler,
-    cstr_ptr,
     data::Data,
     encoder::Encoder,
     properties::Properties,
     service::Service,
-    util::{self, StringConversion},
+    util::{self, FfiToString, StringToFfi},
     video::Video,
 };
 
@@ -39,7 +38,8 @@ impl<'a> Output<'a> {
 
     /// Get an output by its name.
     pub fn by_name(name: &str) -> Option<Self> {
-        let raw = unsafe { libobs_sys::obs_get_output_by_name(cstr_ptr!(name)) };
+        let name = name.cstr();
+        let raw = unsafe { libobs_sys::obs_get_output_by_name(name.as_ptr()) };
         (!raw.is_null()).then(|| Self::from_raw(raw))
     }
 
@@ -200,10 +200,12 @@ impl<'a> Output<'a> {
     }
 
     pub fn output_caption_text2(&self, caption: &str, display_duration: f64) {
+        let caption = caption.cstr();
+
         unsafe {
             libobs_sys::obs_output_output_caption_text2(
                 self.raw.as_ptr(),
-                cstr_ptr!(caption),
+                caption.as_ptr(),
                 display_duration,
             )
         };

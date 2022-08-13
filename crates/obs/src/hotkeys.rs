@@ -3,8 +3,12 @@ use std::{ffi::c_void, ptr::NonNull};
 use bitflags::bitflags;
 
 use crate::{
-    cstr_ptr, data::Data, encoder::Encoder, output::Output, service::Service, source::Source,
-    util::StringConversion,
+    data::Data,
+    encoder::Encoder,
+    output::Output,
+    service::Service,
+    source::Source,
+    util::{FfiToString, StringToFfi},
 };
 
 pub struct Hotkey {
@@ -1436,7 +1440,9 @@ impl Key {
     }
 
     pub fn from_name(name: &str) -> Option<Self> {
-        Self::from_native(unsafe { libobs_sys::obs_key_from_name(cstr_ptr!(name)) })
+        let name = name.cstr();
+
+        Self::from_native(unsafe { libobs_sys::obs_key_from_name(name.as_ptr()) })
     }
 }
 

@@ -1,6 +1,6 @@
 use std::{ffi::c_void, marker::PhantomData, ptr::NonNull};
 
-use crate::util::StringConversion;
+use crate::util::FfiToString;
 
 pub struct Encoder<'a> {
     raw: NonNull<libobs_sys::obs_encoder_t>,

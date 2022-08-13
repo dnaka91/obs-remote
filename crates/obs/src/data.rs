@@ -2,7 +2,7 @@ use std::{marker::PhantomData, os::raw::c_char, ptr::NonNull};
 
 use anyhow::{ensure, Result};
 
-use crate::{cstr, cstr_ptr, util::StringConversion};
+use crate::util::{FfiToString, StringToFfi};
 
 pub struct Data<'a> {
     raw: NonNull<libobs_sys::obs_data_t>,
@@ -50,7 +50,8 @@ impl<'a> Data<'a> {
     }
 
     pub fn from_json(json: &str) -> Result<Self> {
-        let raw = unsafe { libobs_sys::obs_data_create_from_json(cstr_ptr!(json)) };
+        let json = json.cstr();
+        let raw = unsafe { libobs_sys::obs_data_create_from_json(json.as_ptr()) };
 
         ensure!(!raw.is_null(), "invalid JSON");
 
@@ -58,7 +59,8 @@ impl<'a> Data<'a> {
     }
 
     pub fn item_by_name(&self, name: &str) -> Option<DataItem> {
-        let raw = unsafe { libobs_sys::obs_data_item_byname(self.raw.as_ptr(), cstr_ptr!(name)) };
+        let name = name.cstr();
+        let raw = unsafe { libobs_sys::obs_data_item_byname(self.raw.as_ptr(), name.as_ptr()) };
 
         (!raw.is_null()).then(|| DataItem::from_raw(raw))
     }
@@ -81,7 +83,9 @@ impl<'a> Data<'a> {
     }
 
     pub fn set_string(&mut self, name: &str, value: &str) {
-        self.set(name, cstr_ptr!(value), libobs_sys::obs_data_set_string)
+        let value = value.cstr();
+
+        self.set(name, value.as_ptr(), libobs_sys::obs_data_set_string)
     }
 
     pub fn set_int(&mut self, name: &str, value: i64) {
@@ -89,7 +93,9 @@ impl<'a> Data<'a> {
     }
 
     pub fn erase(&mut self, name: &str) {
-        unsafe { libobs_sys::obs_data_erase(self.raw.as_ptr(), cstr_ptr!(name)) };
+        let name = name.cstr();
+
+        unsafe { libobs_sys::obs_data_erase(self.raw.as_ptr(), name.as_ptr()) };
     }
 
     fn get<T>(
@@ -97,7 +103,7 @@ impl<'a> Data<'a> {
         name: &str,
         f: unsafe extern "C" fn(*mut libobs_sys::obs_data_t, *const c_char) -> T,
     ) -> Option<T> {
-        let name = cstr!(name);
+        let name = name.cstr();
 
         unsafe { libobs_sys::obs_data_has_user_value(self.raw.as_ptr(), name.as_ptr()) }
             .then(|| unsafe { f(self.raw.as_ptr(), name.as_ptr()) })
@@ -109,7 +115,9 @@ impl<'a> Data<'a> {
         value: T,
         f: unsafe extern "C" fn(*mut libobs_sys::obs_data_t, *const c_char, T),
     ) {
-        unsafe { f(self.raw.as_ptr(), cstr_ptr!(name), value) };
+        let name = name.cstr();
+
+        unsafe { f(self.raw.as_ptr(), name.as_ptr(), value) };
     }
 }
 

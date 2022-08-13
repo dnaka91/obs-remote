@@ -1,9 +1,8 @@
 use std::{ffi::CStr, marker::PhantomData, os::raw::c_char, ptr::NonNull};
 
 use crate::{
-    cstr_ptr,
     data::Data,
-    util::{self, StringConversion},
+    util::{self, FfiToString, StringToFfi},
 };
 
 pub struct Service<'a> {
@@ -30,10 +29,13 @@ impl<'a> Service<'a> {
     }
 
     pub fn create(id: &str, name: &str, settings: &Data<'_>, hotkey_data: &Data<'_>) -> Self {
+        let id = id.cstr();
+        let name = name.cstr();
+
         Self::from_raw(unsafe {
             libobs_sys::obs_service_create(
-                cstr_ptr!(id),
-                cstr_ptr!(name),
+                id.as_ptr(),
+                name.as_ptr(),
                 settings.as_ptr(),
                 hotkey_data.as_ptr(),
             )
@@ -41,7 +43,9 @@ impl<'a> Service<'a> {
     }
 
     pub fn display_name(id: &str) -> Option<String> {
-        unsafe { libobs_sys::obs_service_get_display_name(cstr_ptr!(id)) }.into_opt_string()
+        let id = id.cstr();
+
+        unsafe { libobs_sys::obs_service_get_display_name(id.as_ptr()) }.into_opt_string()
     }
 
     pub fn id(&self) -> String {
@@ -88,17 +92,9 @@ impl<'a> Service<'a> {
     }
 
     pub fn supported_video_codecs(&self) -> Vec<String> {
-        let mut raw =
-            unsafe { libobs_sys::obs_service_get_supported_video_codecs(self.raw.as_ptr()) };
-
-        std::iter::from_fn(|| {
-            let codec = unsafe { raw.read() }.into_opt_string();
-            if codec.is_some() {
-                raw = unsafe { raw.offset(1) };
-            }
-            codec
+        util::convert_string_list(unsafe {
+            libobs_sys::obs_service_get_supported_video_codecs(self.raw.as_ptr())
         })
-        .collect()
     }
 
     /// Updates the settings of the service context.

@@ -1,6 +1,6 @@
 use std::{ffi::c_void, path::PathBuf, ptr::NonNull};
 
-use crate::{cstr_ptr, util::StringConversion};
+use crate::util::{FfiToString, StringToFfi};
 
 pub struct Module {
     raw: NonNull<libobs_sys::obs_module_t>,
@@ -15,7 +15,8 @@ impl Module {
 
     /// Return a module based upon its name.
     pub fn by_name(name: &str) -> Option<Self> {
-        let raw = unsafe { libobs_sys::obs_get_module(cstr_ptr!(name)) };
+        let name = name.cstr();
+        let raw = unsafe { libobs_sys::obs_get_module(name.as_ptr()) };
         NonNull::new(raw).map(|raw| Module { raw })
     }
 

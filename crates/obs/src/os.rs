@@ -1,4 +1,4 @@
-use crate::cstr_ptr;
+use crate::util::StringToFfi;
 
 pub fn cpu_usage() -> f64 {
     unsafe {
@@ -15,5 +15,7 @@ pub fn memory_usage() -> u64 {
 }
 
 pub fn free_disk_space(path: &str) -> u64 {
-    unsafe { libobs_sys::os_get_free_disk_space(cstr_ptr!(path)) }
+    let path = path.cstr();
+
+    unsafe { libobs_sys::os_get_free_disk_space(path.as_ptr()) }
 }

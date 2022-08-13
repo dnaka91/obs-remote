@@ -5,9 +5,9 @@ package config.v1;
 import "google/protobuf/struct.proto";
 
 service ConfigService {
-  // Gets the value of a "slot" from the selected persistent data realm.
+  // Gets the value of a "slot" in the global data realm.
   rpc GlobalPersistentData(GlobalPersistentDataRequest) returns (GlobalPersistentDataResponse);
-  // Sets the value of a "slot" from the selected persistent data realm.
+  // Sets the value of a "slot" in the global data realm.
   rpc SetGlobalPersistentData(SetGlobalPersistentDataRequest) returns (SetGlobalPersistentDataResponse);
   // Gets the current video settings.
   rpc VideoSettings(VideoSettingsRequest) returns (VideoSettingsResponse);

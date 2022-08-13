@@ -7,37 +7,23 @@ import "google/protobuf/wrappers.proto";
 
 service ProfilesService {
   // Gets an array of all profiles.
-  //
-  // Original: GetProfileList
   rpc List(ListRequest) returns (ListResponse);
   // Get the currently active profile.
-  //
-  // Original: **MISSING**
   rpc Current(CurrentRequest) returns (CurrentResponse);
   // Switches to a profile.
-  //
-  // Original: SetCurrentProfile
   rpc SetCurrent(SetCurrentRequest) returns (SetCurrentResponse);
   // Gets a parameter from the current profile's configuration.
-  //
-  // Original: GetProfileParameter
   rpc Parameter(ParameterRequest) returns (ParameterResponse);
   // Sets the value of a parameter in the current profile's configuration.
-  //
-  // Original: SetProfileParameter
   rpc SetParameter(SetParameterRequest) returns (SetParameterResponse);
-  // Original: GetPersistentData
+  // Gets the value of a "slot" in the profile data realm.
   rpc PersistentData(PersistentDataRequest) returns (PersistentDataResponse);
-  // Original: SetPersistentData
+  // Sets the value of a "slot" in the profile data realm.
   rpc SetPersistentData(SetPersistentDataRequest) returns (SetPersistentDataResponse);
   // Creates a new profile, switching to it in the process.
-  //
-  // Original: CreateProfile
   rpc Create(CreateRequest) returns (CreateResponse);
   // Removes a profile. If the current profile is chosen, it will change to a
   // different profile first.
-  //
-  // Original: DeleteProfile
   rpc Remove(RemoveRequest) returns (RemoveResponse);
 }
 
@@ -53,10 +39,12 @@ message ListResponse {
 message CurrentRequest {}
 
 message CurrentResponse {
+  // The name of the currently active profile.
   string name = 1;
 }
 
 message SetCurrentRequest {
+  // Name of the profile to switch to.
   string name = 1;
 }
 
@@ -88,10 +76,12 @@ message SetParameterRequest {
 message SetParameterResponse {}
 
 message PersistentDataRequest {
+  // Name of the data slot to retrieve.
   string name = 1;
 }
 
 message PersistentDataResponse {
+  // Content of the slot.
   google.protobuf.Value value = 1;
 }
 
@@ -105,12 +95,14 @@ message SetPersistentDataRequest {
 message SetPersistentDataResponse {}
 
 message CreateRequest {
+  // Name of the new profile.
   string name = 1;
 }
 
 message CreateResponse {}
 
 message RemoveRequest {
+  // Name of the profile to delete.
   string name = 1;
 }
 

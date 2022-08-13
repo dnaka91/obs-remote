@@ -1,8 +1,9 @@
 use obs::frontend::profiles;
+use serde_json::{Map, Value};
 use tonic::{Request, Response, Status};
 
 pub use self::profiles_service_server::ProfilesServiceServer;
-use crate::precondition;
+use crate::{precondition, util};
 
 tonic::include_proto!("profiles.v1");
 
@@ -92,27 +93,82 @@ impl profiles_service_server::ProfilesService for ProfilesService {
         &self,
         request: Request<PersistentDataRequest>,
     ) -> Result<Response<PersistentDataResponse>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+        let PersistentDataRequest { name } = request.into_inner();
+        let profile_path = obs::frontend::profiles::current_path();
+        let data_path = profile_path.join("obsWebSocketPersistentData.json");
+
+        let result = async {
+            let buf = tokio::fs::read(data_path).await?;
+            let mut data = serde_json::from_slice::<Map<String, Value>>(&buf)?;
+
+            anyhow::Ok(data.remove(&name))
+        };
+
+        match result.await {
+            Ok(v) => Ok(Response::new(PersistentDataResponse {
+                value: v.map(util::json_to_proto),
+            })),
+            Err(e) => Err(Status::internal(e.to_string())),
+        }
     }
 
     async fn set_persistent_data(
         &self,
         request: Request<SetPersistentDataRequest>,
     ) -> Result<Response<SetPersistentDataResponse>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+        let SetPersistentDataRequest { name, value } = request.into_inner();
+        let value = value.and_then(util::proto_to_json);
+        let profile_path = obs::frontend::profiles::current_path();
+        let data_path = profile_path.join("obsWebSocketPersistentData.json");
+
+        let result = async {
+            let buf = tokio::fs::read(data_path).await?;
+            let mut data = serde_json::from_slice::<Map<String, Value>>(&buf)?;
+
+            match value {
+                Some(value) => {
+                    data.insert(name, value);
+                }
+                None => {
+                    data.remove(&name);
+                }
+            }
+
+            anyhow::Ok(())
+        };
+
+        match result.await {
+            Ok(()) => Ok(Response::new(SetPersistentDataResponse {})),
+            Err(e) => Err(Status::internal(e.to_string())),
+        }
     }
 
     async fn create(
         &self,
         request: Request<CreateRequest>,
     ) -> Result<Response<CreateResponse>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+        let CreateRequest { name } = request.into_inner();
+
+        precondition!(
+            !profiles::list().contains(&name),
+            "profile with that name already exists"
+        );
+
+        profiles::create_profile(&name);
+
+        Ok(Response::new(CreateResponse {}))
     }
 
     async fn remove(
         &self,
         request: Request<RemoveRequest>,
     ) -> Result<Response<RemoveResponse>, Status> {
-        Err(Status::unimplemented("not implemented!"))
+        let RemoveRequest { name } = request.into_inner();
+
+        precondition!(profiles::list().contains(&name), "profile doesn't exist");
+
+        profiles::delete_profile(&name);
+
+        Ok(Response::new(RemoveResponse {}))
     }
 }

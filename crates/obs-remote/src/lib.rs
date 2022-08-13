@@ -11,7 +11,7 @@
 use std::thread::JoinHandle;
 
 use anyhow::Result;
-use log::{error, info, Level};
+use log::{error, info, warn, Level};
 use obs::{
     declare_module,
     logger::{self, ObsLogger},
@@ -30,6 +30,12 @@ macro_rules! new_service {
     };
 }
 
+const MIN_VERSION: obs::Version = obs::Version {
+    major: 28,
+    minor: 0,
+    patch: 0,
+};
+
 struct ObsRemotePlugin {
     handle: Option<JoinHandle<Result<()>>>,
     shutdown: Option<watch::Sender<()>>,
@@ -46,6 +52,11 @@ impl Plugin for ObsRemotePlugin {
     fn load(&mut self) -> bool {
         if !init_logger() {
             return false;
+        }
+
+        let version = obs::obs_version();
+        if version < MIN_VERSION {
+            warn!("expected OBS v{MIN_VERSION}, but running in v{version}. Some APIs might fail");
         }
 
         let (shutdown, signal) = watch::channel(());

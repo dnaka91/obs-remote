@@ -26,9 +26,9 @@ impl general_service_server::GeneralService for GeneralService {
                 patch: LIBOBS_API_PATCH_VER,
             }),
             obs_runtime_version: Some(SemVer {
-                major: version >> 24 & 0xff,
-                minor: version >> 16 & 0xff,
-                patch: version & 0xffff,
+                major: version.major.into(),
+                minor: version.minor.into(),
+                patch: version.patch.into(),
             }),
             obs_remote_version: Some(SemVer {
                 major: env!("CARGO_PKG_VERSION_MAJOR").parse().unwrap(),

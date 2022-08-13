@@ -1,6 +1,6 @@
 #![deny(rust_2018_idioms)]
 
-use std::{ffi::CStr, os::raw::c_char};
+use std::{ffi::CStr, fmt::{Display, self}, os::raw::c_char};
 
 pub use num_rational::Ratio;
 pub use time::Duration;
@@ -255,8 +255,27 @@ pub fn render_main_texture() {
     unsafe { libobs_sys::obs_render_main_texture() };
 }
 
-pub fn obs_version() -> u32 {
-    unsafe { libobs_sys::obs_get_version() }
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub struct Version {
+    pub major: u8,
+    pub minor: u8,
+    pub patch: u16,
+}
+
+impl Display for Version {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}.{}.{}", self.major, self.minor, self.patch)
+    }
+}
+
+pub fn obs_version() -> Version {
+    let version = unsafe { libobs_sys::obs_get_version() };
+
+    Version {
+        major: (version >> 24 & 0xff) as u8,
+        minor: (version >> 16 & 0xff) as u8,
+        patch: (version & 0xffff) as u16,
+    }
 }
 
 pub fn obs_version_string() -> String {

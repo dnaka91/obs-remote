@@ -761,7 +761,6 @@ dependencies = [
 name = "obs-rust"
 version = "0.1.0"
 dependencies = [
- "libobs-sys",
  "log",
  "obs",
  "serde",

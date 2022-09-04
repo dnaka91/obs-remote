@@ -6,12 +6,12 @@ use std::{
     time::{Duration, Instant},
 };
 
-use libobs_sys::{LIBOBS_API_MAJOR_VER, LIBOBS_API_MINOR_VER, LIBOBS_API_PATCH_VER};
 use log::{info, Level};
 use obs::{
     audio::AudioInfo,
     encoder::EncoderType,
     hotkeys::HotkeyRegisterer,
+    libobs_sys::{LIBOBS_API_MAJOR_VER, LIBOBS_API_MINOR_VER, LIBOBS_API_PATCH_VER},
     logger::ObsLogger,
     properties::{
         ButtonType, ComboFormat, ComboType, EditableListType, GroupType, MediaFps, NumberType,

@@ -10,7 +10,7 @@ links = "obs"
 [dependencies]
 
 [build-dependencies]
-bindgen = { version = "0.61.0", default-features = false, features = ["runtime", "which-rustfmt"] }
+bindgen = "0.61.0"
 
 [target.'cfg(all(unix, not(target_os = "macos")))'.build-dependencies]
 pkg-config = "0.3.25"

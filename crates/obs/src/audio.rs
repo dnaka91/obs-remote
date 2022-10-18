@@ -26,11 +26,11 @@ impl<'a> Audio<'a> {
     // TODO: audio_output_connect
     // TODO: audio_output_disconnect
 
-    pub fn block_size(&self) -> u64 {
+    pub fn block_size(&self) -> usize {
         unsafe { libobs_sys::audio_output_get_block_size(self.raw.as_ptr()) }
     }
 
-    pub fn channels(&self) -> u64 {
+    pub fn channels(&self) -> usize {
         unsafe { libobs_sys::audio_output_get_channels(self.raw.as_ptr()) }
     }
 
@@ -38,7 +38,7 @@ impl<'a> Audio<'a> {
         AudioOutputInfo::from_raw(unsafe { libobs_sys::audio_output_get_info(self.raw.as_ptr()) })
     }
 
-    pub fn planes(&self) -> u64 {
+    pub fn planes(&self) -> usize {
         unsafe { libobs_sys::audio_output_get_planes(self.raw.as_ptr()) }
     }
 

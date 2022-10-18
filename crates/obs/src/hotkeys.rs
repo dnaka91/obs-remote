@@ -53,7 +53,7 @@ impl Hotkey {
         param.result
     }
 
-    pub fn id(&self) -> u64 {
+    pub fn id(&self) -> usize {
         unsafe { libobs_sys::obs_hotkey_get_id(self.raw.as_ptr()) }
     }
 
@@ -92,7 +92,7 @@ impl HotkeyBinding {
         Hotkey::from_raw(unsafe { libobs_sys::obs_hotkey_binding_get_hotkey(self.raw.as_ptr()) })
     }
 
-    pub fn hotkey_id(&self) -> u64 {
+    pub fn hotkey_id(&self) -> usize {
         unsafe { libobs_sys::obs_hotkey_binding_get_hotkey_id(self.raw.as_ptr()) }
     }
 

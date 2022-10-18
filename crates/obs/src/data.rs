@@ -148,7 +148,7 @@ impl DataArray {
         Self::from_raw(unsafe { libobs_sys::obs_data_array_create() })
     }
 
-    pub fn len(&self) -> u64 {
+    pub fn len(&self) -> usize {
         unsafe { libobs_sys::obs_data_array_count(self.raw.as_ptr()) }
     }
 
@@ -156,15 +156,15 @@ impl DataArray {
         self.len() == 0
     }
 
-    pub fn erase(&mut self, idx: u64) {
+    pub fn erase(&mut self, idx: usize) {
         unsafe { libobs_sys::obs_data_array_erase(self.raw.as_ptr(), idx) };
     }
 
-    pub fn insert(&mut self, idx: u64, obj: Data<'_>) {
+    pub fn insert(&mut self, idx: usize, obj: Data<'_>) {
         unsafe { libobs_sys::obs_data_array_insert(self.raw.as_ptr(), idx, obj.raw.as_ptr()) };
     }
 
-    pub fn get(&self, idx: u64) -> Data<'_> {
+    pub fn get(&self, idx: usize) -> Data<'_> {
         Data::from_raw(unsafe { libobs_sys::obs_data_array_item(self.raw.as_ptr(), idx) })
     }
 

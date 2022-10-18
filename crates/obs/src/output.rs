@@ -75,7 +75,7 @@ impl<'a> Output<'a> {
     /// Returns the current audio encoder associated with this output.
     ///
     /// The idx parameter specifies the audio encoder index. Only used with outputs that have multiple audio outputs, otherwise the parameter is ignored.
-    pub fn audio_encoder(&self, idx: u64) -> Encoder<'_> {
+    pub fn audio_encoder(&self, idx: usize) -> Encoder<'_> {
         let raw = unsafe { libobs_sys::obs_output_get_audio_encoder(self.raw.as_ptr(), idx) };
         let raw = unsafe { libobs_sys::obs_encoder_get_ref(raw) };
         Encoder::from_raw(raw)

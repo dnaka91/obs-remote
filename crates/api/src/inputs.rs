@@ -40,13 +40,8 @@ impl inputs_service_server::InputsService for InputsService {
             kinds: source::list_input_types2()
                 .into_iter()
                 .filter_map(|id| {
-                    (!source::output_flags(&id.0).contains(OutputFlags::CAP_DISABLED)).then(|| {
-                        if unversioned {
-                            id.1
-                        } else {
-                            id.0
-                        }
-                    })
+                    (!source::output_flags(&id.0).contains(OutputFlags::CAP_DISABLED))
+                        .then_some(if unversioned { id.1 } else { id.0 })
                 })
                 .collect(),
         }))

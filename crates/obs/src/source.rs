@@ -230,7 +230,7 @@ impl<'a> Source<'a> {
         unsafe { libobs_sys::obs_transition_get_time(self.raw.as_ptr()) }
     }
 
-    pub fn filter_count(&self) -> u64 {
+    pub fn filter_count(&self) -> usize {
         unsafe { libobs_sys::obs_source_filter_count(self.raw.as_ptr()) }
     }
 

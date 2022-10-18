@@ -58,11 +58,11 @@ impl Calldata {
                 self.raw.as_ptr(),
                 name.as_ptr(),
                 (&mut val as *mut c_longlong).cast(),
-                mem::size_of::<c_longlong>() as u64,
+                mem::size_of::<c_longlong>(),
             )
         };
 
-        success.then(|| val as i64)
+        success.then_some(val as i64)
     }
 
     pub fn float(&self, name: &str) -> Option<f64> {
@@ -74,11 +74,11 @@ impl Calldata {
                 self.raw.as_ptr(),
                 name.as_ptr(),
                 (&mut val as *mut c_double).cast(),
-                mem::size_of::<c_double>() as u64,
+                mem::size_of::<c_double>(),
             )
         };
 
-        success.then(|| val as f64)
+        success.then_some(val as f64)
     }
 
     pub fn bool(&self, name: &str) -> Option<bool> {
@@ -90,11 +90,11 @@ impl Calldata {
                 self.raw.as_ptr(),
                 name.as_ptr(),
                 (&mut val as *mut bool).cast(),
-                mem::size_of::<bool>() as u64,
+                mem::size_of::<bool>(),
             )
         };
 
-        success.then(|| val)
+        success.then_some(val)
     }
 
     fn ptr<T>(&self, name: &str) -> Option<NonNull<T>> {
@@ -105,7 +105,7 @@ impl Calldata {
                 self.raw.as_ptr(),
                 name.as_ptr(),
                 (&mut val as *mut *mut c_void).cast(),
-                mem::size_of::<*mut c_void>() as u64,
+                mem::size_of::<*mut c_void>(),
             )
         };
 
@@ -121,7 +121,7 @@ impl Calldata {
                 self.raw.as_ptr(),
                 name.as_ptr(),
                 (&mut val as *mut *mut c_char).cast(),
-                mem::size_of::<*mut c_char>() as u64,
+                mem::size_of::<*mut c_char>(),
             )
         };
 

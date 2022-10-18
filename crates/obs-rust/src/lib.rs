@@ -227,7 +227,7 @@ enum JsonPropertyType {
     List {
         r#type: ComboType,
         format: ComboFormat,
-        count: u64,
+        count: usize,
         items: Vec<ListItem>,
     },
     Button {
@@ -240,8 +240,8 @@ enum JsonPropertyType {
         filter: String,
     },
     FrameRate {
-        fps_range_count: u64,
-        option_count: u64,
+        fps_range_count: usize,
+        option_count: usize,
         fps_ranges: Vec<FpsRange>,
         options: Vec<FrameRateOption>,
     },
@@ -480,7 +480,7 @@ fn list_outputs() -> Vec<JsonOutput> {
 
 #[derive(Serialize)]
 struct JsonHotkey {
-    id: u64,
+    id: usize,
     name: String,
     description: String,
     registerer: HotkeyRegisterer,

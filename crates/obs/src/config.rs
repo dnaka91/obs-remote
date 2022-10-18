@@ -242,12 +242,12 @@ impl Config {
     }
 
     /// Returns the number of sections.
-    pub fn sections(&self) -> u64 {
+    pub fn sections(&self) -> usize {
         unsafe { libobs_sys::config_num_sections(self.raw.as_ptr()) }
     }
 
     /// Returns a section name based upon its index.
-    pub fn section(&self, idx: u64) -> Option<String> {
+    pub fn section(&self, idx: usize) -> Option<String> {
         unsafe { libobs_sys::config_get_section(self.raw.as_ptr(), idx) }.into_opt_string()
     }
 }

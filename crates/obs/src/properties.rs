@@ -129,39 +129,39 @@ impl<'a> Property<'a> {
     }
 
     pub fn as_int(&self) -> Option<IntProperty<'_>> {
-        (self.ty() == PropertyType::Int).then(|| IntProperty(self))
+        (self.ty() == PropertyType::Int).then_some(IntProperty(self))
     }
 
     pub fn as_float(&self) -> Option<FloatProperty<'_>> {
-        (self.ty() == PropertyType::Float).then(|| FloatProperty(self))
+        (self.ty() == PropertyType::Float).then_some(FloatProperty(self))
     }
 
     pub fn as_text(&self) -> Option<TextProperty<'_>> {
-        (self.ty() == PropertyType::Text).then(|| TextProperty(self))
+        (self.ty() == PropertyType::Text).then_some(TextProperty(self))
     }
 
     pub fn as_path(&self) -> Option<PathProperty<'_>> {
-        (self.ty() == PropertyType::Path).then(|| PathProperty(self))
+        (self.ty() == PropertyType::Path).then_some(PathProperty(self))
     }
 
     pub fn as_list(&self) -> Option<ListProperty<'_>> {
-        (self.ty() == PropertyType::List).then(|| ListProperty(self))
+        (self.ty() == PropertyType::List).then_some(ListProperty(self))
     }
 
     pub fn as_button(&self) -> Option<ButtonProperty<'_>> {
-        (self.ty() == PropertyType::Button).then(|| ButtonProperty(self))
+        (self.ty() == PropertyType::Button).then_some(ButtonProperty(self))
     }
 
     pub fn as_editable_list(&self) -> Option<EditableListProperty<'_>> {
-        (self.ty() == PropertyType::EditableList).then(|| EditableListProperty(self))
+        (self.ty() == PropertyType::EditableList).then_some(EditableListProperty(self))
     }
 
     pub fn as_frame_rate(&self) -> Option<FrameRateProperty<'_>> {
-        (self.ty() == PropertyType::FrameRate).then(|| FrameRateProperty(self))
+        (self.ty() == PropertyType::FrameRate).then_some(FrameRateProperty(self))
     }
 
     pub fn as_group(&self) -> Option<GroupProperty<'_>> {
-        (self.ty() == PropertyType::Group).then(|| GroupProperty(self))
+        (self.ty() == PropertyType::Group).then_some(GroupProperty(self))
     }
 
     pub fn as_typed(&self) -> Option<TypedProperty<'_>> {
@@ -455,27 +455,27 @@ impl<'a> ListProperty<'a> {
         })
     }
 
-    pub fn count(&self) -> u64 {
+    pub fn count(&self) -> usize {
         unsafe { libobs_sys::obs_property_list_item_count(self.0.raw.as_ptr()) }
     }
 
-    pub fn item_name(&self, index: u64) -> String {
+    pub fn item_name(&self, index: usize) -> String {
         unsafe { libobs_sys::obs_property_list_item_name(self.0.raw.as_ptr(), index) }.into_string()
     }
 
-    pub fn item_disabled(&self, index: u64) -> bool {
+    pub fn item_disabled(&self, index: usize) -> bool {
         unsafe { libobs_sys::obs_property_list_item_disabled(self.0.raw.as_ptr(), index) }
     }
 
-    pub fn item_int(&self, index: u64) -> i64 {
+    pub fn item_int(&self, index: usize) -> i64 {
         unsafe { libobs_sys::obs_property_list_item_int(self.0.raw.as_ptr(), index) }
     }
 
-    pub fn item_float(&self, index: u64) -> f64 {
+    pub fn item_float(&self, index: usize) -> f64 {
         unsafe { libobs_sys::obs_property_list_item_float(self.0.raw.as_ptr(), index) }
     }
 
-    pub fn item_string(&self, index: u64) -> String {
+    pub fn item_string(&self, index: usize) -> String {
         unsafe { libobs_sys::obs_property_list_item_string(self.0.raw.as_ptr(), index) }
             .into_string()
     }
@@ -571,17 +571,17 @@ impl EditableListType {
 pub struct FrameRateProperty<'a>(&'a Property<'a>);
 
 impl<'a> FrameRateProperty<'a> {
-    pub fn fps_ranges_count(&self) -> u64 {
+    pub fn fps_ranges_count(&self) -> usize {
         unsafe { libobs_sys::obs_property_frame_rate_fps_ranges_count(self.0.raw.as_ptr()) }
     }
 
-    pub fn fps_range_min(&self, index: u64) -> MediaFps {
+    pub fn fps_range_min(&self, index: usize) -> MediaFps {
         MediaFps::from_native(unsafe {
             libobs_sys::obs_property_frame_rate_fps_range_min(self.0.raw.as_ptr(), index)
         })
     }
 
-    pub fn fps_range_max(&self, index: u64) -> MediaFps {
+    pub fn fps_range_max(&self, index: usize) -> MediaFps {
         MediaFps::from_native(unsafe {
             libobs_sys::obs_property_frame_rate_fps_range_max(self.0.raw.as_ptr(), index)
         })
@@ -595,16 +595,16 @@ impl<'a> FrameRateProperty<'a> {
         }
     }
 
-    pub fn options_count(&self) -> u64 {
+    pub fn options_count(&self) -> usize {
         unsafe { libobs_sys::obs_property_frame_rate_options_count(self.0.raw.as_ptr()) }
     }
 
-    pub fn option_name(&self, index: u64) -> String {
+    pub fn option_name(&self, index: usize) -> String {
         unsafe { libobs_sys::obs_property_frame_rate_option_name(self.0.raw.as_ptr(), index) }
             .into_string()
     }
 
-    pub fn option_description(&self, index: u64) -> String {
+    pub fn option_description(&self, index: usize) -> String {
         unsafe {
             libobs_sys::obs_property_frame_rate_option_description(self.0.raw.as_ptr(), index)
         }
@@ -638,8 +638,8 @@ impl MediaFps {
 
 pub struct FpsRangeIter<'a> {
     prop: &'a FrameRateProperty<'a>,
-    count: u64,
-    pos: u64,
+    count: usize,
+    pos: usize,
 }
 
 impl<'a> Iterator for FpsRangeIter<'a> {
@@ -663,8 +663,8 @@ impl<'a> ExactSizeIterator for FpsRangeIter<'a> {
 
 pub struct OptionIter<'a> {
     prop: &'a FrameRateProperty<'a>,
-    count: u64,
-    pos: u64,
+    count: usize,
+    pos: usize,
 }
 
 impl<'a> Iterator for OptionIter<'a> {

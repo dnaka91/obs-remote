@@ -52,9 +52,7 @@ where
     }
 }
 
-pub fn list_types(
-    f: unsafe extern "C" fn(libobs_sys::size_t, *mut *const c_char) -> bool,
-) -> Vec<String> {
+pub fn list_types(f: unsafe extern "C" fn(usize, *mut *const c_char) -> bool) -> Vec<String> {
     let mut id = ptr::null::<c_char>();
     let raw = (&mut id) as *mut _;
     let mut idx = 0;

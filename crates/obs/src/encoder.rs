@@ -52,7 +52,7 @@ impl<'a> Encoder<'a> {
     }
 
     /// For audio encoders, returns the frame size of the audio packet.
-    pub fn frame_size(&self) -> u64 {
+    pub fn frame_size(&self) -> usize {
         unsafe { libobs_sys::obs_encoder_get_frame_size(self.raw.as_ptr()) }
     }
 }

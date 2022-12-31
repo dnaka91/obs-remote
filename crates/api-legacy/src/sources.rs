@@ -109,7 +109,7 @@ impl Sources for Service {
         precondition!(!source.is_empty(), "source mustn't be empty");
 
         let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{source}` doesn't exist")))?;
         let volume = source.volume();
         let volume = if use_decibel {
             volume.as_db()
@@ -137,7 +137,7 @@ impl Sources for Service {
         );
 
         let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{source}` doesn't exist")))?;
 
         source.set_volume(if use_decibel {
             Volume::Db(volume)
@@ -156,7 +156,7 @@ impl Sources for Service {
         precondition!(!source.is_empty(), "source mustn't be empty");
 
         let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{source}` doesn't exist")))?;
         let mixers = source.audio_mixers();
 
         Ok(Response::new(GetTracksReply {
@@ -179,7 +179,7 @@ impl Sources for Service {
         precondition!((1..=6).contains(&track), "track must be between 1 and 6");
 
         let mut source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{source}` doesn't exist")))?;
 
         let mut mixers = source.audio_mixers();
         mixers[track as usize] = active;
@@ -197,7 +197,7 @@ impl Sources for Service {
         precondition!(!source.is_empty(), "source mustn't be empty");
 
         let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{source}` doesn't exist")))?;
 
         Ok(Response::new(GetMuteReply {
             name: source.name(),
@@ -210,7 +210,7 @@ impl Sources for Service {
         precondition!(!source.is_empty(), "source mustn't be empty");
 
         let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{source} doesn't exist")))?;
 
         source.set_muted(mute);
 
@@ -225,7 +225,7 @@ impl Sources for Service {
         precondition!(!source.is_empty(), "source mustn't be empty");
 
         let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{source} doesn't exist")))?;
 
         source.set_muted(!source.muted());
 
@@ -240,7 +240,7 @@ impl Sources for Service {
         precondition!(!source.is_empty(), "source mustn't be empty");
 
         let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{source} doesn't exist")))?;
 
         Ok(Response::new(source.active()))
     }
@@ -253,7 +253,7 @@ impl Sources for Service {
         precondition!(!source.is_empty(), "source mustn't be empty");
 
         let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{source} doesn't exist")))?;
 
         Ok(Response::new(source.audio_active()))
     }
@@ -272,7 +272,7 @@ impl Sources for Service {
         let offset =
             offset.ok_or_else(|| Status::failed_precondition("offset must be specified"))?;
         let mut source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{source} doesn't exist")))?;
 
         source.set_sync_offset(Duration::from_proto(offset));
 
@@ -287,7 +287,7 @@ impl Sources for Service {
         precondition!(!source.is_empty(), "source mustn't be empty");
 
         let source = Source::by_name(&source)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", source)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{source} doesn't exist")))?;
 
         Ok(Response::new(GetSyncOffsetReply {
             name: source.name(),

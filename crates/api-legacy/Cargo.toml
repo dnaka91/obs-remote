@@ -6,16 +6,16 @@ edition = "2021"
 license = "AGPL-3.0-only"
 
 [dependencies]
-anyhow = "1.0.65"
-image = { version = "0.24.4", default-features = false, features = ["jpeg", "png"] }
+anyhow = "1.0.68"
+image = { version = "0.24.5", default-features = false, features = ["jpeg", "png"] }
 log = "0.4.17"
 obs = { path = "../obs" }
 parking_lot = "0.12.1"
-prost = "0.11.0"
-prost-types = "0.11.1"
-tokio = { version = "1.21.2", features = ["fs", "rt", "sync"] }
+prost = "0.11.5"
+prost-types = "0.11.5"
+tokio = { version = "1.23.0", features = ["fs", "rt", "sync"] }
 tokio-stream = { version = "0.1.11", default-features = false, features = ["sync"] }
-tonic = { version = "0.8.2", features = ["gzip"] }
+tonic = { version = "0.8.3", features = ["gzip"] }
 
 [build-dependencies]
-tonic-build = "0.8.2"
+tonic-build = "0.8.4"

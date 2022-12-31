@@ -41,7 +41,7 @@ impl profiles_service_server::ProfilesService for ProfilesService {
         let found = profiles::list()
             .into_iter()
             .find(|sc| sc == &name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
 
         if profiles::current() != found {
             profiles::set_current(&found);

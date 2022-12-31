@@ -62,7 +62,7 @@ impl inputs_service_server::InputsService for InputsService {
         precondition!(!kind.is_empty(), "kind mustn't be empty");
 
         let defaults = source::defaults(&kind)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", kind)))?
+            .ok_or_else(|| Status::failed_precondition(format!("`{kind}` doesn't exist")))?
             .to_json();
 
         Ok(Response::new(DefaultSettingsResponse { defaults }))
@@ -76,7 +76,7 @@ impl inputs_service_server::InputsService for InputsService {
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let source = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
         let settings = source.settings().to_json();
 
         Ok(Response::new(SettingsResponse {
@@ -97,7 +97,7 @@ impl inputs_service_server::InputsService for InputsService {
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let source = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
 
         Ok(Response::new(MuteResponse {
             muted: source.muted(),
@@ -112,7 +112,7 @@ impl inputs_service_server::InputsService for InputsService {
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let source = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
 
         source.set_muted(muted);
 
@@ -127,7 +127,7 @@ impl inputs_service_server::InputsService for InputsService {
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let source = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
 
         let muted = !source.muted();
         source.set_muted(muted);
@@ -143,7 +143,7 @@ impl inputs_service_server::InputsService for InputsService {
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let volume = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?
             .volume();
 
         Ok(Response::new(VolumeResponse {
@@ -161,7 +161,7 @@ impl inputs_service_server::InputsService for InputsService {
 
         let volume = volume.ok_or_else(|| Status::failed_precondition("volume must be set"))?;
         let input = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
 
         input.set_volume(match volume {
             set_volume_request::Volume::Mul(v) => Volume::Mul(v),

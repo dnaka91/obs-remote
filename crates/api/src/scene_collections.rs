@@ -40,7 +40,7 @@ impl scene_collections_service_server::SceneCollectionsService for SceneCollecti
         let found = scene_collections::list()
             .into_iter()
             .find(|sc| sc == &name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
 
         if scene_collections::current() != found {
             scene_collections::set_current(&found);

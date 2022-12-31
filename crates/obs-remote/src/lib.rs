@@ -18,15 +18,13 @@ use obs::{
     module_use_default_locale, Plugin,
 };
 use tokio::sync::watch;
-use tonic::{codegen::CompressionEncoding, transport::Server};
+use tonic::{codec::CompressionEncoding, transport::Server};
 
 macro_rules! new_service {
     ($server:ident, $service:expr) => {
-        tonic_web::enable(
-            $server::new($service)
-                .accept_compressed(CompressionEncoding::Gzip)
-                .send_compressed(CompressionEncoding::Gzip),
-        )
+        $server::new($service)
+            .accept_compressed(CompressionEncoding::Gzip)
+            .send_compressed(CompressionEncoding::Gzip)
     };
 }
 
@@ -105,7 +103,7 @@ fn init_logger() -> bool {
     );
 
     if let Err(e) = result {
-        logger::blog(Level::Error, &format!("failed setting up logger: {:?}", e));
+        logger::blog(Level::Error, &format!("failed setting up logger: {e:?}"));
         false
     } else {
         log_panics::init();
@@ -133,6 +131,7 @@ async fn run_server(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
 
     let result = Server::builder()
         .accept_http1(true)
+        .layer(tonic_web::GrpcWebLayer::new())
         .add_service(reflection)
         .add_service(new_service!(ConfigServiceServer, ConfigService))
         .add_service(new_service!(EventsServiceServer, EventsService))

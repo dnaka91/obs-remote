@@ -19,7 +19,7 @@ impl MediaControl for Service {
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let source = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
 
         let play_pause = play_pause.unwrap_or_else(|| source.media_state() == MediaState::Playing);
 
@@ -78,7 +78,7 @@ impl MediaControl for Service {
             timestamp.ok_or_else(|| Status::failed_precondition("timestamp must be defined"))?;
 
         let source = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
 
         source.media_set_time(
             Duration::seconds(timestamp.seconds) + Duration::nanoseconds(timestamp.nanos.into()),
@@ -94,7 +94,7 @@ impl MediaControl for Service {
         let offset = offset.ok_or_else(|| Status::failed_precondition("offset must be defined"))?;
 
         let source = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
 
         let time = source.media_time()
             + Duration::seconds(offset.seconds)
@@ -118,5 +118,5 @@ fn source_from_identifier(request: Request<Identifier>) -> Result<Source<'static
     precondition!(!name.is_empty(), "name mustn't be empty");
 
     Source::by_name(&name)
-        .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))
+        .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))
 }

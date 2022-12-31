@@ -22,13 +22,12 @@ impl sources_service_server::SourcesService for SourcesService {
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let source = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
 
         let ty = source.ty();
         precondition!(
             ty == SourceType::Input || ty == SourceType::Scene,
-            "`{}` is neither an input nor a scene",
-            name
+            "`{name}` is neither an input nor a scene",
         );
 
         Ok(Response::new(IsActiveResponse {

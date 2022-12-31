@@ -870,9 +870,8 @@ impl General for Service {
         let hotkey_name = request.into_inner().hotkey_name;
         precondition!(!hotkey_name.is_empty(), "name mustn't be empty");
 
-        let hotkey = Hotkey::by_name(&hotkey_name).ok_or_else(|| {
-            Status::failed_precondition(format!("`{}` doesn't exist", hotkey_name))
-        })?;
+        let hotkey = Hotkey::by_name(&hotkey_name)
+            .ok_or_else(|| Status::failed_precondition(format!("`{hotkey_name}` doesn't exist")))?;
 
         hotkey.trigger_routed_callback(true);
 

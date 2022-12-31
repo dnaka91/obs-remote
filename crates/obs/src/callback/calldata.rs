@@ -32,7 +32,7 @@ impl Drop for Calldata {
 impl Default for Calldata {
     fn default() -> Self {
         // TODO: Safety: probably UB to call `bfree` on a pointer created with `Box`.
-        let raw = Box::leak(Box::new(libobs_sys::calldata_t::default()));
+        let raw = Box::leak(Box::default());
         Self::from_raw(raw as *mut _, true)
     }
 }
@@ -62,7 +62,7 @@ impl Calldata {
             )
         };
 
-        success.then_some(val as i64)
+        success.then_some(val)
     }
 
     pub fn float(&self, name: &str) -> Option<f64> {
@@ -78,7 +78,7 @@ impl Calldata {
             )
         };
 
-        success.then_some(val as f64)
+        success.then_some(val)
     }
 
     pub fn bool(&self, name: &str) -> Option<bool> {

@@ -82,7 +82,7 @@ impl StudioMode for Service {
             obs::frontend::scenes::current()
         } else {
             Source::by_name(&scene_name).ok_or_else(|| {
-                Status::failed_precondition(format!("scene `{}` doesn't exist", scene_name))
+                Status::failed_precondition(format!("scene `{scene_name}` doesn't exist"))
             })?
         };
 
@@ -106,7 +106,7 @@ impl StudioMode for Service {
                     .into_iter()
                     .find(|source| source.name() == name)
                     .ok_or_else(|| {
-                        Status::failed_precondition(format!("transition `{}` doesn't exist", name))
+                        Status::failed_precondition(format!("transition `{name}` doesn't exist"))
                     })?;
 
                 transitions::set_current(&transition);

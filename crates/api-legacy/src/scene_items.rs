@@ -149,9 +149,8 @@ impl SceneItems for Service {
         } = request.into_inner();
 
         let mut scene = scene_or_current(&scene_name)?;
-        let source = Source::by_name(&source_name).ok_or_else(|| {
-            Status::failed_precondition(format!("`{}` doesn't exist", source_name))
-        })?;
+        let source = Source::by_name(&source_name)
+            .ok_or_else(|| Status::failed_precondition(format!("`{source_name}` doesn't exist")))?;
 
         precondition!(scene.source() != source, "can't add scene to itself");
 
@@ -202,7 +201,7 @@ fn find_scene(scene_name: &str) -> Result<Scene<'static>, Status> {
     precondition!(!scene_name.is_empty(), "scene name mustn't be empty");
 
     let source = Source::by_name(scene_name)
-        .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", scene_name)))?;
+        .ok_or_else(|| Status::failed_precondition(format!("`{scene_name}` doesn't exist")))?;
 
     Scene::from_source(source)
         .ok_or_else(|| Status::failed_precondition("requested source is not a scene"))
@@ -213,7 +212,7 @@ fn scene_or_current(scene_name: &str) -> Result<Scene<'static>, Status> {
         frontend::scenes::current()
     } else {
         Source::by_name(scene_name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", scene_name)))?
+            .ok_or_else(|| Status::failed_precondition(format!("`{scene_name}` doesn't exist")))?
     };
 
     Scene::from_source(source)

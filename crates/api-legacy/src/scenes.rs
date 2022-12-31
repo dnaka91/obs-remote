@@ -24,7 +24,7 @@ impl Scenes for Service {
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let source = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
 
         frontend::scenes::set_current(&source);
 
@@ -86,16 +86,15 @@ impl Scenes for Service {
             "transition name mustn't be empty"
         );
 
-        let scene = Source::by_name(&scene_name).ok_or_else(|| {
-            Status::failed_precondition(format!("`{}` doesn't exist", scene_name))
-        })?;
+        let scene = Source::by_name(&scene_name)
+            .ok_or_else(|| Status::failed_precondition(format!("`{scene_name}` doesn't exist")))?;
         precondition!(scene.ty() == SourceType::Scene, "scene is invalid");
 
         let transition = frontend::transitions::list()
             .into_iter()
             .find(|t| t.name() == transition_name)
             .ok_or_else(|| {
-                Status::failed_precondition(format!("`{}` doesn't exist", transition_name))
+                Status::failed_precondition(format!("`{transition_name}` doesn't exist"))
             })?;
 
         let mut data = scene.private_settings();
@@ -118,7 +117,7 @@ impl Scenes for Service {
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let scene = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
         precondition!(scene.ty() == SourceType::Scene, "scene is invalid");
 
         let mut data = scene.private_settings();
@@ -136,7 +135,7 @@ impl Scenes for Service {
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let scene = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
         precondition!(scene.ty() == SourceType::Scene, "scene is invalid");
 
         let data = scene.private_settings();

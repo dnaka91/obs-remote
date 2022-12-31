@@ -673,7 +673,7 @@ impl hotkeys_service_server::HotkeysService for HotkeysService {
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let hotkey = Hotkey::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
 
         hotkey.trigger_routed_callback(true);
 

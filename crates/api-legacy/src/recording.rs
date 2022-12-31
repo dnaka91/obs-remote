@@ -68,7 +68,7 @@ impl Recording for Service {
     ) -> Result<Response<()>, Status> {
         let rec_folder = request.into_inner().rec_folder;
         fs::create_dir_all(&rec_folder).await.map_err(|e| {
-            Status::invalid_argument(format!("failed creating recording folder: {:?}", e))
+            Status::invalid_argument(format!("failed creating recording folder: {e:?}"))
         })?;
 
         let config = profiles::config();
@@ -76,7 +76,7 @@ impl Recording for Service {
         config.set_string("SimpleOutput", "FilePath", &rec_folder);
         config
             .save()
-            .map_err(|e| Status::unknown(format!("failed saving config: {:?}", e)))?;
+            .map_err(|e| Status::unknown(format!("failed saving config: {e:?}")))?;
 
         Ok(Response::new(()))
     }

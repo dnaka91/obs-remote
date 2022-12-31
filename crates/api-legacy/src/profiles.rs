@@ -16,7 +16,7 @@ impl Profiles for Service {
     ) -> Result<Response<()>, Status> {
         let name = request.into_inner().name;
         precondition!(!name.is_empty(), "name mustn't be empty");
-        precondition!(profiles::list().contains(&name), "`{}` doesn't exist", name);
+        precondition!(profiles::list().contains(&name), "`{name} doesn't exist");
 
         profiles::set_current(&name);
 

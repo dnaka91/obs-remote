@@ -51,8 +51,8 @@ impl scenes_service_server::ScenesService for ScenesService {
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let scene = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
-        precondition!(scene.ty() == SourceType::Scene, "`{}` isn't a scene", name);
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
+        precondition!(scene.ty() == SourceType::Scene, "`{name}` isn't a scene");
 
         scenes::set_current(&scene);
 
@@ -81,8 +81,8 @@ impl scenes_service_server::ScenesService for ScenesService {
         precondition!(preview_mode::active(), "studio mode isn't active");
 
         let scene = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
-        precondition!(scene.ty() == SourceType::Scene, "`{}` isn't a scene", name);
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
+        precondition!(scene.ty() == SourceType::Scene, "`{name}` isn't a scene");
 
         scenes::set_current_preview(&scene);
 
@@ -105,13 +105,12 @@ impl scenes_service_server::ScenesService for ScenesService {
         precondition!(!new_name.is_empty(), "new name mustn't be empty");
 
         let scene = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
-        precondition!(scene.ty() == SourceType::Scene, "`{}` isn't a scene", name);
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
+        precondition!(scene.ty() == SourceType::Scene, "`{name}` isn't a scene");
 
         precondition!(
             Source::by_name(&new_name).is_none(),
-            "Source with name `{}` already exists",
-            new_name
+            "Source with name `{new_name}` already exists",
         );
 
         scene.set_name(&new_name);
@@ -127,8 +126,7 @@ impl scenes_service_server::ScenesService for ScenesService {
         precondition!(!name.is_empty(), "name mustn't be empty");
         precondition!(
             Source::by_name(&name).is_none(),
-            "Source with name `{}` already exists",
-            name
+            "Source with name `{name}` already exists",
         );
 
         Scene::create(&name);
@@ -144,8 +142,8 @@ impl scenes_service_server::ScenesService for ScenesService {
         precondition!(!name.is_empty(), "name mustn't be empty");
 
         let scene = Source::by_name(&name)
-            .ok_or_else(|| Status::failed_precondition(format!("`{}` doesn't exist", name)))?;
-        precondition!(scene.ty() == SourceType::Scene, "`{}` isn't a scene", name);
+            .ok_or_else(|| Status::failed_precondition(format!("`{name}` doesn't exist")))?;
+        precondition!(scene.ty() == SourceType::Scene, "`{name}` isn't a scene");
 
         scene.remove();
 

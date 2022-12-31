@@ -168,7 +168,7 @@ impl Vec3 {
     pub fn rand(self, positive_only: bool) -> Self {
         let mut dst = Self::default();
         unsafe {
-            libobs_sys::vec3_rand((&mut dst.0) as _, if positive_only { 1 } else { 0 });
+            libobs_sys::vec3_rand((&mut dst.0) as _, i32::from(positive_only));
         }
         dst
     }

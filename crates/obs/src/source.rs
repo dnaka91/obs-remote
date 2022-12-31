@@ -84,12 +84,12 @@ impl<'a> Source<'a> {
     }
 
     pub fn set_audio_mixers(&mut self, mixers: [bool; 6]) {
-        let mixers = if mixers[0] { 1 } else { 0 }
-            | if mixers[1] { 1 } else { 0 } << 1
-            | if mixers[2] { 1 } else { 0 } << 2
-            | if mixers[3] { 1 } else { 0 } << 3
-            | if mixers[4] { 1 } else { 0 } << 4
-            | if mixers[5] { 1 } else { 0 } << 5;
+        let mixers = u32::from(mixers[0])
+            | u32::from(mixers[1]) << 1
+            | u32::from(mixers[2]) << 2
+            | u32::from(mixers[3]) << 3
+            | u32::from(mixers[4]) << 4
+            | u32::from(mixers[5]) << 5;
         unsafe { libobs_sys::obs_source_set_audio_mixers(self.raw.as_ptr(), mixers) };
     }
 
@@ -365,6 +365,7 @@ impl SourceType {
             OBS_SOURCE_TYPE_FILTER => Self::Filter,
             OBS_SOURCE_TYPE_TRANSITION => Self::Transition,
             OBS_SOURCE_TYPE_SCENE => Self::Scene,
+            #[allow(clippy::unnecessary_cast)]
             _ => Self::Unknown(value as u32),
         }
     }
@@ -665,6 +666,7 @@ impl MediaState {
             OBS_MEDIA_STATE_STOPPED => Self::Stopped,
             OBS_MEDIA_STATE_ENDED => Self::Ended,
             OBS_MEDIA_STATE_ERROR => Self::Error,
+            #[allow(clippy::unnecessary_cast)]
             _ => Self::Unknown(value as u32),
         }
     }

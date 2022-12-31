@@ -54,9 +54,8 @@ impl Outputs for Service {
         let name = request.into_inner().name;
         precondition!(!name.is_empty(), "output name mustn't be empty");
 
-        let output = obs::output::Output::by_name(&name).ok_or_else(|| {
-            Status::failed_precondition(format!("output `{}` doesn't exist", name))
-        })?;
+        let output = obs::output::Output::by_name(&name)
+            .ok_or_else(|| Status::failed_precondition(format!("output `{name}` doesn't exist")))?;
 
         Ok(Response::new(InfoReply {
             output: Some(output.into()),
@@ -67,9 +66,8 @@ impl Outputs for Service {
         let name = request.into_inner().name;
         precondition!(!name.is_empty(), "output name mustn't be empty");
 
-        let output = obs::output::Output::by_name(&name).ok_or_else(|| {
-            Status::failed_precondition(format!("output `{}` doesn't exist", name))
-        })?;
+        let output = obs::output::Output::by_name(&name)
+            .ok_or_else(|| Status::failed_precondition(format!("output `{name}` doesn't exist")))?;
 
         precondition!(!output.active(), "output is already active");
 
@@ -82,9 +80,8 @@ impl Outputs for Service {
         let StopRequest { name, force } = request.into_inner();
         precondition!(!name.is_empty(), "output name mustn't be empty");
 
-        let output = obs::output::Output::by_name(&name).ok_or_else(|| {
-            Status::failed_precondition(format!("output `{}` doesn't exist", name))
-        })?;
+        let output = obs::output::Output::by_name(&name)
+            .ok_or_else(|| Status::failed_precondition(format!("output `{name}` doesn't exist")))?;
 
         precondition!(output.active(), "output isn't active");
 

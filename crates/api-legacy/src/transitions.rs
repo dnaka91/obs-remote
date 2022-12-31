@@ -51,7 +51,7 @@ impl Transitions for Service {
                 .into_iter()
                 .find(|t| t.name() == name)
                 .ok_or_else(|| {
-                    Status::failed_precondition(format!("transition `{}` doesn't exist", name))
+                    Status::failed_precondition(format!("transition `{name}` doesn't exist"))
                 })?,
         );
 
@@ -104,7 +104,7 @@ impl Transitions for Service {
             .into_iter()
             .find(|source| source.name() == name)
             .ok_or_else(|| {
-                Status::failed_precondition(format!("transition `{}` doesn't exist", name))
+                Status::failed_precondition(format!("transition `{name}` doesn't exist"))
             })?;
         let settings = transition.settings().to_json();
 
@@ -123,11 +123,11 @@ impl Transitions for Service {
             .into_iter()
             .find(|source| source.name() == name)
             .ok_or_else(|| {
-                Status::failed_precondition(format!("transition `{}` doesn't exist", name))
+                Status::failed_precondition(format!("transition `{name}` doesn't exist"))
             })?;
 
         let data = data::Data::from_json(&settings)
-            .map_err(|e| Status::failed_precondition(format!("invalid JSON data: {:?}", e)))?;
+            .map_err(|e| Status::failed_precondition(format!("invalid JSON data: {e:?}")))?;
 
         transition.update(data);
         transition.update_properties();

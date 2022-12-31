@@ -41,7 +41,7 @@ pub fn list() -> Vec<Source<'static>> {
     unsafe { libobs_sys::obs_frontend_get_transitions(&mut sources as *mut _) };
 
     let array = unsafe { sources.sources.__bindgen_anon_1.array };
-    let num = unsafe { sources.sources.__bindgen_anon_1.num } as usize;
+    let num = unsafe { sources.sources.__bindgen_anon_1.num };
 
     let mut source_list = Vec::with_capacity(num);
 

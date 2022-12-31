@@ -414,6 +414,7 @@ impl BoundsType {
             OBS_BOUNDS_SCALE_TO_WIDTH => Self::ScaleToWidth,
             OBS_BOUNDS_SCALE_TO_HEIGHT => Self::ScaleToHeight,
             OBS_BOUNDS_MAX_ONLY => Self::MaxOnly,
+            #[allow(clippy::unnecessary_cast)]
             _ => Self::Unknown(value as u32),
         }
     }

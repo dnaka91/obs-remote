@@ -24,7 +24,7 @@ pub fn list() -> Vec<Source<'static>> {
 
     let list = unsafe { list.sources.__bindgen_anon_1 };
 
-    (0..list.num as usize)
+    (0..list.num)
         .map(|i| Source::from_raw(unsafe { *list.array.add(i) }))
         .collect()
 }

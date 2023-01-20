@@ -17,5 +17,5 @@ pkg-config = "0.3.26"
 
 [target.'cfg(windows)'.build-dependencies]
 cc = "1.0.78"
-regex = "1.7.0"
+regex = "1.7.1"
 winreg = "0.10.1"

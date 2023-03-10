@@ -6,7 +6,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use log::{info, Level};
+use log::{info, Level, debug};
 use obs::{
     audio::AudioInfo,
     encoder::EncoderType,
@@ -43,7 +43,7 @@ impl Plugin for MainPlugin {
         thread::spawn(|| {
             thread::sleep(Duration::from_secs(2));
 
-            obs::frontend::add_tools_menu_item("OBS Rust!");
+            // obs::frontend::add_tools_menu_item("OBS Rust!");
             // obs::frontend::events::add_callback();
 
             let start = Instant::now();
@@ -58,8 +58,8 @@ impl Plugin for MainPlugin {
                 filter_types: obs::source::list_filter_types(),
                 transition_types: obs::source::list_transition_types(),
                 source_properties: list_source_properties(),
-                profiles: obs::frontend::profiles::list(),
-                scene_collections: obs::frontend::scene_collections::list(),
+                profiles: { obs::frontend::profiles::list() },
+                scene_collections: { obs::frontend::scene_collections::list() },
                 scene_names: obs::frontend::scenes::names(),
                 encoders: list_encoders(),
                 service_types: obs::service::list_service_types(),
@@ -278,16 +278,25 @@ struct FrameRateOption {
 }
 
 fn list_source_properties() -> BTreeMap<String, Vec<JsonProperty>> {
+    const BUGGED_SOURCE_TYPES: &[&str] = &[
+        "av_capture_input_v2",
+        "av_capture_input",
+        "expander_filter",
+        "screen_capture",
+        "upward_compressor_filter",
+        "v4l2_input",
+        "vst_filter",
+        "wipe_transition",
+        "xshm_input",
+    ];
+
     obs::source::list_source_types()
         .into_iter()
-        .filter(|ty| {
-            ty != "av_capture_input"
-                && ty != "av_capture_input_v2"
-                && ty != "screen_capture"
-                && ty != "vst_filter"
-                && ty != "wipe_transition"
+        .filter(|ty| !BUGGED_SOURCE_TYPES.contains(&ty.as_str()))
+        .filter_map(|ty| {
+            debug!("list properties for: {ty}");
+            obs::source::properties(&ty).map(|p| (ty, p))
         })
-        .filter_map(|ty| obs::source::properties(&ty).map(|p| (ty, p)))
         .map(|(ty, props)| {
             (
                 ty,

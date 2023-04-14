@@ -67,6 +67,7 @@ impl<'a> Properties<'a> {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug)]
     pub struct PropertiesFlags: u32 {
         const DEFER_UPDATE = libobs_sys::OBS_PROPERTIES_DEFER_UPDATE;
     }

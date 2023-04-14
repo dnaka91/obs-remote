@@ -324,6 +324,7 @@ impl Texture {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug)]
     pub struct ClearFlags: u32 {
         const COLOR = libobs_sys::GS_CLEAR_COLOR;
         const DEPTH = libobs_sys::GS_CLEAR_DEPTH;
@@ -332,7 +333,7 @@ bitflags! {
 }
 
 pub fn clear(flags: ClearFlags, color: Vec4, depth: f32, stencil: u8) {
-    unsafe { libobs_sys::gs_clear(flags.bits, color.as_ptr(), depth, stencil) };
+    unsafe { libobs_sys::gs_clear(flags.bits(), color.as_ptr(), depth, stencil) };
 }
 
 pub fn ortho(left: f32, right: f32, top: f32, bottom: f32, znear: f32, zfar: f32) {

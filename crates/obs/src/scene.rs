@@ -371,6 +371,7 @@ impl<'a, 'b> Deref for EditableSceneItem<'a, 'b> {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug)]
     pub struct Alignment: u32 {
         const CENTER = libobs_sys::OBS_ALIGN_CENTER;
         const LEFT = libobs_sys::OBS_ALIGN_LEFT;

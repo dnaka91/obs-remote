@@ -440,7 +440,9 @@ impl MonitoringType {
 
 bitflags! {
     /// These flags determine what type of data the source outputs and expects.
+    #[derive(Clone, Copy, Debug)]
     #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "serde", serde(transparent))]
     pub struct OutputFlags: u32 {
         /// Source has video.
         ///

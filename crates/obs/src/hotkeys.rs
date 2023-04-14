@@ -131,6 +131,7 @@ impl HotkeyRegisterer {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug)]
     pub struct InteractionFlags: u32 {
         const NONE = libobs_sys::obs_interaction_flags::INTERACT_NONE;
         const CAPS_KEY = libobs_sys::obs_interaction_flags::INTERACT_CAPS_KEY;

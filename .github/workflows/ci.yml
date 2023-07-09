@@ -19,7 +19,7 @@ jobs:
         if: startsWith(matrix.os, 'macos')
         run: |
           brew update
-          brew install homebrew/cask-versions/obs-beta protobuf
+          brew install obs protobuf
       - name: Install OBS and Protobuf (windows)
         if: startsWith(matrix.os, 'windows')
         run: |

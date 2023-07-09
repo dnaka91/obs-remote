@@ -11,7 +11,7 @@
     clippy::derive_partial_eq_without_eq,
     clippy::doc_markdown,
     clippy::enum_variant_names,
-	clippy::manual_let_else,
+    clippy::manual_let_else,
     clippy::module_name_repetitions,
     clippy::must_use_candidate,
     clippy::option_if_let_else,

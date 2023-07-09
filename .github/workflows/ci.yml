@@ -51,6 +51,8 @@ jobs:
           components: miri
       - name: Configure cache
         uses: Swatinem/rust-cache@v2
+      - name: Miri setup
+        run: cargo miri setup
       - name: Miri test
         run: cargo miri test --package obs
   lint:

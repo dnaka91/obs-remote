@@ -20,6 +20,7 @@ jobs:
         run: |
           brew update
           brew install obs protobuf
+          ls -l /Applications/OBS.app/Contents/Frameworks
       - name: Install OBS and Protobuf (windows)
         if: startsWith(matrix.os, 'windows')
         run: |

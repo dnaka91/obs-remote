@@ -49,6 +49,10 @@ impl<'a> Data<'a> {
         unsafe { libobs_sys::obs_data_get_json(self.raw.as_ptr()) }.into_string()
     }
 
+    pub fn to_json_pretty(&self) -> String {
+        unsafe { libobs_sys::obs_data_get_json_pretty(self.raw.as_ptr()) }.into_string()
+    }
+
     pub fn from_json(json: &str) -> Result<Self> {
         let json = json.cstr();
         let raw = unsafe { libobs_sys::obs_data_create_from_json(json.as_ptr()) };

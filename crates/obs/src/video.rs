@@ -123,6 +123,9 @@ pub enum Format {
     I210,
     I412,
     Ya2L,
+    P216,
+    P416,
+    V210,
     Unknown(u32),
 }
 
@@ -153,6 +156,9 @@ impl Format {
             VIDEO_FORMAT_I210 => Self::I210,
             VIDEO_FORMAT_I412 => Self::I412,
             VIDEO_FORMAT_YA2L => Self::Ya2L,
+            VIDEO_FORMAT_P216 => Self::P216,
+            VIDEO_FORMAT_P416 => Self::P416,
+            VIDEO_FORMAT_V210 => Self::V210,
             _ => Self::Unknown(ty as _),
         }
     }

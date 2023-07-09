@@ -6,7 +6,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use log::{info, Level, debug};
+use log::{debug, info, Level};
 use obs::{
     audio::AudioInfo,
     encoder::EncoderType,
@@ -36,9 +36,10 @@ impl Plugin for MainPlugin {
         ObsLogger::init(env!("CARGO_PKG_NAME"), Level::Info, vec![]).ok();
 
         info!(
-            "OBS version: {}.{}.{}",
+            "OBS version (headers): {}.{}.{}",
             LIBOBS_API_MAJOR_VER, LIBOBS_API_MINOR_VER, LIBOBS_API_PATCH_VER
         );
+        info!("OBS version (runtime): {}", obs::obs_version());
 
         thread::spawn(|| {
             thread::sleep(Duration::from_secs(2));

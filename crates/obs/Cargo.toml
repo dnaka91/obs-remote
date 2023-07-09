@@ -11,12 +11,12 @@ serde = ["dep:serde", "num-rational/serde", "serde?/derive", "time/serde-human-r
 tracing = ["dep:tracing-subscriber", "tracing-subscriber?/fmt"]
 
 [dependencies]
-anyhow = "1.0.70"
-bitflags = { version = "2.1.0", features = ["serde"] }
+anyhow = "1.0.71"
+bitflags = { version = "2.3.3", features = ["serde"] }
 libobs-sys = { path = "../libobs-sys" }
-log = { version = "0.4.17", features = ["std"] }
+log = { version = "0.4.19", features = ["std"] }
 num-rational = { version = "0.4.1", default-features = false }
-serde = { version = "1.0.160", optional = true }
-strum = { version = "0.24.1", features = ["derive"] }
-time = "0.3.20"
-tracing-subscriber = { version = "0.3.16", default-features = false, optional = true }
+serde = { version = "1.0.169", optional = true }
+strum = { version = "0.25.0", features = ["derive"] }
+time = "0.3.23"
+tracing-subscriber = { version = "0.3.17", default-features = false, optional = true }

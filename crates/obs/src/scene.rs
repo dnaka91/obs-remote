@@ -19,7 +19,7 @@ impl<'a> Scene<'a> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_scene_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
-            life: PhantomData::default(),
+            life: PhantomData,
         }
     }
 
@@ -139,7 +139,7 @@ impl<'a> SceneItem<'a> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_sceneitem_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
-            life: PhantomData::default(),
+            life: PhantomData,
         }
     }
 

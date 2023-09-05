@@ -35,7 +35,7 @@ impl<'a> Source<'a> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_source_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
-            life: PhantomData::default(),
+            life: PhantomData,
             release: true,
         }
     }
@@ -43,7 +43,7 @@ impl<'a> Source<'a> {
     pub(crate) fn from_raw_no_release(raw: *mut libobs_sys::obs_source_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
-            life: PhantomData::default(),
+            life: PhantomData,
             release: false,
         }
     }

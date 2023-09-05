@@ -22,7 +22,7 @@ impl<'a> ProcHandler<'a> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::proc_handler_t, destroy: bool) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
-            life: PhantomData::default(),
+            life: PhantomData,
             destroy,
         }
     }

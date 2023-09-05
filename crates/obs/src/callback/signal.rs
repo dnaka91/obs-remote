@@ -32,7 +32,7 @@ impl<T: Signal> SignalHandler<T> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::signal_handler_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
-            signal: PhantomData::default(),
+            signal: PhantomData,
         }
     }
 

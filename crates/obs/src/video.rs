@@ -17,7 +17,7 @@ impl<'a> Video<'a> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::video_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
-            life: PhantomData::default(),
+            life: PhantomData,
         }
     }
 

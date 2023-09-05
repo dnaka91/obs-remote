@@ -6,14 +6,14 @@ edition = "2021"
 license = "AGPL-3.0-only"
 
 [dependencies]
-anyhow = "1.0.71"
-image = { version = "0.24.6", default-features = false, features = ["jpeg", "png"] }
-log = "0.4.19"
+anyhow = "1.0.75"
+image = { version = "0.24.7", default-features = false, features = ["jpeg", "png"] }
+log = "0.4.20"
 obs = { path = "../obs" }
 prost = "0.11.9"
 prost-types = "0.11.9"
-serde_json = "1.0.100"
-tokio = { version = "1.29.1", features = ["fs", "rt", "sync"] }
+serde_json = "1.0.105"
+tokio = { version = "1.32.0", features = ["fs", "rt", "sync"] }
 tokio-stream = { version = "0.1.14", default-features = false, features = ["sync"] }
 tonic = { version = "0.9.2", features = ["gzip"] }
 

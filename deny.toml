@@ -19,6 +19,9 @@ exceptions = [
 [bans]
 skip = [
     { name = "bitflags", version = "1" },
+    { name = "hashbrown", version = "0.12" },
+    { name = "indexmap", version = "1" },
     { name = "prettyplease", version = "0.1" },
+    { name = "socket2", version = "0.4" },
     { name = "syn", version = "1" },
 ]

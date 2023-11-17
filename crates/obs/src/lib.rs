@@ -26,6 +26,7 @@ pub mod module;
 pub mod os;
 pub mod output;
 pub mod properties;
+pub mod register;
 pub mod scene;
 pub mod service;
 pub mod source;

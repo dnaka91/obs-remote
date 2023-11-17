@@ -63,7 +63,7 @@ fn main() {
         .default_enum_style(EnumVariation::ModuleConsts)
         .constified_enum("LOG_.+")
         .derive_default(true)
-        .parse_callbacks(Box::new(bindgen::CargoCallbacks))
+        .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .clang_arg("-Iheaders")
         .generate()
         .expect("unable to generate bindings");

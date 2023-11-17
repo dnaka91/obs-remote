@@ -6,7 +6,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use log::{debug, info, Level};
+use log::{info, Level};
 use obs::{
     audio::AudioInfo,
     encoder::EncoderType,
@@ -280,22 +280,37 @@ struct FrameRateOption {
 
 fn list_source_properties() -> BTreeMap<String, Vec<JsonProperty>> {
     const BUGGED_SOURCE_TYPES: &[&str] = &[
-        "av_capture_input_v2",
-        "av_capture_input",
+        // "av_capture_input_v2",
+        // "av_capture_input",
         "expander_filter",
-        "screen_capture",
+        // "screen_capture",
         "upward_compressor_filter",
         "v4l2_input",
         "vst_filter",
-        "wipe_transition",
+        // "wipe_transition",
         "xshm_input",
+        // ## plugins ##
+        // "vkcapture-source",
+        "move_transition_override_filter",
+        "move_source_filter",
+        "move_value_filter",
+        "move_audio_value_filter",
+        "move_action_filter",
+        "move_audio_action_filter",
+        // "obs_stroke_filter",
+        // "obs_glow_filter",
+        // "obs_shadow_filter",
+        // "obs_stroke_source",
+        // "obs_glow_source",
+        // "obs_shadow_source",
+        // "scale_to_sound",
     ];
 
     obs::source::list_source_types()
         .into_iter()
         .filter(|ty| !BUGGED_SOURCE_TYPES.contains(&ty.as_str()))
         .filter_map(|ty| {
-            debug!("list properties for: {ty}");
+            log::info!("list properties for: {ty}");
             obs::source::properties(&ty).map(|p| (ty, p))
         })
         .map(|(ty, props)| {

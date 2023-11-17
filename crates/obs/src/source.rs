@@ -1,6 +1,7 @@
 use std::{
     fmt::{self, Display},
     marker::PhantomData,
+    os::raw::c_void,
     ptr::NonNull,
 };
 
@@ -196,6 +197,10 @@ impl<'a> Source<'a> {
         SourceType::from_native(unsafe { libobs_sys::obs_source_get_type(self.raw.as_ptr()) })
     }
 
+    pub fn type_data(&self) -> *mut c_void {
+        unsafe { libobs_sys::obs_source_get_type_data(self.raw.as_ptr()) }
+    }
+
     pub fn unversioned_id(&self) -> String {
         unsafe { libobs_sys::obs_source_get_unversioned_id(self.raw.as_ptr()) }.into_string()
     }
@@ -369,6 +374,19 @@ impl SourceType {
             _ => Self::Unknown(value as u32),
         }
     }
+
+    pub(crate) const fn to_native(self) -> libobs_sys::obs_source_type::Type {
+        use libobs_sys::obs_source_type::*;
+
+        match self {
+            SourceType::Input => OBS_SOURCE_TYPE_INPUT,
+            SourceType::Filter => OBS_SOURCE_TYPE_FILTER,
+            SourceType::Transition => OBS_SOURCE_TYPE_TRANSITION,
+            SourceType::Scene => OBS_SOURCE_TYPE_SCENE,
+            #[allow(clippy::unnecessary_cast)]
+            SourceType::Unknown(value) => value as _,
+        }
+    }
 }
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -413,6 +431,29 @@ impl IconType {
             OBS_ICON_TYPE_CUSTOM => Self::Custom,
             OBS_ICON_TYPE_PROCESS_AUDIO_OUTPUT => Self::ProcessAudioOutput,
             _ => Self::UnknownValue(ty as _),
+        }
+    }
+
+    pub(crate) const fn to_native(self) -> libobs_sys::obs_icon_type::Type {
+        use libobs_sys::obs_icon_type::*;
+
+        match self {
+            IconType::Unknown => OBS_ICON_TYPE_UNKNOWN,
+            IconType::Image => OBS_ICON_TYPE_IMAGE,
+            IconType::Color => OBS_ICON_TYPE_COLOR,
+            IconType::Slideshow => OBS_ICON_TYPE_SLIDESHOW,
+            IconType::AudioInput => OBS_ICON_TYPE_AUDIO_INPUT,
+            IconType::AudioOutput => OBS_ICON_TYPE_AUDIO_OUTPUT,
+            IconType::DesktopCapture => OBS_ICON_TYPE_DESKTOP_CAPTURE,
+            IconType::WindowCapture => OBS_ICON_TYPE_WINDOW_CAPTURE,
+            IconType::GameCapture => OBS_ICON_TYPE_GAME_CAPTURE,
+            IconType::Camera => OBS_ICON_TYPE_CAMERA,
+            IconType::Text => OBS_ICON_TYPE_TEXT,
+            IconType::Media => OBS_ICON_TYPE_MEDIA,
+            IconType::Browser => OBS_ICON_TYPE_BROWSER,
+            IconType::Custom => OBS_ICON_TYPE_CUSTOM,
+            IconType::ProcessAudioOutput => OBS_ICON_TYPE_PROCESS_AUDIO_OUTPUT,
+            IconType::UnknownValue(value) => value as _,
         }
     }
 }

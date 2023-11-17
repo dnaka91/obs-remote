@@ -146,60 +146,6 @@ pub fn list_instances_of<P, C, T>(
     param.instances
 }
 
-pub fn find_instance_of<P, C, T>(
-    parent: *mut P,
-    search: *mut C,
-    f: unsafe extern "C" fn(
-        *mut P,
-        Option<unsafe extern "C" fn(*mut P, *mut C, *mut c_void)>,
-        *mut c_void,
-    ),
-    get_ref: unsafe extern "C" fn(*mut C) -> *mut C,
-    converter: fn(*mut C) -> T,
-) -> Option<(usize, T)> {
-    struct Param<C, T> {
-        search: *mut C,
-        found: Option<T>,
-        index: usize,
-        get_ref: unsafe extern "C" fn(*mut C) -> *mut C,
-        converter: fn(*mut C) -> T,
-    }
-
-    unsafe extern "C" fn callback<P, C, T>(_parent: *mut P, child: *mut C, param: *mut c_void) {
-        if !child.is_null() {
-            let param = unsafe { &mut *param.cast::<Param<C, T>>() };
-            let r = param.get_ref;
-            let f = param.converter;
-
-            if param.found.is_none() && child == param.search {
-                param.found = Some(f(unsafe { r(child) }));
-            }
-
-            if param.found.is_none() {
-                param.index += 1;
-            }
-        }
-    }
-
-    let mut param = Param {
-        search,
-        found: None,
-        index: 0,
-        get_ref,
-        converter,
-    };
-
-    unsafe {
-        f(
-            parent,
-            Some(callback::<P, C, T>),
-            (&mut param as *mut Param<_, _>).cast(),
-        )
-    };
-
-    param.found.map(|found| (param.index, found))
-}
-
 pub fn convert_string_list(raw: *mut *const c_char) -> Vec<String> {
     if raw.is_null() {
         return Vec::new();

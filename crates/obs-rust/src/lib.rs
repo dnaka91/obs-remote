@@ -264,6 +264,7 @@ enum ListItemValue {
     Int(i64),
     Float(f64),
     String(String),
+    Bool(bool),
 }
 
 #[derive(Serialize)]
@@ -369,6 +370,9 @@ fn list_source_properties() -> BTreeMap<String, Vec<JsonProperty>> {
                                             }
                                             ComboFormat::String => {
                                                 ListItemValue::String(lp.item_string(i))
+                                            }
+                                            ComboFormat::Bool => {
+                                                ListItemValue::Bool(lp.item_bool(i))
                                             }
                                         },
                                     })

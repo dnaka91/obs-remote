@@ -230,6 +230,9 @@ bitflags! {
         const SERVICE = libobs_sys::OBS_OUTPUT_SERVICE;
         const MULTI_TRACK = libobs_sys::OBS_OUTPUT_MULTI_TRACK;
         const CAN_PAUSE = libobs_sys::OBS_OUTPUT_CAN_PAUSE;
+        const MULTI_TRACK_AUDIO = libobs_sys::OBS_OUTPUT_MULTI_TRACK_AUDIO;
+        const MULTI_TRACK_VIDEO = libobs_sys::OBS_OUTPUT_MULTI_TRACK_VIDEO;
+        const MULTI_TRACK_AV = libobs_sys::OBS_OUTPUT_MULTI_TRACK_AV;
     }
 }
 

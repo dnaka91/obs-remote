@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use crate::{source::Source, util};
+use crate::source::Source;
 
 pub struct Filter<'a> {
     raw: NonNull<libobs_sys::obs_source_t>,
@@ -42,14 +42,16 @@ impl<'a> Filter<'a> {
     }
 
     pub fn index(&self) -> Option<usize> {
-        util::find_instance_of(
-            self.parent.as_ptr(),
-            self.raw.as_ptr(),
-            libobs_sys::obs_source_enum_filters,
-            libobs_sys::obs_source_get_ref,
-            Source::from_raw,
-        )
-        .map(|(index, _)| index)
+        usize::try_from(unsafe {
+            libobs_sys::obs_source_filter_get_index(self.parent.as_ptr(), self.raw.as_ptr())
+        })
+        .ok()
+    }
+
+    pub fn set_index(&mut self, index: usize) {
+        unsafe {
+            libobs_sys::obs_source_filter_set_index(self.parent.as_ptr(), self.raw.as_ptr(), index)
+        };
     }
 }
 

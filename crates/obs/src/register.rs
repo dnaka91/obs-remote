@@ -76,6 +76,7 @@ impl SourceInfo {
                 unversioned_id: std::ptr::null(),
                 missing_files: None,
                 video_get_color_space: None,
+                filter_add: None,
             },
             pointers,
         }

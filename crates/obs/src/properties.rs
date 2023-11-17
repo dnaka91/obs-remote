@@ -480,6 +480,10 @@ impl<'a> ListProperty<'a> {
         unsafe { libobs_sys::obs_property_list_item_string(self.0.raw.as_ptr(), index) }
             .into_string()
     }
+
+    pub fn item_bool(&self, index: usize) -> bool {
+        unsafe { libobs_sys::obs_property_list_item_bool(self.0.raw.as_ptr(), index) }
+    }
 }
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -489,6 +493,7 @@ pub enum ComboFormat {
     Int,
     Float,
     String,
+    Bool,
     Unknown(u32),
 }
 
@@ -501,6 +506,7 @@ impl ComboFormat {
             OBS_COMBO_FORMAT_INT => Self::Int,
             OBS_COMBO_FORMAT_FLOAT => Self::Float,
             OBS_COMBO_FORMAT_STRING => Self::String,
+            OBS_COMBO_FORMAT_BOOL => Self::Bool,
             _ => Self::Unknown(ty as _),
         }
     }
@@ -512,6 +518,7 @@ pub enum ComboType {
     Invalid,
     Editable,
     List,
+    Radio,
     Unknown(u32),
 }
 
@@ -523,6 +530,7 @@ impl ComboType {
             OBS_COMBO_INVALID => Self::Invalid,
             OBS_COMBO_TYPE_EDITABLE => Self::Editable,
             OBS_COMBO_TYPE_LIST => Self::List,
+            OBS_COMBO_TYPE_RADIO => Self::Radio,
             _ => Self::Unknown(ty as _),
         }
     }

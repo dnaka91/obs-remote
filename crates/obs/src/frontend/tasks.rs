@@ -9,7 +9,7 @@ pub(crate) fn queue<T>(ty: TaskType, param: T, task: fn(T), wait: bool) {
     }
 
     unsafe extern "C" fn callback<T>(param: *mut c_void) {
-        let param = Box::from_raw(param.cast::<Param<T>>());
+        let param = unsafe { Box::from_raw(param.cast::<Param<T>>()) };
         let t = param.task;
         t(param.param);
     }

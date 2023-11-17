@@ -63,7 +63,7 @@ pub fn list() -> Vec<Encoder<'static>> {
         encoder: *mut libobs_sys::obs_encoder_t,
     ) -> bool {
         if !encoder.is_null() {
-            let param = &mut *param.cast::<Vec<Encoder<'_>>>();
+            let param = unsafe { &mut *param.cast::<Vec<Encoder<'_>>>() };
             param.push(Encoder::from_raw(encoder));
         }
 

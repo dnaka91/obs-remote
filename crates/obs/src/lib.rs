@@ -1,4 +1,4 @@
-#![deny(rust_2018_idioms)]
+#![deny(rust_2018_idioms, unsafe_op_in_unsafe_fn)]
 
 use std::{
     ffi::CStr,

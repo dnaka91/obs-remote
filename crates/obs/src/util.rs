@@ -79,10 +79,10 @@ pub fn list_instances<R, T>(
 
     unsafe extern "C" fn callback<R, T>(param: *mut c_void, raw: *mut R) -> bool {
         if !raw.is_null() {
-            let param = &mut *param.cast::<Param<R, T>>();
+            let param = unsafe { &mut *param.cast::<Param<R, T>>() };
             let r = param.get_ref;
             let f = param.converter;
-            param.instances.push(f(r(raw)));
+            param.instances.push(f(unsafe { r(raw) }));
         }
 
         true
@@ -122,10 +122,10 @@ pub fn list_instances_of<P, C, T>(
 
     unsafe extern "C" fn callback<P, C, T>(_parent: *mut P, child: *mut C, param: *mut c_void) {
         if !child.is_null() {
-            let param = &mut *param.cast::<Param<C, T>>();
+            let param = unsafe { &mut *param.cast::<Param<C, T>>() };
             let r = param.get_ref;
             let f = param.converter;
-            param.instances.push(f(r(child)));
+            param.instances.push(f(unsafe { r(child) }));
         }
     }
 
@@ -167,12 +167,12 @@ pub fn find_instance_of<P, C, T>(
 
     unsafe extern "C" fn callback<P, C, T>(_parent: *mut P, child: *mut C, param: *mut c_void) {
         if !child.is_null() {
-            let param = &mut *param.cast::<Param<C, T>>();
+            let param = unsafe { &mut *param.cast::<Param<C, T>>() };
             let r = param.get_ref;
             let f = param.converter;
 
             if param.found.is_none() && child == param.search {
-                param.found = Some(f(r(child)));
+                param.found = Some(f(unsafe { r(child) }));
             }
 
             if param.found.is_none() {

@@ -83,7 +83,7 @@ impl SourceInfo {
 
     pub fn get_name(mut self, f: fn() -> &'static str) -> Self {
         unsafe extern "C" fn trampoline(ptrs: *mut c_void) -> *const i8 {
-            let ptrs = &*ptrs.cast::<Pointers>();
+            let ptrs = unsafe { &*ptrs.cast::<Pointers>() };
             ptrs.get_name
                 .map(|f| f().as_ptr().cast())
                 .unwrap_or(std::ptr::null())
@@ -101,7 +101,7 @@ impl SourceInfo {
         ) -> *mut c_void {
             let mut data = Data::from_raw(data);
             let mut source = Source::from_raw_no_release(source);
-            let ptrs = &*source.type_data().cast::<Pointers>();
+            let ptrs = unsafe { &*source.type_data().cast::<Pointers>() };
 
             ptrs.create
                 .map(|f| f(&mut data, &mut source).cast())

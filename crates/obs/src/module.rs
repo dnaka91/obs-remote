@@ -58,7 +58,7 @@ impl Module {
 pub fn list_modules() -> Vec<Module> {
     unsafe extern "C" fn callback(param: *mut c_void, module: *mut libobs_sys::obs_module_t) {
         if !module.is_null() {
-            let param = &mut *param.cast::<Vec<Module>>();
+            let param = unsafe { &mut *param.cast::<Vec<Module>>() };
             param.push(Module::from_raw(module));
         }
     }

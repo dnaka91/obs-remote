@@ -33,7 +33,7 @@ impl Hotkey {
             _id: libobs_sys::obs_hotkey_id,
             key: *mut libobs_sys::obs_hotkey_t,
         ) -> bool {
-            let param = &mut *param.cast::<Param<'_>>();
+            let param = unsafe { &mut *param.cast::<Param<'_>>() };
             let key = Hotkey::from_raw(key);
 
             if key.name() == param.name {
@@ -1515,7 +1515,7 @@ fn list_instances<R, I, T>(
 
     unsafe extern "C" fn callback<R, I, T>(param: *mut c_void, _id: I, raw: *mut R) -> bool {
         if !raw.is_null() {
-            let param = &mut *param.cast::<Param<R, T>>();
+            let param = unsafe { &mut *param.cast::<Param<R, T>>() };
             param.instances.push((param.converter)(raw));
         }
 

@@ -42,9 +42,9 @@ impl<'a> Scene<'a> {
             param: *mut c_void,
         ) -> bool {
             if !item.is_null() {
-                libobs_sys::obs_sceneitem_addref(item);
+                unsafe { libobs_sys::obs_sceneitem_addref(item) };
 
-                let param = &mut *param.cast::<Vec<SceneItem<'_>>>();
+                let param = unsafe { &mut *param.cast::<Vec<SceneItem<'_>>>() };
                 param.push(SceneItem::from_raw(item));
             }
 
@@ -91,7 +91,7 @@ impl<'a> Scene<'a> {
         where
             F: FnOnce(&mut Scene<'_>) -> T,
         {
-            let param = &mut *param.cast::<Param<F, T>>();
+            let param = unsafe { &mut *param.cast::<Param<F, T>>() };
             if let Some(update) = param.update.take() {
                 param.result = Some(update(&mut Scene::from_raw(raw)));
             }
@@ -262,9 +262,9 @@ impl<'a> SceneItem<'a> {
             param: *mut c_void,
         ) -> bool {
             if !item.is_null() {
-                libobs_sys::obs_sceneitem_addref(item);
+                unsafe { libobs_sys::obs_sceneitem_addref(item) };
 
-                let param = &mut *param.cast::<Vec<SceneItem<'_>>>();
+                let param = unsafe { &mut *param.cast::<Vec<SceneItem<'_>>>() };
                 param.push(SceneItem::from_raw(item));
             }
 

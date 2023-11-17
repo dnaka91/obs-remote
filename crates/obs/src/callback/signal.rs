@@ -89,7 +89,8 @@ unsafe impl Send for Handle {}
 unsafe impl Sync for Handle {}
 
 unsafe extern "C" fn signal_callback(param: *mut c_void, data: *mut libobs_sys::calldata_t) {
-    let callback = ManuallyDrop::new(Box::from_raw(param.cast::<Box<dyn Fn(&Calldata)>>()));
+    let callback =
+        ManuallyDrop::new(unsafe { Box::from_raw(param.cast::<Box<dyn Fn(&Calldata)>>()) });
     (callback)(&Calldata::from_raw(data, false));
 }
 

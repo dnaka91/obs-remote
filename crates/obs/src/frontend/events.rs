@@ -36,7 +36,8 @@ unsafe extern "C" fn event_callback(
     event: libobs_sys::obs_frontend_event::Type,
     private_data: *mut c_void,
 ) {
-    let handler = ManuallyDrop::new(Box::from_raw(private_data.cast::<Box<dyn Fn(Event)>>()));
+    let handler =
+        ManuallyDrop::new(unsafe { Box::from_raw(private_data.cast::<Box<dyn Fn(Event)>>()) });
     (handler)(Event::from_native(event));
 }
 

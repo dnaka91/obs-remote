@@ -11,6 +11,7 @@ exceptions = [
     { allow = ["AGPL-3.0"], name = "libobs-sys" },
     { allow = ["AGPL-3.0"], name = "obs" },
     { allow = ["AGPL-3.0"], name = "obs-client" },
+    { allow = ["AGPL-3.0"], name = "obs-gradient-sourcer" },
     { allow = ["AGPL-3.0"], name = "obs-remote" },
     { allow = ["AGPL-3.0"], name = "obs-rust" },
     { allow = ["Unicode-DFS-2016"], name = "unicode-ident" },
@@ -21,7 +22,7 @@ skip = [
     { name = "bitflags", version = "1" },
     { name = "hashbrown", version = "0.12" },
     { name = "indexmap", version = "1" },
-    { name = "prettyplease", version = "0.1" },
-    { name = "socket2", version = "0.4" },
-    { name = "syn", version = "1" },
+]
+skip-tree = [
+    { name = "windows-sys", version = "0.48", depth = 3 },
 ]

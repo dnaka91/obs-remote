@@ -12,5 +12,5 @@ crate-type = ["cdylib"]
 [dependencies]
 log = "0.4.20"
 obs = { path = "../obs", features = ["serde"] }
-serde = { version = "1.0.192", features = ["derive"] }
-serde_json = "1.0.108"
+serde = { version = "1.0.195", features = ["derive"] }
+serde_json = "1.0.111"

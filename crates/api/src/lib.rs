@@ -17,6 +17,7 @@
     clippy::option_if_let_else,
     clippy::similar_names,
     clippy::struct_excessive_bools,
+    clippy::struct_field_names,
     clippy::too_many_lines,
     clippy::trivially_copy_pass_by_ref,
     clippy::use_self,

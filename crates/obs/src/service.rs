@@ -87,10 +87,6 @@ impl Service<'_> {
         StreamType::from_native(unsafe { libobs_sys::obs_service_get_type(self.raw.as_ptr()) })
     }
 
-    pub fn url(&self) -> String {
-        unsafe { libobs_sys::obs_service_get_url(self.raw.as_ptr()) }.into_string()
-    }
-
     pub fn supported_video_codecs(&self) -> Vec<String> {
         util::convert_string_list(unsafe {
             libobs_sys::obs_service_get_supported_video_codecs(self.raw.as_ptr())

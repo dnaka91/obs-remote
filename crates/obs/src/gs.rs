@@ -54,11 +54,6 @@ pub fn base_effect(effect: BaseEffect) -> Option<Effect> {
     (!raw.is_null()).then(|| Effect::from_raw(raw))
 }
 
-pub fn default_rect_effect() -> Option<Effect> {
-    let raw = unsafe { libobs_sys::obs_get_default_rect_effect() };
-    (!raw.is_null()).then(|| Effect::from_raw(raw))
-}
-
 pub struct Effect {
     #[allow(dead_code)]
     raw: NonNull<libobs_sys::gs_effect_t>,

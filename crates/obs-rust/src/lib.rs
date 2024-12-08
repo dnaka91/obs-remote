@@ -456,7 +456,6 @@ struct JsonService {
     display_name: Option<String>,
     max_bitrate: MaxBitrate,
     max_fps: u32,
-    url: String,
     supported_video_codecs: Vec<String>,
 }
 
@@ -477,7 +476,6 @@ fn list_services() -> Vec<JsonService> {
                 display_name: obs::service::Service::display_name(&service.id()),
                 max_bitrate: MaxBitrate { video, audio },
                 max_fps: service.max_fps(),
-                url: service.url(),
                 supported_video_codecs: service.supported_video_codecs(),
             }
         })

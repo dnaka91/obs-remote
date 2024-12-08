@@ -230,11 +230,6 @@ pub fn locale() -> String {
         .into_owned()
 }
 
-/// Get the master user volume.
-pub fn master_volume() -> f32 {
-    unsafe { libobs_sys::obs_get_master_volume() }
-}
-
 pub fn render_main_texture() {
     unsafe { libobs_sys::obs_render_main_texture() };
 }

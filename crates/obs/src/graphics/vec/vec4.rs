@@ -4,7 +4,6 @@ use std::arch::x86::*;
 use std::arch::x86_64::*;
 use std::{
     fmt::{self, Debug},
-    mem,
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
 };
 
@@ -19,7 +18,7 @@ impl Vec4 {
     pub fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
         Self(libobs_sys::vec4 {
             __bindgen_anon_1: libobs_sys::vec4__bindgen_ty_1 {
-                m: unsafe { mem::transmute(_mm_set_ps(w, z, y, x)) },
+                m: zerocopy::transmute!(unsafe { _mm_set_ps(w, z, y, x) }),
             },
         })
     }
@@ -35,14 +34,14 @@ impl Vec4 {
     fn new_m(m: __m128) -> Self {
         Self(libobs_sys::vec4 {
             __bindgen_anon_1: libobs_sys::vec4__bindgen_ty_1 {
-                m: unsafe { mem::transmute(m) },
+                m: zerocopy::transmute!(m),
             },
         })
     }
 
     #[inline]
     fn set_m(&mut self, m: __m128) {
-        self.0.__bindgen_anon_1.m = unsafe { mem::transmute(m) };
+        self.0.__bindgen_anon_1.m = zerocopy::transmute!(m);
     }
 
     pub(crate) fn from_raw(raw: libobs_sys::vec4) -> Self {
@@ -125,8 +124,8 @@ impl Add for Vec4 {
     fn add(self, rhs: Self) -> Self::Output {
         Self::new_m(unsafe {
             _mm_add_ps(
-                mem::transmute(self.0.__bindgen_anon_1.m),
-                mem::transmute(rhs.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(rhs.0.__bindgen_anon_1.m),
             )
         })
     }
@@ -136,8 +135,8 @@ impl AddAssign for Vec4 {
     fn add_assign(&mut self, rhs: Self) {
         self.set_m(unsafe {
             _mm_add_ps(
-                mem::transmute(self.0.__bindgen_anon_1.m),
-                mem::transmute(rhs.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(rhs.0.__bindgen_anon_1.m),
             )
         });
     }
@@ -149,8 +148,8 @@ impl Sub for Vec4 {
     fn sub(self, rhs: Self) -> Self::Output {
         Self::new_m(unsafe {
             _mm_sub_ps(
-                mem::transmute(self.0.__bindgen_anon_1.m),
-                mem::transmute(rhs.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(rhs.0.__bindgen_anon_1.m),
             )
         })
     }
@@ -160,8 +159,8 @@ impl SubAssign for Vec4 {
     fn sub_assign(&mut self, rhs: Self) {
         self.set_m(unsafe {
             _mm_sub_ps(
-                mem::transmute(self.0.__bindgen_anon_1.m),
-                mem::transmute(rhs.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(rhs.0.__bindgen_anon_1.m),
             )
         });
     }
@@ -173,8 +172,8 @@ impl Mul for Vec4 {
     fn mul(self, rhs: Self) -> Self::Output {
         Self::new_m(unsafe {
             _mm_mul_ps(
-                mem::transmute(self.0.__bindgen_anon_1.m),
-                mem::transmute(rhs.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(rhs.0.__bindgen_anon_1.m),
             )
         })
     }
@@ -184,8 +183,8 @@ impl MulAssign for Vec4 {
     fn mul_assign(&mut self, rhs: Self) {
         self.set_m(unsafe {
             _mm_mul_ps(
-                mem::transmute(self.0.__bindgen_anon_1.m),
-                mem::transmute(rhs.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(rhs.0.__bindgen_anon_1.m),
             )
         });
     }
@@ -197,8 +196,8 @@ impl Div for Vec4 {
     fn div(self, rhs: Self) -> Self::Output {
         Self::new_m(unsafe {
             _mm_div_ps(
-                mem::transmute(self.0.__bindgen_anon_1.m),
-                mem::transmute(rhs.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(rhs.0.__bindgen_anon_1.m),
             )
         })
     }
@@ -208,8 +207,8 @@ impl DivAssign for Vec4 {
     fn div_assign(&mut self, rhs: Self) {
         self.set_m(unsafe {
             _mm_div_ps(
-                mem::transmute(self.0.__bindgen_anon_1.m),
-                mem::transmute(rhs.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(rhs.0.__bindgen_anon_1.m),
             )
         });
     }
@@ -220,7 +219,10 @@ impl Add<f32> for Vec4 {
 
     fn add(self, rhs: f32) -> Self::Output {
         Self::new_m(unsafe {
-            _mm_add_ps(mem::transmute(self.0.__bindgen_anon_1.m), _mm_set1_ps(rhs))
+            _mm_add_ps(
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                _mm_set1_ps(rhs),
+            )
         })
     }
 }
@@ -228,7 +230,10 @@ impl Add<f32> for Vec4 {
 impl AddAssign<f32> for Vec4 {
     fn add_assign(&mut self, rhs: f32) {
         self.set_m(unsafe {
-            _mm_add_ps(mem::transmute(self.0.__bindgen_anon_1.m), _mm_set1_ps(rhs))
+            _mm_add_ps(
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                _mm_set1_ps(rhs),
+            )
         });
     }
 }
@@ -238,7 +243,10 @@ impl Sub<f32> for Vec4 {
 
     fn sub(self, rhs: f32) -> Self::Output {
         Self::new_m(unsafe {
-            _mm_sub_ps(mem::transmute(self.0.__bindgen_anon_1.m), _mm_set1_ps(rhs))
+            _mm_sub_ps(
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                _mm_set1_ps(rhs),
+            )
         })
     }
 }
@@ -246,7 +254,10 @@ impl Sub<f32> for Vec4 {
 impl SubAssign<f32> for Vec4 {
     fn sub_assign(&mut self, rhs: f32) {
         self.set_m(unsafe {
-            _mm_sub_ps(mem::transmute(self.0.__bindgen_anon_1.m), _mm_set1_ps(rhs))
+            _mm_sub_ps(
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                _mm_set1_ps(rhs),
+            )
         });
     }
 }
@@ -256,7 +267,10 @@ impl Mul<f32> for Vec4 {
 
     fn mul(self, rhs: f32) -> Self::Output {
         Self::new_m(unsafe {
-            _mm_mul_ps(mem::transmute(self.0.__bindgen_anon_1.m), _mm_set1_ps(rhs))
+            _mm_mul_ps(
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                _mm_set1_ps(rhs),
+            )
         })
     }
 }
@@ -264,7 +278,10 @@ impl Mul<f32> for Vec4 {
 impl MulAssign<f32> for Vec4 {
     fn mul_assign(&mut self, rhs: f32) {
         self.set_m(unsafe {
-            _mm_mul_ps(mem::transmute(self.0.__bindgen_anon_1.m), _mm_set1_ps(rhs))
+            _mm_mul_ps(
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                _mm_set1_ps(rhs),
+            )
         });
     }
 }
@@ -274,7 +291,10 @@ impl Div<f32> for Vec4 {
 
     fn div(self, rhs: f32) -> Self::Output {
         Self::new_m(unsafe {
-            _mm_div_ps(mem::transmute(self.0.__bindgen_anon_1.m), _mm_set1_ps(rhs))
+            _mm_div_ps(
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                _mm_set1_ps(rhs),
+            )
         })
     }
 }
@@ -282,7 +302,10 @@ impl Div<f32> for Vec4 {
 impl DivAssign<f32> for Vec4 {
     fn div_assign(&mut self, rhs: f32) {
         self.set_m(unsafe {
-            _mm_div_ps(mem::transmute(self.0.__bindgen_anon_1.m), _mm_set1_ps(rhs))
+            _mm_div_ps(
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                _mm_set1_ps(rhs),
+            )
         });
     }
 }
@@ -301,8 +324,8 @@ impl Min for Vec4 {
     fn min(self, rhs: Self) -> Self {
         Self::new_m(unsafe {
             _mm_min_ps(
-                mem::transmute(self.0.__bindgen_anon_1.m),
-                mem::transmute(rhs.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(rhs.0.__bindgen_anon_1.m),
             )
         })
     }
@@ -314,8 +337,8 @@ impl Max for Vec4 {
     fn max(self, rhs: Self) -> Self {
         Self::new_m(unsafe {
             _mm_max_ps(
-                mem::transmute(self.0.__bindgen_anon_1.m),
-                mem::transmute(rhs.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(rhs.0.__bindgen_anon_1.m),
             )
         })
     }
@@ -326,7 +349,10 @@ impl Min<f32> for Vec4 {
 
     fn min(self, rhs: f32) -> Self {
         Self::new_m(unsafe {
-            _mm_min_ps(mem::transmute(self.0.__bindgen_anon_1.m), _mm_set1_ps(rhs))
+            _mm_min_ps(
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                _mm_set1_ps(rhs),
+            )
         })
     }
 }
@@ -336,7 +362,10 @@ impl Max<f32> for Vec4 {
 
     fn max(self, rhs: f32) -> Self {
         Self::new_m(unsafe {
-            _mm_max_ps(mem::transmute(self.0.__bindgen_anon_1.m), _mm_set1_ps(rhs))
+            _mm_max_ps(
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                _mm_set1_ps(rhs),
+            )
         })
     }
 }
@@ -349,8 +378,8 @@ impl VecX<f32> for Vec4 {
     fn dot(self, rhs: Self) -> f32 {
         let m = unsafe {
             _mm_mul_ps(
-                mem::transmute(self.0.__bindgen_anon_1.m),
-                mem::transmute(rhs.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(self.0.__bindgen_anon_1.m),
+                zerocopy::transmute!(rhs.0.__bindgen_anon_1.m),
             )
         };
         let m = unsafe { _mm_add_ps(_mm_movehl_ps(m, m), m) };
@@ -383,7 +412,7 @@ impl VecX<f32> for Vec4 {
         Self::new_m(if dot > 0.0 {
             unsafe {
                 _mm_mul_ps(
-                    mem::transmute(self.0.__bindgen_anon_1.m),
+                    zerocopy::transmute!(self.0.__bindgen_anon_1.m),
                     _mm_set1_ps(1.0 / dot.sqrt()),
                 )
             }

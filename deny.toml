@@ -14,15 +14,19 @@ exceptions = [
     { allow = ["AGPL-3.0"], name = "obs-gradient-sourcer" },
     { allow = ["AGPL-3.0"], name = "obs-remote" },
     { allow = ["AGPL-3.0"], name = "obs-rust" },
-    { allow = ["Unicode-DFS-2016"], name = "unicode-ident" },
+    { allow = ["Unicode-3.0"], name = "unicode-ident" },
 ]
 
 [bans]
 skip = [
-    { name = "bitflags", version = "1" },
-    { name = "hashbrown", version = "0.12" },
-    { name = "indexmap", version = "1" },
+    "bitflags@1",
+    "hashbrown@0.12",
+    "indexmap@1",
+    "sync_wrapper@0.1",
+    "tower@0.4",
+    "zerocopy@0.7",
 ]
 skip-tree = [
-    { name = "windows-sys", version = "0.48", depth = 3 },
+    { crate = "windows-sys@0.48", depth = 3 },
+    { crate = "windows-sys@0.52", depth = 3 },
 ]

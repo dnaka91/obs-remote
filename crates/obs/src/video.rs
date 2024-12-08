@@ -9,7 +9,7 @@ pub struct Video<'a> {
     life: PhantomData<&'a ()>,
 }
 
-impl<'a> Video<'a> {
+impl Video<'_> {
     pub fn get() -> Self {
         Self::from_raw(unsafe { libobs_sys::obs_get_video() })
     }

@@ -11,7 +11,7 @@ pub struct Properties<'a> {
     release: bool,
 }
 
-impl<'a> Drop for Properties<'a> {
+impl Drop for Properties<'_> {
     fn drop(&mut self) {
         if self.release {
             unsafe { libobs_sys::obs_properties_destroy(self.raw.as_ptr()) }
@@ -20,7 +20,7 @@ impl<'a> Drop for Properties<'a> {
     }
 }
 
-impl<'a> Properties<'a> {
+impl Properties<'_> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_properties_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
@@ -239,7 +239,7 @@ pub enum TypedProperty<'a> {
 
 pub struct IntProperty<'a>(&'a Property<'a>);
 
-impl<'a> IntProperty<'a> {
+impl IntProperty<'_> {
     pub fn ty(&self) -> NumberType {
         NumberType::from_native(unsafe { libobs_sys::obs_property_int_type(self.0.raw.as_ptr()) })
     }
@@ -263,7 +263,7 @@ impl<'a> IntProperty<'a> {
 
 pub struct FloatProperty<'a>(&'a Property<'a>);
 
-impl<'a> FloatProperty<'a> {
+impl FloatProperty<'_> {
     pub fn ty(&self) -> NumberType {
         NumberType::from_native(unsafe { libobs_sys::obs_property_int_type(self.0.raw.as_ptr()) })
     }
@@ -307,7 +307,7 @@ impl NumberType {
 
 pub struct TextProperty<'a>(&'a Property<'a>);
 
-impl<'a> TextProperty<'a> {
+impl TextProperty<'_> {
     pub fn ty(&self) -> TextType {
         TextType::from_native(unsafe { libobs_sys::obs_property_text_type(self.0.raw.as_ptr()) })
     }
@@ -373,7 +373,7 @@ impl TextInfoType {
 
 pub struct PathProperty<'a>(&'a Property<'a>);
 
-impl<'a> PathProperty<'a> {
+impl PathProperty<'_> {
     pub fn ty(&self) -> PathType {
         PathType::from_native(unsafe { libobs_sys::obs_property_path_type(self.0.raw.as_ptr()) })
     }
@@ -411,7 +411,7 @@ impl PathType {
 
 pub struct ButtonProperty<'a>(&'a Property<'a>);
 
-impl<'a> ButtonProperty<'a> {
+impl ButtonProperty<'_> {
     pub fn ty(&self) -> ButtonType {
         ButtonType::from_native(unsafe {
             libobs_sys::obs_property_button_type(self.0.raw.as_ptr())
@@ -445,7 +445,7 @@ impl ButtonType {
 
 pub struct ListProperty<'a>(&'a Property<'a>);
 
-impl<'a> ListProperty<'a> {
+impl ListProperty<'_> {
     pub fn ty(&self) -> ComboType {
         ComboType::from_native(unsafe { libobs_sys::obs_property_list_type(self.0.raw.as_ptr()) })
     }
@@ -538,7 +538,7 @@ impl ComboType {
 
 pub struct EditableListProperty<'a>(&'a Property<'a>);
 
-impl<'a> EditableListProperty<'a> {
+impl EditableListProperty<'_> {
     pub fn ty(&self) -> EditableListType {
         EditableListType::from_native(unsafe {
             libobs_sys::obs_property_editable_list_type(self.0.raw.as_ptr())
@@ -579,7 +579,7 @@ impl EditableListType {
 
 pub struct FrameRateProperty<'a>(&'a Property<'a>);
 
-impl<'a> FrameRateProperty<'a> {
+impl FrameRateProperty<'_> {
     pub fn fps_ranges_count(&self) -> usize {
         unsafe { libobs_sys::obs_property_frame_rate_fps_ranges_count(self.0.raw.as_ptr()) }
     }
@@ -651,7 +651,7 @@ pub struct FpsRangeIter<'a> {
     pos: usize,
 }
 
-impl<'a> Iterator for FpsRangeIter<'a> {
+impl Iterator for FpsRangeIter<'_> {
     type Item = (MediaFps, MediaFps);
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -664,7 +664,7 @@ impl<'a> Iterator for FpsRangeIter<'a> {
     }
 }
 
-impl<'a> ExactSizeIterator for FpsRangeIter<'a> {
+impl ExactSizeIterator for FpsRangeIter<'_> {
     fn len(&self) -> usize {
         self.count as _
     }
@@ -676,7 +676,7 @@ pub struct OptionIter<'a> {
     pos: usize,
 }
 
-impl<'a> Iterator for OptionIter<'a> {
+impl Iterator for OptionIter<'_> {
     type Item = (String, String);
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -689,7 +689,7 @@ impl<'a> Iterator for OptionIter<'a> {
     }
 }
 
-impl<'a> ExactSizeIterator for OptionIter<'a> {
+impl ExactSizeIterator for OptionIter<'_> {
     fn len(&self) -> usize {
         self.count as _
     }

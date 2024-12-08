@@ -294,6 +294,10 @@ fn list_source_properties() -> BTreeMap<String, Vec<JsonProperty>> {
         "move_action_filter",
         "move_audio_action_filter",
         "advanced_masks_filter",
+        "advanced_masks_filter_v2",
+        "obs_noise_source",
+        "obs_noise_displace_filter",
+        "scale_to_sound",
     ];
 
     obs::source::list_source_types()

@@ -9,7 +9,7 @@ pub struct Scene<'a> {
     life: PhantomData<&'a ()>,
 }
 
-impl<'a> Drop for Scene<'a> {
+impl Drop for Scene<'_> {
     fn drop(&mut self) {
         unsafe { libobs_sys::obs_scene_release(self.raw.as_ptr()) }
     }
@@ -129,13 +129,13 @@ pub struct SceneItem<'a> {
     life: PhantomData<&'a ()>,
 }
 
-impl<'a> Drop for SceneItem<'a> {
+impl Drop for SceneItem<'_> {
     fn drop(&mut self) {
         unsafe { libobs_sys::obs_sceneitem_release(self.raw.as_ptr()) };
     }
 }
 
-impl<'a> SceneItem<'a> {
+impl SceneItem<'_> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_sceneitem_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },
@@ -299,7 +299,7 @@ impl<'a> SceneItem<'a> {
 
 pub struct EditableSceneItem<'a, 'b>(&'a mut SceneItem<'b>);
 
-impl<'a, 'b> EditableSceneItem<'a, 'b> {
+impl EditableSceneItem<'_, '_> {
     pub fn set_pos(&mut self, pos: (f32, f32)) {
         let pos = Vec2::new(pos.0, pos.1);
         unsafe { libobs_sys::obs_sceneitem_set_pos(self.0.raw.as_ptr(), pos.as_ptr()) };
@@ -362,7 +362,7 @@ impl<'a, 'b> EditableSceneItem<'a, 'b> {
     }
 }
 
-impl<'a, 'b> Deref for EditableSceneItem<'a, 'b> {
+impl<'b> Deref for EditableSceneItem<'_, 'b> {
     type Target = SceneItem<'b>;
 
     fn deref(&self) -> &Self::Target {

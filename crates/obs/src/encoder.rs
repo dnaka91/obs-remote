@@ -7,7 +7,7 @@ pub struct Encoder<'a> {
     life: PhantomData<&'a ()>,
 }
 
-impl<'a> Encoder<'a> {
+impl Encoder<'_> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_encoder_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },

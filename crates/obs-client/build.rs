@@ -1,7 +1,7 @@
 fn main() {
     tonic_build::configure()
         .build_server(false)
-        .compile(
+        .compile_protos(
             &[
                 "../../proto/config/v1/config.proto",
                 "../../proto/events/v1/events.proto",

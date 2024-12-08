@@ -10,5 +10,5 @@ description = "Port of exeldro/obs-gradient-source for fun"
 crate-type = ["cdylib"]
 
 [dependencies]
-log = "0.4.20"
+log = "0.4.22"
 obs = { path = "../obs" }

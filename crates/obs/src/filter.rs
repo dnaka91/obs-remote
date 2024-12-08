@@ -7,7 +7,7 @@ pub struct Filter<'a> {
     parent: &'a Source<'a>,
 }
 
-impl<'a> Drop for Filter<'a> {
+impl Drop for Filter<'_> {
     fn drop(&mut self) {
         unsafe { libobs_sys::obs_source_release(self.raw.as_ptr()) }
     }

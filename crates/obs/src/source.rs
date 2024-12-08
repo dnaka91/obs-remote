@@ -23,7 +23,7 @@ pub struct Source<'a> {
     release: bool,
 }
 
-impl<'a> Drop for Source<'a> {
+impl Drop for Source<'_> {
     fn drop(&mut self) {
         if self.release {
             unsafe { libobs_sys::obs_source_release(self.raw.as_ptr()) };
@@ -32,7 +32,7 @@ impl<'a> Drop for Source<'a> {
     }
 }
 
-impl<'a> Source<'a> {
+impl Source<'_> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_source_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },

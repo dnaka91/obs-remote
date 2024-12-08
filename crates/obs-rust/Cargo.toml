@@ -10,7 +10,7 @@ description = "Sample OBS plugin to try out various APIs"
 crate-type = ["cdylib"]
 
 [dependencies]
-log = "0.4.20"
+log = "0.4.22"
 obs = { path = "../obs", features = ["serde"] }
-serde = { version = "1.0.195", features = ["derive"] }
-serde_json = "1.0.111"
+serde = { version = "1.0.215", features = ["derive"] }
+serde_json = "1.0.133"

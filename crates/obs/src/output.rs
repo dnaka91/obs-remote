@@ -18,13 +18,13 @@ pub struct Output<'a> {
     life: PhantomData<&'a ()>,
 }
 
-impl<'a> Drop for Output<'a> {
+impl Drop for Output<'_> {
     fn drop(&mut self) {
         unsafe { libobs_sys::obs_output_release(self.raw.as_ptr()) }
     }
 }
 
-impl<'a> Output<'a> {
+impl Output<'_> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_output_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },

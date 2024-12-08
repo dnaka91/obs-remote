@@ -9,7 +9,6 @@ pub trait FfiToString {
     fn into_string(self) -> String;
     fn into_opt_string(self) -> Option<String>;
     fn into_path_buf(self) -> PathBuf;
-    fn into_opt_path_buf(self) -> Option<PathBuf>;
 }
 
 impl FfiToString for *const c_char {
@@ -31,10 +30,6 @@ impl FfiToString for *const c_char {
         // TODO: Probably there is a better way of transforming as `CStr -> OsStr -> Path`,
         // allowing to have non-UTF8 content.
         self.into_string().into()
-    }
-
-    fn into_opt_path_buf(self) -> Option<PathBuf> {
-        self.into_opt_string().map(Into::into)
     }
 }
 

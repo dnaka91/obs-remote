@@ -9,19 +9,19 @@ pub struct Data<'a> {
     life: PhantomData<&'a ()>,
 }
 
-impl<'a> Drop for Data<'a> {
+impl Drop for Data<'_> {
     fn drop(&mut self) {
         unsafe { libobs_sys::obs_data_release(self.raw.as_ptr()) };
     }
 }
 
-impl<'a> Default for Data<'a> {
+impl Default for Data<'_> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<'a> Data<'a> {
+impl Data<'_> {
     pub fn new() -> Self {
         Self::from_raw(unsafe { libobs_sys::obs_data_create() })
     }

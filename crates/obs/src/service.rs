@@ -10,13 +10,13 @@ pub struct Service<'a> {
     life: PhantomData<&'a ()>,
 }
 
-impl<'a> Drop for Service<'a> {
+impl Drop for Service<'_> {
     fn drop(&mut self) {
         unsafe { libobs_sys::obs_service_release(self.raw.as_ptr()) }
     }
 }
 
-impl<'a> Service<'a> {
+impl Service<'_> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::obs_service_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },

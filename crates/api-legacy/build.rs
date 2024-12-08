@@ -7,7 +7,7 @@ fn main() {
         .build_client(false)
         .server_mod_attribute(".", "#[allow(clippy::return_self_not_must_use)]")
         .file_descriptor_set_path(out_dir.join("obs_remote_legacy_descriptor.bin"))
-        .compile(
+        .compile_protos(
             &[
                 "proto/events.proto",
                 "proto/general.proto",

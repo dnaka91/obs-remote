@@ -7,7 +7,7 @@ pub struct Audio<'a> {
     life: PhantomData<&'a ()>,
 }
 
-impl<'a> Audio<'a> {
+impl Audio<'_> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::audio_t) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },

@@ -9,7 +9,7 @@ pub struct ProcHandler<'a> {
     destroy: bool,
 }
 
-impl<'a> Drop for ProcHandler<'a> {
+impl Drop for ProcHandler<'_> {
     fn drop(&mut self) {
         if self.destroy {
             unsafe { libobs_sys::proc_handler_destroy(self.raw.as_ptr()) };
@@ -18,7 +18,7 @@ impl<'a> Drop for ProcHandler<'a> {
     }
 }
 
-impl<'a> ProcHandler<'a> {
+impl ProcHandler<'_> {
     pub(crate) fn from_raw(raw: *mut libobs_sys::proc_handler_t, destroy: bool) -> Self {
         Self {
             raw: unsafe { NonNull::new_unchecked(raw) },

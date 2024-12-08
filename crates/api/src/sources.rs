@@ -1,6 +1,13 @@
 use std::io::Cursor;
 
-use image::{imageops::FilterType, DynamicImage, ImageOutputFormat, RgbaImage};
+use image::{
+    codecs::{
+        jpeg::JpegEncoder,
+        png::{self, PngEncoder},
+    },
+    imageops::FilterType,
+    DynamicImage, RgbaImage,
+};
 use obs::source::{Source, SourceType};
 use tonic::{Request, Response, Status};
 
@@ -83,15 +90,21 @@ fn screenshot(details: &ScreenshotRequest) -> Option<Vec<u8>> {
 
     let mut buf = Cursor::new(Vec::new());
 
-    image
-        .write_to(
-            &mut buf,
-            match details.format() {
-                ImageFormat::Unspecified | ImageFormat::Png => ImageOutputFormat::Png,
-                ImageFormat::Jpg => ImageOutputFormat::Jpeg(details.compression as _),
-            },
-        )
-        .unwrap();
+    match details.format() {
+        ImageFormat::Unspecified | ImageFormat::Png => image
+            .write_with_encoder(PngEncoder::new_with_quality(
+                &mut buf,
+                png::CompressionType::Best,
+                png::FilterType::default(),
+            ))
+            .unwrap(),
+        ImageFormat::Jpg => image
+            .write_with_encoder(JpegEncoder::new_with_quality(
+                &mut buf,
+                details.compression as _,
+            ))
+            .unwrap(),
+    }
 
     Some(buf.into_inner())
 }

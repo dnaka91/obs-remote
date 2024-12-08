@@ -14,10 +14,9 @@ fn main() {
 
     #[cfg(target_os = "macos")]
     {
-        compile_error!("macos builds are currently broken due to linking changes on OBS side");
-        // println!("cargo:rustc-link-search=/Applications/OBS.app/Contents/Frameworks");
-        // println!("cargo:rustc-link-lib=framework=libobs");
-        // println!("cargo:rustc-link-lib=dylib=obs-frontend-api");
+        println!("cargo:rustc-link-search=/Applications/OBS.app/Contents/Frameworks");
+        println!("cargo:rustc-link-lib=framework=libobs");
+        println!("cargo:rustc-link-lib=dylib=obs-frontend-api");
     }
 
     #[cfg(windows)]

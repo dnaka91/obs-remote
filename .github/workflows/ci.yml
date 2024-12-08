@@ -10,20 +10,20 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
     steps:
-      - name: Install OBS and Protobuf (ubuntu)
+      - name: Install OBS (ubuntu)
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           sudo add-apt-repository ppa:obsproject/obs-studio
-          sudo apt-get -y install libx11-dev obs-studio protobuf-compiler
-      - name: Install OBS and Protobuf (macos)
+          sudo apt-get -y install libx11-dev obs-studio
+      - name: Install OBS (macos)
         if: startsWith(matrix.os, 'macos')
         run: |
           brew update
-          brew install obs protobuf
-      - name: Install OBS and Protobuf (windows)
+          brew install obs
+      - name: Install OBS (windows)
         if: startsWith(matrix.os, 'windows')
         run: |
-          choco install -y --no-progress llvm obs-studio protoc
+          choco install -y --no-progress llvm obs-studio
           echo "LIBCLANG_PATH=C:\Program Files\LLVM\lib" >> $env:GITHUB_ENV
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -38,10 +38,10 @@ jobs:
     name: Miri
     runs-on: ubuntu-latest
     steps:
-      - name: Install OBS and Protobuf
+      - name: Install OBS
         run: |
           sudo add-apt-repository ppa:obsproject/obs-studio
-          sudo apt-get -y install libx11-dev obs-studio protobuf-compiler
+          sudo apt-get -y install libx11-dev obs-studio
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Setup Rust
@@ -61,10 +61,10 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - name: Install OBS and Protobuf
+      - name: Install OBS
         run: |
           sudo add-apt-repository ppa:obsproject/obs-studio
-          sudo apt-get -y install libx11-dev obs-studio protobuf-compiler
+          sudo apt-get -y install libx11-dev obs-studio
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Setup Rust (nightly)

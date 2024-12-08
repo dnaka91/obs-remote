@@ -18,4 +18,5 @@ tokio-stream = { version = "0.1.17", default-features = false, features = ["sync
 tonic = { version = "0.12.3", features = ["gzip"] }
 
 [build-dependencies]
+protox = "0.7.1"
 tonic-build = "0.12.3"

@@ -125,7 +125,7 @@ async fn run_server(mut signal: watch::Receiver<()>, ipv6: bool) -> Result<()> {
 
     let reflection = tonic_reflection::server::Builder::configure()
         .register_encoded_file_descriptor_set(FILE_DESCRIPTOR_SET)
-        .build()?;
+        .build_v1()?;
 
     info!("OBS Remote server starting up at {} ...", addr);
 

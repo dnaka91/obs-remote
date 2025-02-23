@@ -2,7 +2,7 @@
 name = "libobs-sys"
 version = "0.1.0"
 authors = ["Dominik Nakamura <dnaka91@gmail.com>"]
-edition = "2021"
+edition = "2024"
 build = "build.rs"
 license = "AGPL-3.0-only"
 links = "obs"
@@ -10,7 +10,7 @@ links = "obs"
 [dependencies]
 
 [build-dependencies]
-bindgen = "0.71.0"
+bindgen = "0.71.1"
 
 [target.'cfg(all(unix, not(target_os = "macos")))'.build-dependencies]
 pkg-config = "0.3.31"

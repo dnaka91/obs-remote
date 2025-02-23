@@ -86,11 +86,11 @@ impl Source<'_> {
 
     pub fn set_audio_mixers(&mut self, mixers: [bool; 6]) {
         let mixers = u32::from(mixers[0])
-            | u32::from(mixers[1]) << 1
-            | u32::from(mixers[2]) << 2
-            | u32::from(mixers[3]) << 3
-            | u32::from(mixers[4]) << 4
-            | u32::from(mixers[5]) << 5;
+            | (u32::from(mixers[1]) << 1)
+            | (u32::from(mixers[2]) << 2)
+            | (u32::from(mixers[3]) << 3)
+            | (u32::from(mixers[4]) << 4)
+            | (u32::from(mixers[5]) << 5);
         unsafe { libobs_sys::obs_source_set_audio_mixers(self.raw.as_ptr(), mixers) };
     }
 

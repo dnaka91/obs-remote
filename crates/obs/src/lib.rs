@@ -45,23 +45,23 @@ macro_rules! declare_module {
         static OBS_MODULE_POINTER: std::sync::atomic::AtomicPtr<$crate::libobs_sys::obs_module_t> =
             std::sync::atomic::AtomicPtr::new(std::ptr::null_mut());
 
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub extern "C" fn obs_module_set_pointer(module: *mut $crate::libobs_sys::obs_module_t) {
             unsafe { INSTANCE = Some(<$t>::new()) };
             OBS_MODULE_POINTER.store(module, std::sync::atomic::Ordering::SeqCst);
         }
 
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub extern "C" fn obs_current_module() -> *mut $crate::libobs_sys::obs_module_t {
             OBS_MODULE_POINTER.load(std::sync::atomic::Ordering::SeqCst)
         }
 
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub extern "C" fn obs_module_ver() -> std::os::raw::c_uint {
             $crate::libobs_sys::LIBOBS_API_VER
         }
 
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub extern "C" fn obs_module_load() -> bool {
             match unsafe { INSTANCE.as_mut() } {
                 Some(instance) => instance.load(),
@@ -69,21 +69,21 @@ macro_rules! declare_module {
             }
         }
 
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub extern "C" fn obs_module_unload() {
             if let Some(instance) = unsafe { INSTANCE.as_mut() } {
                 instance.unload();
             }
         }
 
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub extern "C" fn obs_module_post_load() {
             if let Some(instance) = unsafe { INSTANCE.as_mut() } {
                 instance.post_load()
             }
         }
 
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub extern "C" fn obs_module_author() -> *const std::os::raw::c_char {
             <$t>::author()
                 .unwrap_or_else(|| unsafe {
@@ -94,7 +94,7 @@ macro_rules! declare_module {
                 .as_ptr()
         }
 
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub extern "C" fn obs_module_name() -> *const std::os::raw::c_char {
             <$t>::name()
                 .unwrap_or_else(|| unsafe {
@@ -105,7 +105,7 @@ macro_rules! declare_module {
                 .as_ptr()
         }
 
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub extern "C" fn obs_module_description() -> *const std::os::raw::c_char {
             <$t>::description()
                 .unwrap_or_else(|| unsafe {
@@ -126,50 +126,58 @@ macro_rules! module_use_default_locale {
         static OBS_MODULE_LOOKUP: std::sync::atomic::AtomicPtr<$crate::libobs_sys::lookup_t> =
             std::sync::atomic::AtomicPtr::new(std::ptr::null_mut());
 
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub unsafe extern "C" fn obs_module_set_locale(locale: *const std::os::raw::c_char) {
             let lookup = OBS_MODULE_LOOKUP.load(std::sync::atomic::Ordering::SeqCst);
             if !lookup.is_null() {
-                $crate::libobs_sys::text_lookup_destroy(lookup);
+                unsafe { $crate::libobs_sys::text_lookup_destroy(lookup) };
             }
 
-            let default_locale = std::ffi::CStr::from_bytes_with_nul_unchecked(
-                concat!($default_locale, '\0').as_bytes(),
-            );
-            let lookup = $crate::libobs_sys::obs_module_load_locale(
-                obs_current_module(),
-                default_locale.as_ptr(),
-                locale,
-            );
+            let default_locale = unsafe {
+                std::ffi::CStr::from_bytes_with_nul_unchecked(
+                    concat!($default_locale, '\0').as_bytes(),
+                )
+            };
+            let lookup = unsafe {
+                $crate::libobs_sys::obs_module_load_locale(
+                    obs_current_module(),
+                    default_locale.as_ptr(),
+                    locale,
+                )
+            };
             OBS_MODULE_LOOKUP.store(lookup, std::sync::atomic::Ordering::SeqCst);
         }
 
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub extern "C" fn obs_module_free_locale() {
             let lookup =
                 OBS_MODULE_LOOKUP.swap(std::ptr::null_mut(), std::sync::atomic::Ordering::SeqCst);
             unsafe { $crate::libobs_sys::text_lookup_destroy(lookup) };
         }
 
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub unsafe extern "C" fn obs_module_text(
             lookup_string: *const std::os::raw::c_char,
         ) -> *const std::os::raw::c_char {
             let mut out = lookup_string;
             let lookup = OBS_MODULE_LOOKUP.load(std::sync::atomic::Ordering::SeqCst);
 
-            $crate::libobs_sys::text_lookup_getstr(lookup, lookup_string, &mut out as *mut _);
+            unsafe {
+                $crate::libobs_sys::text_lookup_getstr(lookup, lookup_string, &mut out as *mut _)
+            };
 
             out
         }
 
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub unsafe extern "C" fn obs_module_get_string(
             lookup_string: *const std::os::raw::c_char,
             translated_string: *mut *const std::os::raw::c_char,
         ) -> bool {
             let lookup = OBS_MODULE_LOOKUP.load(std::sync::atomic::Ordering::SeqCst);
-            $crate::libobs_sys::text_lookup_getstr(lookup, lookup_string, translated_string)
+            unsafe {
+                $crate::libobs_sys::text_lookup_getstr(lookup, lookup_string, translated_string)
+            }
         }
     };
 }
@@ -251,8 +259,8 @@ pub fn obs_version() -> Version {
     let version = unsafe { libobs_sys::obs_get_version() };
 
     Version {
-        major: (version >> 24 & 0xff) as u8,
-        minor: (version >> 16 & 0xff) as u8,
+        major: ((version >> 24) & 0xff) as u8,
+        minor: ((version >> 16) & 0xff) as u8,
         patch: (version & 0xffff) as u16,
     }
 }

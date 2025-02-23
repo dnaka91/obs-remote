@@ -10,14 +10,14 @@ license = "AGPL-3.0-only"
 crate-type = ["cdylib"]
 
 [dependencies]
-anyhow = "1.0.94"
+anyhow = "1.0.97"
 api = { path = "../api" }
-log = { version = "0.4.22", features = ["std", "max_level_debug"] }
+log = { version = "0.4.26", features = ["std", "max_level_debug"] }
 log-panics = { version = "2.1.0", features = ["with-backtrace"] }
 obs = { path = "../obs" }
-prost = "0.13.4"
-prost-types = "0.13.4"
-tokio = { version = "1.42.0", features = ["macros", "parking_lot", "rt", "sync"] }
+prost = "0.13.5"
+prost-types = "0.13.5"
+tokio = { version = "1.44.1", features = ["macros", "parking_lot", "rt", "sync"] }
 tonic = { version = "0.12.3", features = ["gzip"] }
 tonic-reflection = "0.12.3"
 tonic-web = "0.12.3"

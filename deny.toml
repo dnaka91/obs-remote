@@ -20,13 +20,13 @@ exceptions = [
 [bans]
 skip = [
     "bitflags@1",
+    "getrandom@0.2",
     "hashbrown@0.12",
     "indexmap@1",
-    "sync_wrapper@0.1",
+    "itertools@0.13",
     "tower@0.4",
-    "zerocopy@0.7",
+    "wasi@0.11",
 ]
 skip-tree = [
-    { crate = "windows-sys@0.48", depth = 3 },
     { crate = "windows-sys@0.52", depth = 3 },
 ]

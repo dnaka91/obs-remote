@@ -14,10 +14,10 @@ tracing = ["dep:tracing-subscriber", "tracing-subscriber?/fmt"]
 anyhow = "1.0.97"
 bitflags = { version = "2.9.0", features = ["serde"] }
 libobs-sys = { path = "../libobs-sys" }
-log = { version = "0.4.26", features = ["std"] }
+log = { version = "0.4.27", features = ["std"] }
 num-rational = { version = "0.4.2", default-features = false }
 serde = { version = "1.0.219", optional = true }
 strum = { version = "0.27.1", features = ["derive"] }
-time = "0.3.39"
+time = "0.3.41"
 tracing-subscriber = { version = "0.3.19", default-features = false, optional = true }
-zerocopy = { version = "0.8.23", features = ["simd", "std"] }
+zerocopy = { version = "0.8.24", features = ["simd", "std"] }

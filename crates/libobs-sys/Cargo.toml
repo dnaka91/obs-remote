@@ -16,6 +16,6 @@ bindgen = "0.71.1"
 pkg-config = "0.3.32"
 
 [target.'cfg(windows)'.build-dependencies]
-cc = "1.2.16"
+cc = "1.2.19"
 regex = "1.11.1"
 winreg = "0.55.0"
